@@ -4,22 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gjenstand – Speiderlageret</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/auth.js"></script>
 </head>
 <body>
 
-<script>beskyttSide();</script>
 <header class="topbar">
   <div class="topbar-inner">
     <div class="topbar-brand">
       <span class="topbar-icon">⚜️</span>
       <div>
         <div class="topbar-title">Speiderlageret</div>
-        <div class="topbar-sub">Gjenstandsdetaljer</div>
+        <div class="topbar-sub">GJENSTANDSDETALJER</div>
       </div>
     </div>
-    <a href="index.html" class="back-btn">← Tilbake til lageret</a>
-    <button class="btn-logout" onclick="loggUt()">🚪 Logg ut</button>
+    <div class="topbar-right">
+      <a href="index.html" class="back-btn">← Tilbake</a>
+      <button class="btn-logout" onclick="loggUt()">🚪 Logg ut</button>
+    </div>
   </div>
 </header>
 
@@ -27,13 +31,13 @@
 
   <div id="loadingState" class="loading-state">
     <span class="loading-spinner">⚙️</span>
-    <span>Laster gjenstand…</span>
+    <span>Laster…</span>
   </div>
 
   <div id="errorState" class="error-state" style="display:none">
     <span class="error-icon">⚠️</span>
     <span class="error-msg" id="errorMsg">Noe gikk galt</span>
-    <a href="index.html" style="margin-top:8px">← Gå til lageret</a>
+    <a href="index.html">← Gå til lageret</a>
   </div>
 
   <div id="itemContent" style="display:none">
@@ -60,15 +64,15 @@
       <div class="utlan-banner-inner">
         <div><div class="utlan-banner-label">📤 Utlånt til</div><div class="utlan-banner-val" id="bannerUtlantTil">—</div></div>
         <div><div class="utlan-banner-label">📅 Utlånsdato</div><div class="utlan-banner-val mono" id="bannerUtlansdato">—</div></div>
-        <div><div class="utlan-banner-label">⏰ Innleveringsfrist</div><div class="utlan-banner-val mono" id="bannerFrist">—</div></div>
-        <button class="btn-edit-loan" onclick="openLoanModal()">✏️ Rediger utlån</button>
+        <div><div class="utlan-banner-label">⏰ Frist</div><div class="utlan-banner-val mono" id="bannerFrist">—</div></div>
+        <button class="btn-edit-loan" onclick="apneLanModal()">✏️ Rediger utlån</button>
       </div>
     </div>
 
     <!-- Grid -->
     <div class="item-grid">
 
-      <!-- Hyllebilde -->
+      <!-- Bilde -->
       <div class="info-card image-card">
         <div class="info-card-header">
           <h3>📷 Hylleplassering</h3>
@@ -81,14 +85,14 @@
           <span class="ph-hint">Trykk knappen under for å legge til</span>
         </div>
         <div class="image-url-row" id="imageUrlRow" style="display:none">
-          <input type="url" id="newBildeUrl" placeholder="https://… lim inn bilde-URL" class="url-input">
-          <button class="btn-url-save" onclick="saveBildeUrl()">Lagre</button>
+          <input type="text" id="newBildeUrl" placeholder="Lim inn Google Drive eller annen bilde-URL" class="url-input">
+          <button class="btn-url-save" onclick="lagreBildeUrl()">Lagre</button>
         </div>
-        <button class="btn-add-image" onclick="toggleImageInput()" id="addImageBtn">➕ Legg til / endre bilde</button>
+        <button class="btn-add-image" onclick="toggleBildeInput()" id="addImageBtn">➕ Legg til / endre bilde</button>
       </div>
 
       <!-- Info + QR -->
-      <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="info-right-col">
         <div class="info-card">
           <h3>📋 Detaljer</h3>
           <div class="info-row"><span class="info-label">Hylleplassering</span><span class="info-value" id="itemHylle">—</span></div>
@@ -97,7 +101,7 @@
           <div class="info-row"><span class="info-label">Enhet</span><span class="info-value" id="itemEnhet">—</span></div>
           <div class="info-row" style="align-items:flex-start;padding-top:10px">
             <span class="info-label">Notater</span>
-            <span class="info-value" id="itemNotater" style="text-align:right;font-size:12px;color:#94a3b8">—</span>
+            <span class="info-value small-text muted-text" id="itemNotater" style="text-align:right">—</span>
           </div>
         </div>
 
@@ -106,7 +110,7 @@
           <div class="qr-code-box" id="qrCode"></div>
           <div class="qr-hint">Scan → åpner denne siden direkte</div>
           <div class="qr-url" id="qrUrl"></div>
-          <button class="btn-print" onclick="window.print()">🖨️ Skriv ut QR</button>
+          <button class="btn-print" onclick="window.print()">🖨️ Skriv ut</button>
         </div>
       </div>
 
@@ -119,7 +123,7 @@
   <div class="modal">
     <div class="modal-header">
       <span class="modal-title">📤 Registrer utlån</span>
-      <button class="modal-close" onclick="closeLoanModal()">✕</button>
+      <button class="modal-close" onclick="lukkLanModal()">✕</button>
     </div>
     <div class="modal-body">
       <div class="form-field"><label>Utlånt til *</label><input type="text" id="loanTil" placeholder="Navn eller gruppe"></div>
@@ -130,15 +134,14 @@
       <div class="form-field"><label>Notater</label><textarea id="loanNotater" rows="2" style="resize:vertical"></textarea></div>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeLoanModal()">Avbryt</button>
-      <button class="btn-save" onclick="saveLoan()">💾 Lagre utlån</button>
+      <button class="btn-cancel" onclick="lukkLanModal()">Avbryt</button>
+      <button class="btn-save" onclick="lagreLan()">💾 Lagre utlån</button>
     </div>
   </div>
 </div>
 
 <div id="banner" class="banner"></div>
 
-<script src="js/auth.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/config.js"></script>
