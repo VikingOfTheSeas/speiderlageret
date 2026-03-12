@@ -1,5 +1,5 @@
 // Passord med unicode-escape for å unnga kodingsproblemer med norske tegn
-var PASSORD = "Petter B\u00f8ckman";
+var PASSORD = "Terje Marstein";
 var SESSION_KEY = "speider_auth";
 
 function sjekkInnlogget() { return sessionStorage.getItem(SESSION_KEY) === "ok"; }
