@@ -3,91 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Speiderlageret – Lagersystem</title>
+  <title>Speiderlageret</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/auth.js"></script>
 </head>
 <body>
 
-<!-- ── Topbar ─────────────────────────────────────────────────────── -->
-<script>beskyttSide();</script>
 <header class="topbar">
   <div class="topbar-inner">
     <div class="topbar-brand">
       <span class="topbar-icon">⚜️</span>
       <div>
         <div class="topbar-title">Speiderlageret</div>
-        <div class="topbar-sub">Felles lagersystem</div>
+        <div class="topbar-sub">FELLES LAGERSYSTEM</div>
       </div>
     </div>
-
     <nav class="tabs">
       <button class="tab active" data-tab="lager">📦 Lager</button>
       <button class="tab" data-tab="legg-til">➕ Legg til</button>
       <button class="tab" data-tab="sammendrag">📊 Sammendrag</button>
     </nav>
-
-    <div class="topbar-stats">
-      <span><span class="stat-blue" id="stat-total">0</span> stk</span>
-      <span><span class="stat-green" id="stat-tilgjengelig">0</span> ledig</span>
-      <span><span class="stat-red" id="stat-utlant">0</span> utlånt</span>
+    <div class="topbar-right">
+      <div class="topbar-stats">
+        <span><span class="stat-blue" id="stat-total">0</span> stk</span>
+        <span><span class="stat-green" id="stat-tilgjengelig">0</span> ledig</span>
+        <span><span class="stat-red" id="stat-utlant">0</span> utlånt</span>
+      </div>
+      <button class="btn-logout" onclick="loggUt()">🚪 Logg ut</button>
     </div>
-    <button class="btn-logout" onclick="loggUt()">🚪 Logg ut</button>
   </div>
 </header>
 
-<!-- ── Main ───────────────────────────────────────────────────────── -->
 <main class="main">
 
-  <!-- LAGER -->
+  <!-- ── LAGER ──────────────────────────────────────────────────────── -->
   <section id="lager" class="tab-content active">
-    <div class="filters-row">
+    <div class="filters-grid">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Søk på navn, ID, serienummer, låntaker…">
+        <input type="text" id="searchInput" placeholder="Søk navn, ID, serienummer…">
       </div>
       <select id="filterKategori" class="filter-input">
         <option value="Alle">Alle kategorier</option>
       </select>
       <select id="filterStatus" class="filter-input">
         <option value="Alle">Alle statuser</option>
-        <option value="Tilgjengelig">Tilgjengelig</option>
-        <option value="Utlånt">Utlånt</option>
-        <option value="Til reparasjon">Til reparasjon</option>
-        <option value="Tapt">Tapt</option>
+        <option value="Tilgjengelig">✅ Tilgjengelig</option>
+        <option value="Utlånt">📤 Utlånt</option>
+        <option value="Til reparasjon">🔧 Til reparasjon</option>
+        <option value="Tapt">❌ Tapt</option>
       </select>
+      <input type="text" id="filterUtlant"  class="filter-input" placeholder="🔍 Utlånt til…">
+      <input type="text" id="filterHylle"   class="filter-input" placeholder="🔍 Hylle…">
       <div class="filter-count">
-        <span id="count-shown">0</span>&nbsp;/&nbsp;<span id="count-total">0</span> vist
+        <span id="count-shown">0</span> / <span id="count-total">0</span>
       </div>
     </div>
 
     <div class="table-wrap">
-      <table class="items-table">
-        <thead>
-          <tr>
-            <th onclick="setSorter('id')">ID ⇅</th>
-            <th onclick="setSorter('navn')">Navn ⇅</th>
-            <th onclick="setSorter('kategori')">Kategori ⇅</th>
-            <th onclick="setSorter('serienummer')">Serienr.</th>
-            <th onclick="setSorter('status')">Status ⇅</th>
-            <th onclick="setSorter('utlant_til')">Utlånt til ⇅</th>
-            <th onclick="setSorter('hylleplassering')">Hylle ⇅</th>
-            <th>Handling</th>
-          </tr>
-        </thead>
-        <tbody id="itemsBody"></tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th onclick="setSorter('id')">ID ⇅</th>
+              <th onclick="setSorter('navn')">Navn ⇅</th>
+              <th onclick="setSorter('kategori')" class="col-hide-sm">Kategori ⇅</th>
+              <th onclick="setSorter('serienummer')" class="col-hide-md">Serienr.</th>
+              <th onclick="setSorter('status')">Status ⇅</th>
+              <th onclick="setSorter('utlant_til')" class="col-hide-sm">Utlånt til ⇅</th>
+              <th onclick="setSorter('hylleplassering')" class="col-hide-md">Hylle ⇅</th>
+              <th>Handling</th>
+            </tr>
+          </thead>
+          <tbody id="itemsBody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
-  <!-- LEGG TIL -->
+  <!-- ── LEGG TIL ───────────────────────────────────────────────────── -->
   <section id="legg-til" class="tab-content">
     <div class="form-wrap">
       <h2>➕ Legg til gjenstander</h2>
-      <p>Hvert enkelt eksemplar registreres individuelt med eget serienummer og legges direkte inn i det delte lageret.</p>
+      <p>Hvert eksemplar registreres individuelt med serienummer og legges inn i det delte lageret.</p>
       <form id="addItemForm" class="add-form">
         <div class="form-field">
           <label>Navn *</label>
-          <input type="text" id="itemName" placeholder="f.eks. Kniv, Sovepose, Kompass…" required>
+          <input type="text" id="itemName" placeholder="f.eks. Telt, Kniv, Kompass…" required>
         </div>
         <div class="form-grid2">
           <div class="form-field">
@@ -115,7 +119,7 @@
               <input type="number" id="itemStartNr" value="1" min="1">
             </div>
           </div>
-          <div class="preview-text">Forhåndsvisning: <span id="previewText">GJN-001, GJN-002…</span></div>
+          <div class="preview-text">Forhåndsvisning: <span id="previewText">—</span></div>
         </div>
         <div class="form-field">
           <label>Notater</label>
@@ -126,60 +130,71 @@
     </div>
   </section>
 
-  <!-- SAMMENDRAG -->
+  <!-- ── SAMMENDRAG ─────────────────────────────────────────────────── -->
   <section id="sammendrag" class="tab-content">
     <div class="kpi-grid" id="kpiGrid"></div>
-
     <div class="section-box">
       <div class="section-header">📦 Oversikt per kategori</div>
-      <table class="sum-table">
-        <thead>
-          <tr>
-            <th class="left" style="padding-left:18px">Kategori</th>
+      <div class="table-scroll">
+        <table class="sum-table">
+          <thead><tr>
+            <th class="left">Kategori</th>
             <th class="center">Totalt</th>
             <th class="center">Tilgjengelig</th>
             <th class="center">Utlånt</th>
             <th class="center">Reparasjon</th>
             <th class="center">Tapt</th>
-            <th style="padding-right:18px">% Ledig</th>
-          </tr>
-        </thead>
-        <tbody id="katTabell"></tbody>
-      </table>
+            <th>% Ledig</th>
+          </tr></thead>
+          <tbody id="katTabell"></tbody>
+        </table>
+      </div>
     </div>
-
     <div class="section-box">
       <div class="section-header">
         📤 Utlånte gjenstander
         <span class="count-badge" id="utlant-count">0</span>
       </div>
-      <table class="sum-table">
-        <thead>
-          <tr>
-            <th class="left" style="padding-left:18px">ID</th>
+      <div class="table-scroll">
+        <table class="sum-table">
+          <thead><tr>
+            <th class="left">ID</th>
             <th class="left">Gjenstand</th>
             <th class="left">Utlånt til</th>
-            <th class="center">Utlånsdato</th>
+            <th class="center">Dato</th>
             <th class="center">Frist</th>
             <th class="center">Status</th>
-            <th class="center">Handling</th>
-          </tr>
-        </thead>
-        <tbody id="utlantTabell"></tbody>
-      </table>
+            <th class="center">✏️</th>
+          </tr></thead>
+          <tbody id="utlantTabell"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
 </main>
 
-<!-- ── Edit Modal ──────────────────────────────────────────────────── -->
+<!-- ── REDIGER MODAL ────────────────────────────────────────────────── -->
 <div id="editModal" class="modal-overlay">
   <div class="modal">
     <div class="modal-header">
       <span class="modal-title" id="editModalTitle">Rediger</span>
-      <button class="modal-close" onclick="closeEditModal()">✕</button>
+      <button class="modal-close" onclick="lukkRedigerModal()">✕</button>
     </div>
     <div class="modal-body">
+
+      <!-- Bilde-forhåndsvisning øverst i modal -->
+      <div class="edit-bilde-wrap">
+        <img id="editBildePrev" style="display:none;width:100%;max-height:160px;object-fit:cover;border-radius:8px;border:1px solid rgba(70,189,198,0.2)">
+        <div id="editBildeIngen" class="edit-bilde-ingen">Ingen bilde</div>
+      </div>
+
+      <div class="form-field">
+        <label>Bilde-URL (Google Drive / annen lenke)</label>
+        <input type="text" id="editBildeUrl" placeholder="https://drive.google.com/file/d/…/view">
+        <span class="field-hint">💡 Google Drive-lenker konverteres automatisk</span>
+      </div>
+
       <div class="form-grid2">
         <div class="form-field">
           <label>Navn</label>
@@ -197,12 +212,8 @@
         </div>
         <div class="form-field">
           <label>Hylleplassering</label>
-          <input type="text" id="editHylle" placeholder="f.eks. Hylle A3">
+          <input type="text" id="editHylle" placeholder="f.eks. A1, B3…">
         </div>
-      </div>
-      <div class="form-field">
-        <label>Bilde-URL (foto av hylleplass)</label>
-        <input type="url" id="editBildeUrl" placeholder="https://… (last opp til Supabase Storage)">
       </div>
       <div class="form-field">
         <label>Status</label>
@@ -225,7 +236,7 @@
             <input type="date" id="editUtlansdato">
           </div>
           <div class="form-field">
-            <label>Innleveringsdato (frist)</label>
+            <label>Innleveringsfrist</label>
             <input type="date" id="editInnlevering">
           </div>
         </div>
@@ -236,51 +247,47 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeEditModal()">Avbryt</button>
-      <button class="btn-save" id="saveEditBtn" onclick="saveEdit()">Lagre endringer</button>
+      <button class="btn-cancel" onclick="lukkRedigerModal()">Avbryt</button>
+      <button class="btn-save" id="saveEditBtn" onclick="lagreRediger()">💾 Lagre endringer</button>
     </div>
   </div>
 </div>
 
-<!-- ── Slett Modal ─────────────────────────────────────────────────── -->
+<!-- ── SLETT MODAL ──────────────────────────────────────────────────── -->
 <div id="deleteModal" class="modal-overlay">
   <div class="modal modal-sm">
     <div class="delete-body">
       <div class="delete-icon">🗑️</div>
       <div class="delete-title">Slette gjenstand?</div>
-      <div class="delete-sub">Du er i ferd med å slette <span class="delete-name" id="deleteItemName"></span>. Dette kan ikke angres.</div>
+      <div class="delete-sub">Du sletter <span class="delete-name" id="deleteItemName"></span>. Kan ikke angres.</div>
       <div class="delete-btns">
-        <button class="btn-cancel" onclick="closeDeleteModal()">Avbryt</button>
+        <button class="btn-cancel" onclick="lukkSlettModal()">Avbryt</button>
         <button class="btn-danger" id="confirmDeleteBtn">Ja, slett</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── QR Modal ────────────────────────────────────────────────────── -->
+<!-- ── QR MODAL ─────────────────────────────────────────────────────── -->
 <div id="qrModal" class="modal-overlay">
   <div class="modal modal-sm">
     <div class="modal-header">
       <span class="modal-title" id="qrModalTitle">QR-kode</span>
-      <button class="modal-close" onclick="closeQrModal()">✕</button>
+      <button class="modal-close" onclick="lukkQrModal()">✕</button>
     </div>
     <div class="qr-body">
       <div class="qr-box" id="qrContainer"></div>
       <div class="qr-url" id="qrUrl"></div>
-      <button class="btn-print" onclick="printQr()">🖨️ Skriv ut</button>
+      <button class="btn-print" onclick="window.print()">🖨️ Skriv ut</button>
     </div>
   </div>
 </div>
 
-<!-- ── Toast banner ───────────────────────────────────────────────── -->
 <div id="banner" class="banner"></div>
 
-<!-- ── Scripts ────────────────────────────────────────────────────── -->
-<script src="js/auth.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/app.js"></script>
-
 </body>
 </html>
