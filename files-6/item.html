@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <title>Gjenstand – 1. Haugerud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/auth.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="topbar-brand">
+      <img src="data:image/png;base64,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" class="topbar-logo" alt="1. Haugerud">
+      <div>
+        <div class="topbar-title">1. Haugerud</div>
+        <div class="topbar-sub">GJENSTANDSDETALJER</div>
+      </div>
+    </a>
+    <div class="topbar-right">
+      <a href="index.html" class="back-btn">← Tilbake</a>
+      <button class="btn-qr-scan" onclick="window.location.href='index.html?scan=1'" title="Scan QR-koder">📷 Scan</button>
+      <button class="btn-logout item-logout-desktop" onclick="loggUt()">🚪 Logg ut</button>
+      <button class="hamburger" id="hamburger" onclick="toggleItemMeny()" aria-label="Meny">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="hamburger-meny" id="hamburgerMeny">
+        <a href="index.html" class="hmeny-tab">← Tilbake til lager</a>
+        <div class="hmeny-divider"></div>
+        <button class="hmeny-logout" onclick="loggUt()">🚪 Logg ut</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="item-page">
+  <div id="loadingState" class="loading-state">
+    <span class="loading-spinner">⚙️</span><span>Laster…</span>
+  </div>
+  <div id="errorState" class="error-state" style="display:none">
+    <span class="error-icon">⚠️</span>
+    <span class="error-msg" id="errorMsg">Noe gikk galt</span>
+    <a href="index.html">← Gå til lageret</a>
+  </div>
+
+  <div id="itemContent" style="display:none">
+    <div class="item-header">
+      <div>
+        <h1 id="itemNavn">—</h1>
+        <div class="item-meta">
+          <span>🏷️ <span id="itemId" class="mono"></span></span>
+          <span>📦 <span id="itemKategori"></span></span>
+          <span>🔢 <span id="itemSerienummer" class="mono"></span></span>
+          <span>📍 <span id="itemHylleHeader"></span></span>
+        </div>
+      </div>
+      <div class="item-status-col">
+        <span id="itemStatus" class="status-badge">—</span>
+        <div class="quick-status-btns" id="quickStatusBtns"></div>
+      </div>
+    </div>
+
+    <div id="utlanBanner" class="utlan-banner" style="display:none">
+      <div class="utlan-banner-inner">
+        <div><div class="utlan-banner-label">📤 Utlånt til</div><div class="utlan-banner-val" id="bannerTil">—</div></div>
+        <div><div class="utlan-banner-label">📅 Dato</div><div class="utlan-banner-val mono" id="bannerDato">—</div></div>
+        <div><div class="utlan-banner-label">⏰ Frist</div><div class="utlan-banner-val mono" id="bannerFrist">—</div></div>
+        <button class="btn-edit-loan" onclick="apneLanModal()">✏️ Rediger utlån</button>
+      </div>
+    </div>
+
+    <div class="item-grid">
+      <div class="info-card image-card">
+        <div class="info-card-header">
+          <h3>📷 Hylleplassering</h3>
+          <span class="hylle-label-big" id="hylleLabelBig">—</span>
+        </div>
+        <img id="hylleBilde" class="hylle-img" src="" alt="Hyllebilde" style="display:none">
+        <div id="bildePlaceholder" class="hylle-placeholder">
+          <span class="ph-icon">📦</span><span>Ingen hyllebilde</span>
+        </div>
+        <div class="bilde-upload-row">
+          <label class="btn-file-upload" for="bildeFilInput">📁 Last opp fra enhet</label>
+          <input type="file" id="bildeFilInput" accept="image/*" style="display:none" onchange="lastOppBildeItem(this)">
+          <span class="bilde-upload-sep">eller</span>
+          <input type="text" id="newBildeUrl" placeholder="Lim inn URL" class="url-input">
+          <button class="btn-url-save" onclick="lagreBildeUrl()">Lagre</button>
+        </div>
+        <div id="bildeUploadStatus" class="bilde-upload-status" style="display:none"></div>
+      </div>
+
+      <div class="info-right-col">
+        <div class="info-card">
+          <h3>📋 Detaljer</h3>
+          <div class="info-row"><span class="info-label">Hylleplassering</span><span class="info-value" id="itemHylle">—</span></div>
+          <div class="info-row"><span class="info-label">Kategori</span><span class="info-value" id="itemKategori2">—</span></div>
+          <div class="info-row"><span class="info-label">Serienummer</span><span class="info-value mono" id="itemSerienummer2">—</span></div>
+          <div class="info-row"><span class="info-label">Enhet</span><span class="info-value" id="itemEnhet">—</span></div>
+          <div class="info-row" style="align-items:flex-start;padding-top:8px">
+            <span class="info-label">Notater</span>
+            <span class="info-value small-text muted-text" id="itemNotater" style="text-align:right">—</span>
+          </div>
+        </div>
+        <div class="info-card qr-card">
+          <h3>⬛ QR-kode</h3>
+          <div class="qr-code-box" id="qrCode"></div>
+          <div class="qr-hint">Scan → åpner denne siden</div>
+          <div class="qr-url" id="qrUrl"></div>
+          <button class="btn-print" onclick="window.print()">🖨️ Skriv ut</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="loanModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">📤 Registrer utlån</span>
+      <button class="modal-close" onclick="lukkLanModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field"><label>Utlånt til *</label><input type="text" id="loanTil" placeholder="Navn eller gruppe"></div>
+      <div class="form-grid2">
+        <div class="form-field"><label>Utlånsdato</label><input type="date" id="loanDato"></div>
+        <div class="form-field"><label>Innleveringsfrist</label><input type="date" id="loanFrist"></div>
+      </div>
+      <div class="form-field"><label>Notater</label><textarea id="loanNotater" rows="2" style="resize:vertical"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="lukkLanModal()">Avbryt</button>
+      <button class="btn-save" onclick="lagreLan()">💾 Lagre utlån</button>
+    </div>
+  </div>
+</div>
+
+<div id="banner" class="banner"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/item.js"></script>
+<script>
+function toggleItemMeny() {
+  document.getElementById("hamburgerMeny").classList.toggle("open");
+  document.getElementById("hamburger").classList.toggle("open");
+}
+document.addEventListener("click", function(e) {
+  const meny = document.getElementById("hamburgerMeny");
+  const btn  = document.getElementById("hamburger");
+  if (meny && !meny.contains(e.target) && btn && !btn.contains(e.target)) {
+    meny.classList.remove("open");
+    btn.classList.remove("open");
+  }
+});
+// Auto-open scanner if redirected from scan button
+if (new URLSearchParams(location.search).get("scan") === "1") {
+  // No scanner on item page - just go back cleanly
+}
+</script>
+</body>
+</html>
