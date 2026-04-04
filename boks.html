@@ -11,6 +11,7 @@
   <script src="js/auth.js"></script>
 </head>
 <body>
+<script>window.onerror=function(m,s,l){var el=document.getElementById("loadingState");if(el)el.innerHTML="<span style=color:#f87171>FEIL: "+m+" (linje "+l+")</span>";return false;};</script>
 
 <header class="topbar">
   <div class="topbar-inner">
@@ -205,18 +206,23 @@ db.channel(“boks-” + id)
 });
 
 async function lastInnBoks(id) {
+function vis(tekst) {
+var el = document.getElementById(“loadingState”);
+if (el) el.innerHTML = “<span class='loading-spinner'>⚙️</span><span style='color:#46bdc6'>│ “ + tekst + “</span>”;
+}
 try {
+vis(“Kobler til Supabase…”);
 console.log(“Laster boks:”, id);
 const { data: boks, error: bErr } = await db.from(“bokser”).select(”*”).eq(“id”, id).single();
 console.log(“Boks data:”, boks, “Feil:”, bErr);
 if (bErr || !boks) { visError(“Fant ingen boks med ID: “ + id + (bErr ? “ — “ + bErr.message : “”)); return; }
 currentBoks = boks;
-
-```
-const { data: gjenstander, error: gErr } = await db.from("gjenstander").select("*").eq("boks_id", id);
-console.log("Gjenstander:", gjenstander, gErr);
+vis(“Henter gjenstander…”);
+const { data: gjenstander, error: gErr } = await db.from(“gjenstander”).select(”*”).eq(“boks_id”, id);
+console.log(“Gjenstander:”, gjenstander, gErr);
 boksGjenstander = gjenstander || [];
 
+```
 const gIds = boksGjenstander.map(g => g.id);
 let utlan = [];
 if (gIds.length > 0) {
