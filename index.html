@@ -611,7 +611,7 @@ function visTabell(liste) {
       "<td class='tc'><select class='inline-status status-select-" + sk(g.status) + "' onchange='raskStatus(\"" + g.id + "\",this)'>" + opts + "</select></td>" +
       "<td class='tc'><div class='actions-cell'>" +
       "<button class='btn-action btn-edit' onclick='apneRediger(\"" + g.id + "\")'>&#9998;&#65039;</button>" +
-      "<button class='btn-action btn-qr' onclick='event.shiftKey?toggleKo(\"" + g.id + "\"):apneQr(\"" + g.id + "\",\"" + sn + "\")'>&#11035;</button>" +
+      "<button class='btn-action btn-qr' onclick='event.shiftKey?toggleKo(\"" + g.id + "\"):apneUtlanModal([\"" + g.id + "\"])' title='Lån ut'>&#128228;</button>" +
       "<button class='btn-action btn-delete' onclick='event.shiftKey?bekreftSlett(\"" + g.id + "\",\"" + sn + "\",true):bekreftSlett(\"" + g.id + "\",\"" + sn + "\")'>&#128465;&#65039;</button>" +
       "</div></td>" +
       "<td class='tc col-extra col-extra-text mono small-text'>" + (g.hylleplassering||"<span class='dash'>-</span>") + "</td>" +
@@ -698,6 +698,7 @@ async function lagreUtlanModal() {
   if (!dato) { visBanner("Fyll inn utlånsdato", "error"); return; }
   var btn = document.querySelector("#utlanModal .btn-save");
   btn.disabled = true; btn.textContent = "Lagrer…";
+  var antallUtlant = _utlanIds.length;
   for (var id of _utlanIds) {
     var g = gjenstander.find(function(x) { return x.id === id; });
     if (!g) continue;
@@ -707,7 +708,7 @@ async function lagreUtlanModal() {
   }
   lukkUtlanModal();
   await lastInn();
-  visBanner(_utlanIds.length + " gjenstand" + (_utlanIds.length > 1 ? "er" : "") + " utlånt til " + til, "success");
+  visBanner(antallUtlant + " gjenstand" + (antallUtlant > 1 ? "er" : "") + " utlånt til " + til, "success");
   btn.disabled = false; btn.textContent = "Registrer utlån";
 }
 

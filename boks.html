@@ -105,10 +105,10 @@
       <div style="overflow-x:auto">
         <table class="items-table" style="min-width:340px">
           <thead><tr>
-            <th style="text-align:left;padding-left:14px">Navn</th>
-            <th style="text-align:center">Ledig</th>
-            <th style="text-align:center">Utlånt</th>
-            <th style="text-align:center">Totalt</th>
+            <th style="text-align:left;padding-left:14px;cursor:pointer" onclick="sorterBoks('navn')">Navn ⇅</th>
+            <th style="text-align:center;cursor:pointer" onclick="sorterBoks('tilgj')">Ledig ⇅</th>
+            <th style="text-align:center;cursor:pointer" onclick="sorterBoks('utlant')">Utlånt ⇅</th>
+            <th style="text-align:center;cursor:pointer" onclick="sorterBoks('totalt')">Totalt ⇅</th>
             <th style="text-align:center">Handling</th>
           </tr></thead>
           <tbody id="boksInnhold"></tbody>
@@ -175,6 +175,8 @@
 var currentBoks = null;
 var boksGjenstander = [];
 var aktiveUtlan = [];
+var boksSortField = "navn";
+var boksSortDir = "asc";
 
 // ---- INIT ----
 document.addEventListener("DOMContentLoaded", function() {
@@ -255,8 +257,10 @@ function renderBoks() {
   if (!grupper.size) {
     tbody.innerHTML = '<tr><td colspan="5" class="empty-row">Ingen gjenstander i boksen</td></tr>';
   } else {
+    var sortert = sorterGrupper(grupper);
     var html = "";
-    grupper.forEach(function(gr, navn) {
+    sortert.forEach(function(item) {
+      var navn = item.navn, gr = item.gr;
       var sn = navn.replace(/'/g, "\\'");
       html += "<tr>";
       html += "<td style='padding-left:14px'><a class='item-name-link' href='item.html?id=" + encodeURIComponent(gr.alle[0].id) + "'>" + navn + "</a></td>";
@@ -264,8 +268,9 @@ function renderBoks() {
       html += "<td class='tc " + (gr.utlant > 0 ? "red-text" : "muted-text") + "'>" + gr.utlant + "</td>";
       html += "<td class='tc muted-text'>" + gr.alle.length + "</td>";
       html += "<td class='tc' style='white-space:nowrap'>";
-      html += "<button class='btn-action btn-edit' style='padding:9px 13px;font-size:17px;min-width:42px' onclick='apneUtlanForNavn(\"" + sn + "\")'>&#128228;</button>";
-      html += "<button class='btn-action btn-qr' style='padding:9px 13px;font-size:17px;min-width:42px' onclick='apneLeverForNavn(\"" + sn + "\")'>&#128229;</button>";
+      html += "<button class='btn-action btn-edit' onclick='window.location.href=\"item.html?id=" + encodeURIComponent(gr.alle[0].id) + "\"' title='Rediger'>&#9998;&#65039;</button>";
+      html += "<button class='btn-action btn-qr' onclick='apneUtlanForNavn(\"" + sn + "\")' title='Lån ut'>&#128228;</button>";
+      html += "<button class='btn-action btn-delete' onclick='apneLeverForNavn(\"" + sn + "\")' title='Lever inn'>&#128229;</button>";
       html += "</td></tr>";
     });
     tbody.innerHTML = html;
@@ -316,6 +321,27 @@ function lagGrupper() {
     else if (g.status === "Utlånt") gr.utlant++;
   });
   return map;
+}
+
+function sorterGrupper(grupper) {
+  var arr = [];
+  grupper.forEach(function(gr, navn) { arr.push({ navn: navn, gr: gr }); });
+  var dir = boksSortDir === "asc" ? 1 : -1;
+  arr.sort(function(a, b) {
+    var va, vb;
+    if (boksSortField === "navn") { va = a.navn.toLowerCase(); vb = b.navn.toLowerCase(); return va < vb ? -dir : va > vb ? dir : 0; }
+    if (boksSortField === "tilgj") { va = a.gr.tilgj; vb = b.gr.tilgj; }
+    else if (boksSortField === "utlant") { va = a.gr.utlant; vb = b.gr.utlant; }
+    else { va = a.gr.alle.length; vb = b.gr.alle.length; }
+    return (va - vb) * dir;
+  });
+  return arr;
+}
+
+function sorterBoks(felt) {
+  if (boksSortField === felt) boksSortDir = boksSortDir === "asc" ? "desc" : "asc";
+  else { boksSortField = felt; boksSortDir = "asc"; }
+  renderBoks();
 }
 
 // ---- UTLAN ----
