@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="no">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/auth.js?v=1775476073"></script>
+  <script src="js/auth.js?v=1775637712"></script>
 </head>
 <body>
 
@@ -50,7 +49,6 @@
 <main class="main">
 
   <!-- LAGER -->
-
   <section id="lager" class="tab-content active">
     <div class="filters-row">
       <select id="filterKategori" class="filter-input"></select>
@@ -68,39 +66,35 @@
       <button class="btn-save" style="margin-left:auto;padding:7px 14px;font-size:13px;white-space:nowrap" onclick="apneLeggTilModal()">➕ Legg til</button>
     </div>
 
-```
-<div id="batchBar" class="batch-bar">
-  <span id="batchCount">0 valgt</span>
-  <button class="btn-batch-utlan" onclick="batchUtlan()">📤 Utlånt</button>
-  <button class="btn-batch-tilg"  onclick="batchTilgjengelig()">✅ Tilgjengelig</button>
-  <button class="btn-save" style="padding:5px 12px;font-size:12px" onclick="apneBatchRediger()">✏️ Rediger</button>
-  <button class="btn-batch-clear" onclick="clearValg()">✕ Avbryt</button>
-</div>
+    <div id="batchBar" class="batch-bar">
+      <span id="batchCount">0 valgt</span>
+      <button class="btn-batch-utlan" onclick="batchUtlan()">📤 Utlånt</button>
+      <button class="btn-batch-tilg"  onclick="batchTilgjengelig()">✅ Tilgjengelig</button>
+      <button class="btn-save" style="padding:5px 12px;font-size:12px" onclick="apneBatchRediger()">✏️ Rediger</button>
+      <button class="btn-batch-clear" onclick="clearValg()">✕ Avbryt</button>
+    </div>
 
-<div class="table-wrap">
-  <table class="items-table">
-    <thead>
-      <tr>
-        <th style="width:36px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="row-checkbox"></th>
-        <th onclick="setSorter('id')">ID ⇅</th>
-        <th onclick="setSorter('navn')">Navn ⇅</th>
-        <th onclick="setSorter('status')">Status ⇅</th>
-        <th>Handling</th>
-        <th onclick="setSorter('hylleplassering')" class="col-extra">Hylle ⇅</th>
-        <th onclick="setSorter('kategori')" class="col-extra">Kategori ⇅</th>
-        <th onclick="setSorter('utlant_til')" class="col-extra">Utlånt til ⇅</th>
-        <th onclick="setSorter('serienummer')" class="col-extra">Serienr.</th>
-      </tr>
-    </thead>
-    <tbody id="itemsBody"></tbody>
-  </table>
-</div>
-```
-
+    <div class="table-wrap">
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th style="width:36px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="row-checkbox"></th>
+            <th onclick="setSorter('id')">ID ⇅</th>
+            <th onclick="setSorter('navn')">Navn ⇅</th>
+            <th onclick="setSorter('status')">Status ⇅</th>
+            <th>Handling</th>
+            <th onclick="setSorter('hylleplassering')" class="col-extra">Hylle ⇅</th>
+            <th onclick="setSorter('kategori')" class="col-extra">Kategori ⇅</th>
+            <th onclick="setSorter('utlant_til')" class="col-extra">Utlånt til ⇅</th>
+            <th onclick="setSorter('serienummer')" class="col-extra">Serienr.</th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody"></tbody>
+      </table>
+    </div>
   </section>
 
   <!-- LEGG TIL MODAL -->
-
   <div id="leggTilModal" class="modal-overlay">
     <div class="modal" style="max-width:600px">
       <div class="modal-header">
@@ -162,7 +156,6 @@
   </div>
 
   <!-- SAMMENDRAG -->
-
   <section id="sammendrag" class="tab-content">
     <div class="kpi-grid" id="kpiGrid"></div>
     <div class="section-box">
@@ -191,7 +184,6 @@
   </section>
 
   <!-- BOKSER -->
-
   <section id="bokser" class="tab-content">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
       <div style="font-size:13px;color:var(--muted)">Bokser med QR-kode. Klikk for å se innhold og registrere utlån.</div>
@@ -211,12 +203,11 @@
     </div>
   </section>
 
+
 </main>
 
 <!-- PRINT AREA -->
-
 <!-- PRINT DRAWER -->
-
 <div id="printDrawer" class="print-drawer">
   <div class="print-drawer-header">
     <span>🖨️ Utskriftskø <span id="koTeller" class="count-badge">0</span></span>
@@ -231,11 +222,9 @@
 </div>
 
 <!-- PRINT AREA (kun ved utskrift) -->
-
 <div id="printArea" style="display:none"></div>
 
 <!-- REDIGER MODAL -->
-
 <div id="editModal" class="modal-overlay">
   <div class="modal">
     <div class="modal-header">
@@ -305,7 +294,6 @@
 </div>
 
 <!-- SLETT MODAL -->
-
 <div id="deleteModal" class="modal-overlay">
   <div class="modal modal-sm">
     <div class="delete-body">
@@ -321,7 +309,6 @@
 </div>
 
 <!-- UTLÅN MODAL -->
-
 <div id="utlanModal" class="modal-overlay">
   <div class="modal" style="max-width:460px">
     <div class="modal-header">
@@ -361,7 +348,6 @@
 </div>
 
 <!-- QR MODAL -->
-
 <div id="qrModal" class="modal-overlay">
   <div class="modal modal-sm">
     <div class="modal-header">
@@ -380,7 +366,6 @@
 </div>
 
 <!-- NY BOKS MODAL -->
-
 <div id="nyBoksModal" class="modal-overlay">
   <div class="modal" style="max-width:460px">
     <div class="modal-header">
@@ -425,7 +410,6 @@
 </div>
 
 <!-- BATCH REDIGER MODAL -->
-
 <div id="batchRedigerModal" class="modal-overlay">
   <div class="modal" style="max-width:480px">
     <div class="modal-header">
@@ -480,7 +464,6 @@
 </div>
 
 <!-- QR SCANNER MODAL -->
-
 <div id="scannerModal" class="modal-overlay">
   <div class="modal" style="max-width:480px">
     <div class="modal-header">
@@ -502,15 +485,10 @@
 <div id="banner" class="banner"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-
-<script src="js/config.js?v=1775476073"></script>
-
-<script src="js/app.js?v=1775476073"></script>
-
+<script src="js/config.js?v=1775637712"></script>
+<script src="js/app.js?v=1775637712"></script>
 <script>
 function toggleMeny() {
   document.getElementById("hamburgerMeny").classList.toggle("open");
@@ -528,6 +506,5 @@ document.addEventListener("click", function(e) {
 const _tab = sessionStorage.getItem("aktivTab");
 if (_tab) { sessionStorage.removeItem("aktivTab"); document.addEventListener("DOMContentLoaded", () => settFane(_tab)); }
 </script>
-
 </body>
 </html>
