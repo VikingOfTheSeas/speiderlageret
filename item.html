@@ -129,8 +129,8 @@
     <div class="modal-body">
       <div class="form-field"><label>Utlånt til *</label><input type="text" id="loanTil" placeholder="Navn eller gruppe"></div>
       <div class="form-grid2">
-        <div class="form-field"><label>Utlånsdato</label><input type="date" id="loanDato"></div>
-        <div class="form-field"><label>Innleveringsfrist</label><input type="date" id="loanFrist"></div>
+        <div class="form-field"><label>Utlånsdato</label><input type="text" id="loanDato" placeholder="DD/MM/YYYY" maxlength="10" oninput="autoFormatDato(event)"></div>
+        <div class="form-field"><label>Innleveringsfrist</label><input type="text" id="loanFrist" placeholder="DD/MM/YYYY" maxlength="10" oninput="autoFormatDato(event)"></div>
       </div>
       <div class="form-field"><label>Notater</label><textarea id="loanNotater" rows="2" style="resize:vertical"></textarea></div>
     </div>

@@ -336,8 +336,8 @@ function byggUtlanModal(forhNavn) {
   html += "</select></div>";
   html += "<div class='form-field'><label>Antall</label><input type='number' id='utlanAntall' value='1' min='1' style='width:100%'></div>";
   html += "<div class='form-field'><label>Låntaker *</label><input type='text' id='utlanTil' placeholder='Navn eller gruppe' style='width:100%'></div>";
-  html += "<div class='form-grid2'><div class='form-field'><label>Utlånsdato</label><input type='date' id='utlanDato' value='" + iDag() + "'></div>";
-  html += "<div class='form-field'><label>Leveres inn</label><input type='date' id='utlanFrist'></div></div>";
+  html += "<div class='form-grid2'><div class='form-field'><label>Utlånsdato</label><input type='text' id='utlanDato' placeholder='DD/MM/YYYY' maxlength='10' oninput='autoFormatDato(event)' value='" + tilDatoFelt(iDag()) + "'></div>";
+  html += "<div class='form-field'><label>Leveres inn</label><input type='text' id='utlanFrist' placeholder='DD/MM/YYYY' maxlength='10' oninput='autoFormatDato(event)'></div></div>";
 
   document.getElementById("utlanBody").innerHTML = html;
   oppdaterMaks();
@@ -357,8 +357,8 @@ async function lagreUtlan() {
   var navn = document.getElementById("utlanGjenstand").value;
   var antall = parseInt(document.getElementById("utlanAntall").value);
   var til = document.getElementById("utlanTil").value.trim();
-  var dato = document.getElementById("utlanDato").value;
-  var frist = document.getElementById("utlanFrist").value;
+  var dato = fraDatoFelt(document.getElementById("utlanDato").value);
+  var frist = fraDatoFelt(document.getElementById("utlanFrist").value);
 
   if (!til) { visBanner("Fyll inn låntaker", "error"); return; }
 

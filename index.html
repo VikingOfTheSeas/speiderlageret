@@ -280,8 +280,8 @@
         <div class="utlan-title">📤 Utlånsinformasjon</div>
         <div class="form-field"><label>Utlånt til</label><input type="text" id="editUtlantTil" placeholder="Navn eller gruppe"></div>
         <div class="form-grid2">
-          <div class="form-field"><label>Utlånsdato</label><input type="date" id="editUtlansdato"></div>
-          <div class="form-field"><label>Leveres inn</label><input type="date" id="editInnlevering"></div>
+          <div class="form-field"><label>Utlånsdato</label><input type="text" id="editUtlansdato" placeholder="DD/MM/YYYY" maxlength="10" oninput="autoFormatDato(event)"></div>
+          <div class="form-field"><label>Leveres inn</label><input type="text" id="editInnlevering" placeholder="DD/MM/YYYY" maxlength="10" oninput="autoFormatDato(event)"></div>
         </div>
       </div>
       <div class="form-field"><label>Notater</label><textarea id="editNotater" rows="2" style="resize:vertical"></textarea></div>
@@ -330,12 +330,12 @@
       <div class="form-grid2">
         <div class="form-field">
           <label>Utlånsdato *</label>
-          <input type="date" id="utlanDato">
+          <input type="text" id="utlanDato" placeholder="DD/MM/YYYY" maxlength="10" oninput="autoFormatDato(event)">
           <span class="field-hint" id="utlanDatoVis" style="color:var(--primary);font-weight:600"></span>
         </div>
         <div class="form-field">
           <label>Innleveringsfrist</label>
-          <input type="date" id="utlanFrist">
+          <input type="text" id="utlanFrist" placeholder="DD/MM/YYYY" maxlength="10" oninput="autoFormatDato(event)">
           <span class="field-hint" id="utlanFristVis" style="color:var(--muted)"></span>
         </div>
       </div>
@@ -669,7 +669,7 @@ function apneUtlanModal(ids) {
       "</div>";
   }).join("");
   document.getElementById("utlanTil").value = "";
-  document.getElementById("utlanDato").value = idag;
+  document.getElementById("utlanDato").value = tilDatoFelt(idag);
   document.getElementById("utlanFrist").value = "";
   oppdaterDatoVis("utlanDato", "utlanDatoVis");
   oppdaterDatoVis("utlanFrist", "utlanFristVis");
@@ -687,13 +687,13 @@ function lukkUtlanModal() {
 function oppdaterDatoVis(inputId, visId) {
   var val = document.getElementById(inputId) ? document.getElementById(inputId).value : "";
   var el  = document.getElementById(visId);
-  if (el) el.textContent = val ? formatDato(val) : "";
+  if (el) el.textContent = val ? formatDato(fraDatoFelt(val)) : "";
 }
 
 async function lagreUtlanModal() {
   var til   = document.getElementById("utlanTil").value.trim();
-  var dato  = document.getElementById("utlanDato").value;
-  var frist = document.getElementById("utlanFrist").value;
+  var dato  = fraDatoFelt(document.getElementById("utlanDato").value);
+  var frist = fraDatoFelt(document.getElementById("utlanFrist").value);
   if (!til)  { visBanner("Fyll inn låntaker", "error"); return; }
   if (!dato) { visBanner("Fyll inn utlånsdato", "error"); return; }
   var btn = document.querySelector("#utlanModal .btn-save");
@@ -814,8 +814,8 @@ function apneRediger(id, forceStatus) {
   document.getElementById("editBildeUrl").value         = g.bilde_url || "";
   document.getElementById("editStatus").value           = forceStatus || g.status || "Tilgjengelig";
   document.getElementById("editUtlantTil").value        = g.utlant_til || "";
-  document.getElementById("editUtlansdato").value       = g.utlansdato || "";
-  document.getElementById("editInnlevering").value      = g.innleveringsdato || "";
+  document.getElementById("editUtlansdato").value       = tilDatoFelt(g.utlansdato) || "";
+  document.getElementById("editInnlevering").value      = tilDatoFelt(g.innleveringsdato) || "";
   document.getElementById("editNotater").value          = g.notater || "";
   document.getElementById("editBoksId").value           = g.boks_id || "";
   populerBoksSelect();
@@ -852,8 +852,8 @@ async function lagreRediger() {
   btn.disabled = true; btn.textContent = "Lagrer\u2026";
   var status      = document.getElementById("editStatus").value;
   var utlant_til  = document.getElementById("editUtlantTil").value.trim();
-  var utlansdato  = document.getElementById("editUtlansdato").value;
-  var innlevering = document.getElementById("editInnlevering").value;
+  var utlansdato  = fraDatoFelt(document.getElementById("editUtlansdato").value);
+  var innlevering = fraDatoFelt(document.getElementById("editInnlevering").value);
 
   // Batch mode
   if (window._batchUtlanIds && window._batchUtlanIds.length > 1) {

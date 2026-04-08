@@ -86,8 +86,8 @@ async function endreStatus(ny) {
 
 function apneLanModal() {
   document.getElementById("loanTil").value    = currentItem?.utlant_til    || "";
-  document.getElementById("loanDato").value   = currentItem?.utlansdato    || new Date().toISOString().split("T")[0];
-  document.getElementById("loanFrist").value  = currentItem?.innleveringsdato || "";
+  document.getElementById("loanDato").value   = tilDatoFelt(currentItem?.utlansdato    || new Date().toISOString().split("T")[0]);
+  document.getElementById("loanFrist").value  = tilDatoFelt(currentItem?.innleveringsdato) || "";
   document.getElementById("loanNotater").value = currentItem?.notater      || "";
   document.getElementById("loanModal").classList.add("open");
 }
@@ -96,8 +96,8 @@ function lukkLanModal() { document.getElementById("loanModal").classList.remove(
 async function lagreLan() {
   const til = document.getElementById("loanTil").value.trim();
   if (!til) { visBanner("Skriv hvem som låner!", "error"); return; }
-  const dato  = document.getElementById("loanDato").value;
-  const frist = document.getElementById("loanFrist").value;
+  const dato  = fraDatoFelt(document.getElementById("loanDato").value);
+  const frist = fraDatoFelt(document.getElementById("loanFrist").value);
   const notater = document.getElementById("loanNotater").value.trim() || currentItem.notater;
   const oppdatert = {
     ...currentItem, status: "Utlånt", utlant_til: til,
