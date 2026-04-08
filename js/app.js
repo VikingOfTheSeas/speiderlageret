@@ -1010,7 +1010,7 @@ function setupListeners() {
     }
   });
   oppdaterPrev();
-}el.style.display = “block”;
+el.style.display = “block”;
 setTimeout(function() { el.style.display = “none”; }, 3000);
 }
 
