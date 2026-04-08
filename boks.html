@@ -372,10 +372,10 @@ async function lagreUtlan() {
   // Finn N tilgjengelige rader med dette navnet
   var tilgjRader = boksGjenstander.filter(function(g) { return g.navn === navn && g.status === "Tilgjengelig"; });
   for (var i = 0; i < Math.min(antall, tilgjRader.length); i++) {
-    await db.from("gjenstander").update({ status: "Utlånt", utlant_til: til, utlånsdato: dato, innleveringsdato: frist || null }).eq("id", tilgjRader[i].id);
+    await db.from("gjenstander").update({ status: "Utlånt", utlant_til: til, utlansdato: dato, innleveringsdato: frist || null }).eq("id", tilgjRader[i].id);
   }
 
-  await db.from("utlanslogg").insert({ gjenstand_id: tilgjRader[0].id, boks_id: currentBoks.id, antall: antall, utlant_til: til, utlånsdato: dato, innleveringsdato: frist || null, status: "aktiv" });
+  await db.from("utlanslogg").insert({ gjenstand_id: tilgjRader[0].id, boks_id: currentBoks.id, antall: antall, utlant_til: til, utlansdato: dato, innleveringsdato: frist || null, status: "aktiv" });
 
   lukkUtlan();
   await lastInnBoks(currentBoks.id);
@@ -430,7 +430,7 @@ async function lagreLeverDelvis() {
 
   var ids = idStr.split(",").slice(0, antall);
   for (var i = 0; i < ids.length; i++) {
-    await db.from("gjenstander").update({ status: "Tilgjengelig", utlant_til: "", utlånsdato: "", innleveringsdato: "" }).eq("id", ids[i]);
+    await db.from("gjenstander").update({ status: "Tilgjengelig", utlant_til: "", utlansdato: "", innleveringsdato: "" }).eq("id", ids[i]);
     await db.from("utlanslogg").update({ status: "levert", levert_dato: iDag() }).eq("gjenstand_id", ids[i]).eq("status", "aktiv");
   }
 
@@ -480,7 +480,7 @@ async function lagreLeverModal(utMap) {
     if (antall < 1) continue;
     var ids = gr.ids.slice(0, antall);
     for (var i = 0; i < ids.length; i++) {
-      await db.from("gjenstander").update({ status: "Tilgjengelig", utlant_til: "", utlånsdato: "", innleveringsdato: "" }).eq("id", ids[i]);
+      await db.from("gjenstander").update({ status: "Tilgjengelig", utlant_til: "", utlansdato: "", innleveringsdato: "" }).eq("id", ids[i]);
       await db.from("utlanslogg").update({ status: "levert", levert_dato: iDag() }).eq("gjenstand_id", ids[i]).eq("status", "aktiv");
     }
   }
@@ -494,7 +494,7 @@ async function lagreLeverModal(utMap) {
 async function leverGjenstander(idStr, antall) {
   var ids = idStr.split(",").slice(0, antall);
   for (var i = 0; i < ids.length; i++) {
-    await db.from("gjenstander").update({ status: "Tilgjengelig", utlant_til: "", utlånsdato: "", innleveringsdato: "" }).eq("id", ids[i]);
+    await db.from("gjenstander").update({ status: "Tilgjengelig", utlant_til: "", utlansdato: "", innleveringsdato: "" }).eq("id", ids[i]);
     await db.from("utlanslogg").update({ status: "levert", levert_dato: iDag() }).eq("gjenstand_id", ids[i]).eq("status", "aktiv");
   }
   await lastInnBoks(currentBoks.id);
