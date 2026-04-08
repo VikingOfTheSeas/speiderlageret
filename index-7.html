@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <title>1. Haugerud – Lagersystem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/auth.js?v=1775637712"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="topbar-brand">
+      <img src="data:image/png;base64,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" class="topbar-logo" alt="1. Haugerud">
+      <div>
+        <div class="topbar-title">1. Haugerud</div>
+        <div class="topbar-sub">LAGERSYSTEM</div>
+      </div>
+    </a>
+    <nav class="tabs" id="tabsNav">
+      <button class="tab active" data-tab="lager">📦 Lager</button>
+      <button class="tab" data-tab="bokser">🗃️ Bokser</button>
+      <button class="tab" data-tab="sammendrag">📊 Sammendrag</button>
+    </nav>
+    <button class="hamburger" id="hamburger" onclick="toggleMeny()" aria-label="Meny">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="hamburger-meny" id="hamburgerMeny">
+      <button class="hmeny-tab active" data-tab="lager">📦 Lager</button>
+      <button class="hmeny-tab" data-tab="bokser">🗃️ Bokser</button>
+      <button class="hmeny-tab" data-tab="sammendrag">📊 Sammendrag</button>
+      <div class="hmeny-divider"></div>
+      <button class="hmeny-logout" onclick="loggUt()">🚪 Logg ut</button>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-stats">
+        <span><span class="stat-blue" id="stat-total">0</span> stk</span>
+        <span><span class="stat-green" id="stat-tilgjengelig">0</span> ledig</span>
+        <span><span class="stat-red" id="stat-utlant">0</span> utlånt</span>
+      </div>
+      <button class="btn-logout" onclick="loggUt()">🚪 Logg ut</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- LAGER -->
+  <section id="lager" class="tab-content active">
+    <div class="filters-row">
+      <select id="filterKategori" class="filter-input"></select>
+      <select id="filterStatus" class="filter-input">
+        <option value="Alle">Alle statuser</option>
+        <option value="Tilgjengelig">Tilgjengelig</option>
+        <option value="Utlånt">Utlånt</option>
+        <option value="Til reparasjon">Til reparasjon</option>
+        <option value="Tapt">Tapt</option>
+      </select>
+      <input type="text" id="searchInput" class="search-input" placeholder="Søk…" style="max-width:130px;flex:0 0 130px">
+      <div class="filter-count"><span id="count-shown">0</span>&thinsp;/&thinsp;<span id="count-total">0</span></div>
+      <button class="btn-qr-scan" onclick="apneScanner()" title="Scan QR-koder">📷</button>
+      <button class="btn-ko-toggle" id="drawerToggleBtn" onclick="toggleDrawer()" title="Utskriftskø" style="display:none">🖨️ <span id="drawerBadge">0</span></button>
+      <button class="btn-save" style="margin-left:auto;padding:7px 14px;font-size:13px;white-space:nowrap" onclick="apneLeggTilModal()">➕ Legg til</button>
+    </div>
+
+    <div id="batchBar" class="batch-bar">
+      <span id="batchCount">0 valgt</span>
+      <button class="btn-batch-utlan" onclick="batchUtlan()">📤 Utlånt</button>
+      <button class="btn-batch-tilg"  onclick="batchTilgjengelig()">✅ Tilgjengelig</button>
+      <button class="btn-save" style="padding:5px 12px;font-size:12px" onclick="apneBatchRediger()">✏️ Rediger</button>
+      <button class="btn-batch-clear" onclick="clearValg()">✕ Avbryt</button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th style="width:36px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="row-checkbox"></th>
+            <th onclick="setSorter('id')">ID ⇅</th>
+            <th onclick="setSorter('navn')">Navn ⇅</th>
+            <th onclick="setSorter('status')">Status ⇅</th>
+            <th>Handling</th>
+            <th onclick="setSorter('hylleplassering')" class="col-extra">Hylle ⇅</th>
+            <th onclick="setSorter('kategori')" class="col-extra">Kategori ⇅</th>
+            <th onclick="setSorter('utlant_til')" class="col-extra">Utlånt til ⇅</th>
+            <th onclick="setSorter('serienummer')" class="col-extra">Serienr.</th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- LEGG TIL MODAL -->
+  <div id="leggTilModal" class="modal-overlay">
+    <div class="modal" style="max-width:600px">
+      <div class="modal-header">
+        <span class="modal-title">➕ Legg til gjenstander</span>
+        <button class="modal-close" onclick="lukkLeggTilModal()">✕</button>
+      </div>
+      <div class="modal-body" style="max-height:80vh;overflow-y:auto">
+  <section id="legg-til" class="tab-content active" style="display:block">
+    <div class="form-wrap" style="border:none;background:transparent;padding:0;margin:0;max-width:100%">
+      <form id="addItemForm" class="add-form">
+        <div class="form-field">
+          <label>Navn *</label>
+          <input type="text" id="itemName" placeholder="f.eks. Telt, Kniv, Kompass…" required>
+        </div>
+        <div class="form-grid2">
+          <div class="form-field"><label>Kategori</label><select id="itemKategori"></select></div>
+          <div class="form-field"><label>Enhet</label><input type="text" id="itemEnhet" value="stk"></div>
+        </div>
+        <div class="form-grid2">
+          <div class="form-field">
+            <label>Legg i boks (valgfritt)</label>
+            <select id="itemBoksId" class="filter-input" style="width:100%" onchange="autofyllHylle()">
+              <option value="">— Ingen boks —</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Hylleplassering</label>
+            <input type="text" id="itemHylle" placeholder="f.eks. A1, B3…">
+          </div>
+        </div>
+        <div style="display:none"><input type="hidden" id="itemErBulk"><input type="hidden" id="itemAntallTotalt" value="1"><div id="addBulkFields"></div></div>
+        <div class="serial-box">
+          <div class="serial-box-title">📋 Serienummer-oppsett</div>
+          <div class="form-grid3">
+            <div class="form-field"><label>Antall</label><input type="number" id="itemAntall" value="1" min="1" max="500"></div>
+            <div class="form-field"><label>Prefiks</label><input type="text" id="itemPrefix" placeholder="Auto"></div>
+            <div class="form-field"><label>Start nr.</label><input type="number" id="itemStartNr" value="1" min="1"></div>
+          </div>
+          <div class="preview-text">Forhåndsvisning: <span id="previewText">—</span></div>
+        </div>
+        <div class="form-field"><label>Notater</label><textarea id="itemNotater" rows="2" style="resize:vertical"></textarea></div>
+        <div class="form-field">
+          <label>Bilde (valgfritt)</label>
+          <div class="bilde-upload-row">
+            <label class="btn-file-upload" for="addBildeFilInput">📁 Last opp fra enhet</label>
+            <input type="file" id="addBildeFilInput" accept="image/*" style="display:none" onchange="lastOppBildeAdd(this)">
+            <span class="bilde-upload-sep">eller</span>
+            <input type="text" id="addBildeUrl" placeholder="Lim inn URL" style="flex:1;min-width:0;padding:8px 10px;background:rgba(255,255,255,0.07);border:1px solid rgba(70,189,198,0.22);border-radius:8px;color:#e2e8f0;font-size:13px;font-family:inherit;outline:none">
+          </div>
+          <div id="addBildeStatus" class="bilde-upload-status" style="display:none"></div>
+          <img id="addBildePrev" style="display:none;width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-top:8px;border:1px solid rgba(70,189,198,0.2)">
+        </div>
+        <button type="submit" id="addBtn" class="btn-submit">➕ Legg til i lageret</button>
+      </form>
+    </div>
+  </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAMMENDRAG -->
+  <section id="sammendrag" class="tab-content">
+    <div class="kpi-grid" id="kpiGrid"></div>
+    <div class="section-box">
+      <div class="section-header">📦 Oversikt per kategori</div>
+      <table class="sum-table">
+        <thead><tr>
+          <th class="left" style="padding-left:16px">Kategori</th>
+          <th class="center">Totalt</th><th class="center">Tilgjengelig</th>
+          <th class="center">Utlånt</th><th class="center">Reparasjon</th>
+          <th class="center">Tapt</th><th style="padding-right:16px">% Ledig</th>
+        </tr></thead>
+        <tbody id="katTabell"></tbody>
+      </table>
+    </div>
+    <div class="section-box">
+      <div class="section-header">📤 Utlånte gjenstander <span class="count-badge" id="utlant-count">0</span></div>
+      <table class="sum-table">
+        <thead><tr>
+          <th class="left" style="padding-left:16px">ID</th><th class="left">Gjenstand</th>
+          <th class="left">Utlånt til</th><th class="center">Dato</th>
+          <th class="center">Frist</th><th class="center">Status</th><th class="center">✏️</th>
+        </tr></thead>
+        <tbody id="utlantTabell"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- BOKSER -->
+  <section id="bokser" class="tab-content">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:13px;color:var(--muted)">Bokser med QR-kode. Klikk for å se innhold og registrere utlån.</div>
+      <button class="btn-save" style="padding:7px 16px;font-size:13px" onclick="apneNyBoks()">➕ Ny boks</button>
+    </div>
+    <div class="table-wrap">
+      <table class="items-table">
+        <thead><tr>
+          <th>ID</th>
+          <th>Navn</th>
+          <th>Hylleplassering</th>
+          <th>Gjenstander</th>
+          <th>Handling</th>
+        </tr></thead>
+        <tbody id="bokserBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+
+</main>
+
+<!-- PRINT AREA -->
+<!-- PRINT DRAWER -->
+<div id="printDrawer" class="print-drawer">
+  <div class="print-drawer-header">
+    <span>🖨️ Utskriftskø <span id="koTeller" class="count-badge">0</span></span>
+    <div style="display:flex;gap:8px;margin-left:auto">
+      <button class="btn-ko-alle" onclick="leggAlleIKo()">+ Velg alle</button>
+      <button class="btn-ko-print" onclick="skrivUtAlle()" id="printAlleBtn">🖨️ Skriv ut alle</button>
+      <button class="btn-ko-tom" onclick="tømKo()">✕ Tøm</button>
+      <button class="btn-ko-lukk" onclick="toggleDrawer()">▼</button>
+    </div>
+  </div>
+  <div class="print-drawer-list" id="koListe"></div>
+</div>
+
+<!-- PRINT AREA (kun ved utskrift) -->
+<div id="printArea" style="display:none"></div>
+
+<!-- REDIGER MODAL -->
+<div id="editModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="editModalTitle">Rediger</span>
+      <button class="modal-close" onclick="lukkRedigerModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="edit-bilde-wrap">
+        <img id="editBildePrev" style="display:none;width:100%;max-height:160px;object-fit:cover;border-radius:8px;border:1px solid rgba(70,189,198,0.2)">
+        <div id="editBildeIngen" class="edit-bilde-ingen">Ingen bilde</div>
+      </div>
+      <div class="form-field">
+        <label>Bilde av hylleplassen</label>
+        <div class="bilde-upload-row">
+          <label class="btn-file-upload" for="bildeFilInput">📁 Last opp fra enhet</label>
+          <input type="file" id="bildeFilInput" accept="image/*" style="display:none" onchange="lastOppBilde(this)">
+          <span class="bilde-upload-sep">eller</span>
+          <input type="text" id="editBildeUrl" placeholder="Lim inn URL" style="flex:1;min-width:0;padding:8px 10px;background:rgba(255,255,255,0.07);border:1px solid rgba(70,189,198,0.22);border-radius:8px;color:#e2e8f0;font-size:13px;font-family:inherit;outline:none">
+        </div>
+        <div id="bildeUploadStatus" class="bilde-upload-status" style="display:none"></div>
+      </div>
+      <div class="form-grid2">
+        <div class="form-field"><label>Navn</label><input type="text" id="editNavn"></div>
+        <div class="form-field"><label>Kategori</label><select id="editKategori"></select></div>
+      </div>
+      <div class="form-grid2">
+        <div class="form-field"><label>Serienummer</label><input type="text" id="editSerienummer"></div>
+        <div class="form-field"><label>Hylleplassering</label><input type="text" id="editHylle" placeholder="f.eks. A1, B3…"></div>
+      </div>
+      <div class="form-grid2">
+        <div class="form-field">
+          <label>Tilhører boks</label>
+          <select id="editBoksId" class="filter-input" style="width:100%">
+            <option value="">— Ingen boks —</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:none">
+        <input type="hidden" id="editErBulk">
+        <div id="bulkFields">
+          <input type="hidden" id="editAntallTotalt" value="1">
+          <input type="hidden" id="editAntallUtlant" value="0">
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Status</label>
+        <select id="editStatus">
+          <option>Tilgjengelig</option><option>Utlånt</option>
+          <option>Til reparasjon</option><option>Tapt</option>
+        </select>
+      </div>
+      <div class="utlan-section" id="utlanSection" style="display:none">
+        <div class="utlan-title">📤 Utlånsinformasjon</div>
+        <div class="form-field"><label>Utlånt til</label><input type="text" id="editUtlantTil" placeholder="Navn eller gruppe"></div>
+        <div class="form-grid2">
+          <div class="form-field"><label>Utlånsdato</label><input type="date" id="editUtlansdato"></div>
+          <div class="form-field"><label>Leveres inn</label><input type="date" id="editInnlevering"></div>
+        </div>
+      </div>
+      <div class="form-field"><label>Notater</label><textarea id="editNotater" rows="2" style="resize:vertical"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="lukkRedigerModal()">Avbryt</button>
+      <button class="btn-save" id="saveEditBtn" onclick="lagreRediger()">💾 Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- SLETT MODAL -->
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal modal-sm">
+    <div class="delete-body">
+      <div class="delete-icon">🗑️</div>
+      <div class="delete-title">Slette gjenstand?</div>
+      <div class="delete-sub">Du sletter <span class="delete-name" id="deleteItemName"></span>. Kan ikke angres.</div>
+      <div class="delete-btns">
+        <button class="btn-cancel" onclick="lukkSlettModal()">Avbryt</button>
+        <button class="btn-danger" id="confirmDeleteBtn">Ja, slett</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- UTLÅN MODAL -->
+<div id="utlanModal" class="modal-overlay">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <span class="modal-title">📤 Registrer utlån</span>
+      <button class="modal-close" onclick="lukkUtlanModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Gjenstander som lånes ut -->
+      <div id="utlanGjenstander" style="background:rgba(70,189,198,0.06);border:1px solid rgba(70,189,198,0.2);border-radius:10px;padding:12px;margin-bottom:4px">
+        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Gjenstander som lånes ut</div>
+        <div id="utlanGjenstanderListe" style="display:flex;flex-direction:column;gap:4px"></div>
+      </div>
+      <!-- Låntaker -->
+      <div class="form-field">
+        <label>Låntaker *</label>
+        <input type="text" id="utlanTil" placeholder="Navn eller gruppe" autocomplete="off">
+      </div>
+      <!-- Datoer -->
+      <div class="form-grid2">
+        <div class="form-field">
+          <label>Utlånsdato *</label>
+          <input type="date" id="utlanDato">
+          <span class="field-hint" id="utlanDatoVis" style="color:var(--primary);font-weight:600"></span>
+        </div>
+        <div class="form-field">
+          <label>Innleveringsfrist</label>
+          <input type="date" id="utlanFrist">
+          <span class="field-hint" id="utlanFristVis" style="color:var(--muted)"></span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="lukkUtlanModal()">Avbryt</button>
+      <button class="btn-save" onclick="lagreUtlanModal()">📤 Registrer utlån</button>
+    </div>
+  </div>
+</div>
+
+<!-- QR MODAL -->
+<div id="qrModal" class="modal-overlay">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title" id="qrModalTitle">QR-kode</span>
+      <button class="modal-close" onclick="lukkQrModal()">✕</button>
+    </div>
+    <div class="qr-body">
+      <div class="qr-box" id="qrContainer"></div>
+      <div class="qr-url" id="qrUrl"></div>
+      <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-print" onclick="skrivUtEtikett()">🖨️ Skriv ut denne</button>
+        <button class="btn-print-sm" id="leggIKoBtn" onclick="leggIKo()">➕ Legg i utskriftskø</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NY BOKS MODAL -->
+<div id="nyBoksModal" class="modal-overlay">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <span class="modal-title">📦 Ny boks</span>
+      <button class="modal-close" onclick="lukkNyBoks()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label>Hylleplassering *</label>
+        <input type="text" id="nyBoksHylle" placeholder="f.eks. A1, B3, C12…" oninput="genererBoksId()" required>
+        <span class="field-hint">Brukes til å generere ID automatisk</span>
+      </div>
+      <div class="form-field">
+        <label>ID (genereres automatisk)</label>
+        <input type="text" id="nyBoksId" readonly style="background:rgba(70,189,198,0.06);color:var(--primary);font-family:'DM Mono',monospace;font-weight:700;cursor:default" placeholder="Fyll inn hylleplassering først">
+      </div>
+      <div class="form-field">
+        <label>Navn *</label>
+        <input type="text" id="nyBoksNavn" placeholder="f.eks. Verktøyboks, Teltboks…" required>
+      </div>
+      <div class="form-field">
+        <label>Beskrivelse</label>
+        <input type="text" id="nyBoksBeskrivelse" placeholder="Valgfritt">
+      </div>
+      <div class="form-field">
+        <label>Bilde (valgfritt)</label>
+        <div class="bilde-upload-row">
+          <label class="btn-file-upload" for="nyBoksBildeInput">📁 Last opp</label>
+          <input type="file" id="nyBoksBildeInput" accept="image/*" style="display:none" onchange="forhandsvisBoksBilde(this)">
+          <span class="bilde-upload-sep">eller</span>
+          <input type="text" id="nyBoksBildeUrl" placeholder="Lim inn URL" style="flex:1;min-width:0;padding:8px 10px;background:rgba(255,255,255,0.07);border:1px solid rgba(70,189,198,0.22);border-radius:8px;color:#e2e8f0;font-size:13px;font-family:inherit">
+        </div>
+        <div id="nyBoksBildeStatus" class="bilde-upload-status" style="display:none"></div>
+        <img id="nyBoksBildePrev" style="display:none;width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-top:8px;border:1px solid rgba(70,189,198,0.2)">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="lukkNyBoks()">Avbryt</button>
+      <button class="btn-save" onclick="lagreNyBoks()">💾 Opprett boks</button>
+    </div>
+  </div>
+</div>
+
+<!-- BATCH REDIGER MODAL -->
+<div id="batchRedigerModal" class="modal-overlay">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <span class="modal-title">✏️ Rediger valgte gjenstander</span>
+      <button class="modal-close" onclick="lukkBatchRediger()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px">Bare feltene du fyller inn vil bli oppdatert. Tomme felt beholdes.</p>
+      <div class="form-field">
+        <label>Hylleplassering</label>
+        <input type="text" id="batchHylle" placeholder="La stå tom for å ikke endre">
+      </div>
+      <div class="form-field">
+        <label>Kategori</label>
+        <select id="batchKategori">
+          <option value="">— Ikke endre —</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Legg i boks</label>
+        <select id="batchBoksId">
+          <option value="">— Ikke endre —</option>
+          <option value="__fjern__">Fjern fra boks</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Status</label>
+        <select id="batchStatus">
+          <option value="">— Ikke endre —</option>
+          <option value="Tilgjengelig">Tilgjengelig</option>
+          <option value="Utlånt">Utlånt</option>
+          <option value="Til reparasjon">Til reparasjon</option>
+          <option value="Tapt">Tapt</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Bilde</label>
+        <div class="bilde-upload-row">
+          <label class="btn-file-upload" for="batchBildeInput">📁 Last opp</label>
+          <input type="file" id="batchBildeInput" accept="image/*" style="display:none" onchange="lastOppBatchBilde(this)">
+          <span class="bilde-upload-sep">eller</span>
+          <input type="text" id="batchBildeUrl" placeholder="URL (la stå tom for å ikke endre)" style="flex:1;min-width:0;padding:8px 10px;background:rgba(255,255,255,0.07);border:1px solid rgba(70,189,198,0.22);border-radius:8px;color:#e2e8f0;font-size:13px;font-family:inherit">
+        </div>
+        <div id="batchBildeStatus" class="bilde-upload-status" style="display:none"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="lukkBatchRediger()">Avbryt</button>
+      <button class="btn-save" onclick="lagreBatchRediger()">💾 Oppdater alle valgte</button>
+    </div>
+  </div>
+</div>
+
+<!-- QR SCANNER MODAL -->
+<div id="scannerModal" class="modal-overlay">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <span class="modal-title">📷 Scan QR-koder</span>
+      <button class="btn-save" style="padding:5px 12px;font-size:12px" onclick="lukkScanner(true)">✓ Ferdig (<span id="scanCount">0</span>)</button>
+      <button class="modal-close" onclick="lukkScanner()">✕</button>
+    </div>
+    <div class="modal-body scanner-modal-body">
+      <div class="scanner-wrap-outer">
+        <div id="html5qr-scanner"></div>
+        <div class="scanner-overlay-log" id="scannerLog"></div>
+      </div>
+      <div class="scanner-status" id="scannerStatus">Starter kamera…</div>
+    </div>
+
+  </div>
+</div>
+
+<div id="banner" class="banner"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="js/config.js?v=1775637712"></script>
+<script>
+var KATEGORIER = ["Camping","Kjøkken","Sikkerhet","Utstyr","Navigasjon","Verktøy","Belysning","Vann","Kommunikasjon","Annet"];
+var STATUSER   = ["Tilgjengelig","Utlånt","Til reparasjon","Tapt"];
+
+var gjenstander = [];
+var bokser      = [];
+var sortField   = "id";
+var sortDir     = "asc";
+var editingId   = null;
+var valgte      = new Set();
+var skannede    = new Set();
+var html5QrScanner = null;
+var fokusTriggerInterval = null;
+var printKo     = [];
+var drawerOpen  = false;
+var _slettFn    = null;
+var _qrAktivId  = null;
+
+// ---- HELPERS ----
+function sk(s) {
+  var m = {"Tilgjengelig":"tilgjengelig","Utlånt":"utlant","Til reparasjon":"reparasjon","Tapt":"tapt"};
+  return m[s] || "tilgjengelig";
+}
+function enc(s) { return encodeURIComponent(s); }
+function _idag() { return new Date().toISOString().split("T")[0]; }
+function formatDato(d) {
+  if (!d) return "-";
+  if (d === _idag()) return "I dag";
+  var dt = new Date(d);
+  if (isNaN(dt)) return d;
+  return ("0"+dt.getDate()).slice(-2) + "/" + ("0"+(dt.getMonth()+1)).slice(-2) + "/" + dt.getFullYear();
+}
+function visBanner(tekst, type) {
+  type = type || "success";
+  var el = document.getElementById("banner");
+  el.textContent = tekst;
+  el.className = "banner banner-" + type;
+  el.style.display = "block";
+  setTimeout(function() { el.style.display = "none"; }, 3000);
+}
+
+// ---- INIT ----
+document.addEventListener("DOMContentLoaded", async function() {
+  populerSelects();
+  setupListeners();
+  await lastInn();
+  await lastInnBokser();
+  setupRealtime();
+  if (new URLSearchParams(location.search).get("scan") === "1") {
+    history.replaceState({}, "", location.pathname);
+    setTimeout(function() { apneScanner(); }, 400);
+  }
+  var aktivTab = sessionStorage.getItem("aktivTab");
+  if (aktivTab) { sessionStorage.removeItem("aktivTab"); settFane(aktivTab); }
+});
+
+// ---- DATA ----
+async function lastInn() {
+  document.getElementById("itemsBody").innerHTML = "<tr><td colspan='9' class='empty-row loading-text'>Laster...</td></tr>";
+  var r = await db.from("gjenstander").select("*").order("id");
+  if (r.error) { visBanner("Feil: " + r.error.message, "error"); return; }
+  gjenstander = r.data || [];
+  filtrerOgVis();
+  oppdaterStats();
+  viseSammendrag();
+}
+
+async function lastInnBokser() {
+  var r = await db.from("bokser").select("*").order("id");
+  bokser = r.data || [];
+  if (document.getElementById("bokser") && document.getElementById("bokser").classList.contains("active")) visBokser();
+  populerBoksSelect();
+}
+
+function setupRealtime() {
+  db.channel("lager")
+    .on("postgres_changes", { event: "*", schema: "public", table: "gjenstander" }, async function() { await lastInn(); })
+    .on("postgres_changes", { event: "*", schema: "public", table: "bokser" }, async function() { await lastInnBokser(); })
+    .subscribe();
+}
+
+// ---- FILTER / SORT ----
+function filtrerOgVis() {
+  var sok  = document.getElementById("searchInput").value.toLowerCase();
+  var kat  = document.getElementById("filterKategori").value;
+  var stat = document.getElementById("filterStatus").value;
+  var liste = gjenstander.filter(function(g) {
+    var treff = !sok || g.id.toLowerCase().includes(sok) || g.navn.toLowerCase().includes(sok) ||
+      (g.serienummer||"").toLowerCase().includes(sok) || (g.utlant_til||"").toLowerCase().includes(sok) ||
+      (g.hylleplassering||"").toLowerCase().includes(sok);
+    return treff && (kat === "Alle" || g.kategori === kat) && (stat === "Alle" || g.status === stat);
+  });
+  liste.sort(function(a, b) {
+    var av = String(a[sortField]||"").toLowerCase();
+    var bv = String(b[sortField]||"").toLowerCase();
+    return sortDir === "asc" ? av.localeCompare(bv,"no") : bv.localeCompare(av,"no");
+  });
+  visTabell(liste);
+  document.getElementById("count-shown").textContent = liste.length;
+  document.getElementById("count-total").textContent  = gjenstander.length;
+}
+
+function setSorter(felt) {
+  sortDir = sortField === felt && sortDir === "asc" ? "desc" : "asc";
+  sortField = felt;
+  filtrerOgVis();
+}
+
+// ---- TABELL ----
+function visTabell(liste) {
+  var tbody = document.getElementById("itemsBody");
+  if (!liste.length) { tbody.innerHTML = "<tr><td colspan='9' class='empty-row'>Ingen gjenstander</td></tr>"; return; }
+  tbody.innerHTML = liste.map(function(g) {
+    var sn  = g.navn.replace(/'/g, "\\'");
+    var sel = valgte.has(g.id);
+    var opts = STATUSER.map(function(s) { return "<option" + (s===g.status?" selected":"") + ">" + s + "</option>"; }).join("");
+    return "<tr class='item-row row-" + sk(g.status) + (sel?" row-selected":"") + "' data-id='" + g.id + "'>" +
+      "<td class='tc'><input type='checkbox' class='row-checkbox' value='" + g.id + "' onchange='oppdaterValg()'" + (sel?" checked":"") + "></td>" +
+      "<td class='tc'><a class='item-link mono' href='item.html?id=" + enc(g.id) + "'>" + g.id + "</a></td>" +
+      "<td class='tc'><span class='item-name-link' style='cursor:pointer' onclick='apneRediger(\"" + g.id + "\")'>" + g.navn + "</span></td>" +
+      "<td class='tc'><select class='inline-status status-select-" + sk(g.status) + "' onchange='raskStatus(\"" + g.id + "\",this)'>" + opts + "</select></td>" +
+      "<td class='tc'><div class='actions-cell'>" +
+      "<button class='btn-action btn-edit' onclick='apneRediger(\"" + g.id + "\")'>&#9998;&#65039;</button>" +
+      "<button class='btn-action btn-qr' onclick='event.shiftKey?toggleKo(\"" + g.id + "\"):apneQr(\"" + g.id + "\",\"" + sn + "\")'>&#11035;</button>" +
+      "<button class='btn-action btn-delete' onclick='event.shiftKey?bekreftSlett(\"" + g.id + "\",\"" + sn + "\",true):bekreftSlett(\"" + g.id + "\",\"" + sn + "\")'>&#128465;&#65039;</button>" +
+      "</div></td>" +
+      "<td class='tc col-extra col-extra-text mono small-text'>" + (g.hylleplassering||"<span class='dash'>-</span>") + "</td>" +
+      "<td class='tc col-extra col-extra-text'>" + (g.kategori||"-") + "</td>" +
+      "<td class='tc col-extra col-extra-text small-text'>" + (g.utlant_til||"<span class='dash'>-</span>") + "</td>" +
+      "<td class='tc col-extra col-extra-text mono small-text'>" + (g.serienummer||"-") + "</td>" +
+      "</tr>";
+  }).join("");
+}
+
+function oppdaterStats() {
+  document.getElementById("stat-total").textContent        = gjenstander.length;
+  document.getElementById("stat-tilgjengelig").textContent = gjenstander.filter(function(g) { return g.status === "Tilgjengelig"; }).length;
+  document.getElementById("stat-utlant").textContent       = gjenstander.filter(function(g) { return g.status === "Utlånt"; }).length;
+}
+
+// ---- MULTI-SELECT ----
+function oppdaterValg() {
+  valgte.clear();
+  document.querySelectorAll(".row-checkbox:not(#selectAll):checked").forEach(function(cb) { valgte.add(cb.value); });
+  var bar = document.getElementById("batchBar");
+  bar.style.display = valgte.size > 0 ? "flex" : "none";
+  document.getElementById("batchCount").textContent = valgte.size + " valgt";
+  document.querySelectorAll(".item-row").forEach(function(row) {
+    row.classList.toggle("row-selected", valgte.has(row.dataset.id));
+  });
+}
+
+function toggleSelectAll(el) {
+  document.querySelectorAll(".row-checkbox:not(#selectAll)").forEach(function(cb) { cb.checked = el.checked; });
+  oppdaterValg();
+}
+
+function clearValg() {
+  valgte.clear();
+  document.querySelectorAll(".row-checkbox").forEach(function(cb) { cb.checked = false; });
+  document.getElementById("batchBar").style.display = "none";
+  document.querySelectorAll(".item-row").forEach(function(r) { r.classList.remove("row-selected"); });
+}
+
+// ---- UTLÅN MODAL ----
+var _utlanIds = [];
+
+function apneUtlanModal(ids) {
+  _utlanIds = Array.isArray(ids) ? ids : [ids];
+  var idag = new Date().toISOString().split("T")[0];
+  var liste = document.getElementById("utlanGjenstanderListe");
+  liste.innerHTML = _utlanIds.map(function(id) {
+    var g = gjenstander.find(function(x) { return x.id === id; });
+    if (!g) return "";
+    return "<div style='display:flex;align-items:center;gap:8px'>" +
+      "<span class='mono small-text' style='color:var(--primary)'>" + g.id + "</span>" +
+      "<span style='color:var(--text)'>" + g.navn + "</span>" +
+      (g.hylleplassering ? "<span class='muted-text small-text' style='margin-left:auto'>" + g.hylleplassering + "</span>" : "") +
+      "</div>";
+  }).join("");
+  document.getElementById("utlanTil").value = "";
+  document.getElementById("utlanDato").value = idag;
+  document.getElementById("utlanFrist").value = "";
+  oppdaterDatoVis("utlanDato", "utlanDatoVis");
+  oppdaterDatoVis("utlanFrist", "utlanFristVis");
+  document.getElementById("utlanModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+  setTimeout(function() { document.getElementById("utlanTil").focus(); }, 100);
+}
+
+function lukkUtlanModal() {
+  document.getElementById("utlanModal").classList.remove("open");
+  document.body.style.overflow = "";
+  _utlanIds = [];
+}
+
+function oppdaterDatoVis(inputId, visId) {
+  var val = document.getElementById(inputId) ? document.getElementById(inputId).value : "";
+  var el  = document.getElementById(visId);
+  if (el) el.textContent = val ? formatDato(val) : "";
+}
+
+async function lagreUtlanModal() {
+  var til   = document.getElementById("utlanTil").value.trim();
+  var dato  = document.getElementById("utlanDato").value;
+  var frist = document.getElementById("utlanFrist").value;
+  if (!til)  { visBanner("Fyll inn låntaker", "error"); return; }
+  if (!dato) { visBanner("Fyll inn utlånsdato", "error"); return; }
+  var btn = document.querySelector("#utlanModal .btn-save");
+  btn.disabled = true; btn.textContent = "Lagrer…";
+  for (var id of _utlanIds) {
+    var g = gjenstander.find(function(x) { return x.id === id; });
+    if (!g) continue;
+    await db.from("gjenstander").upsert(Object.assign({}, g, {
+      status: "Utlånt", utlant_til: til, utlansdato: dato, innleveringsdato: frist || null
+    }), {onConflict:"id"});
+  }
+  lukkUtlanModal();
+  await lastInn();
+  visBanner(_utlanIds.length + " gjenstand" + (_utlanIds.length > 1 ? "er" : "") + " utlånt til " + til, "success");
+  btn.disabled = false; btn.textContent = "Registrer utlån";
+}
+
+function batchUtlan() {
+  if (!valgte.size) return;
+  apneUtlanModal(Array.from(valgte));
+}
+
+async function batchTilgjengelig() {
+  if (!valgte.size) return;
+  var ids = Array.from(valgte);
+  for (var id of ids) {
+    var g = gjenstander.find(function(x) { return x.id === id; });
+    if (g) await db.from("gjenstander").upsert(Object.assign({}, g, {status:"Tilgjengelig",utlant_til:"",utlansdato:"",innleveringsdato:""}), {onConflict:"id"});
+  }
+  clearValg(); await lastInn(); visBanner(ids.length + " satt til Tilgjengelig", "success");
+}
+
+function apneBatchRediger() {
+  if (!valgte.size) return;
+  var modal = document.getElementById("batchRedigerModal");
+  var katSel = document.getElementById("batchKategori");
+  katSel.innerHTML = "<option value=''>— Ikke endre —</option>" + KATEGORIER.map(function(k) { return "<option value='" + k + "'>" + k + "</option>"; }).join("");
+  var boksSel = document.getElementById("batchBoksId");
+  boksSel.innerHTML = "<option value=''>— Ikke endre —</option><option value='__fjern__'>Fjern fra boks</option>" +
+    bokser.map(function(b) { return "<option value='" + b.id + "'>" + b.navn + " (" + b.id + ")</option>"; }).join("");
+  document.getElementById("batchHylle").value = "";
+  document.getElementById("batchStatus").value = "";
+  document.getElementById("batchBildeUrl").value = "";
+  document.getElementById("batchBildeStatus").style.display = "none";
+  modal.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function lukkBatchRediger() {
+  document.getElementById("batchRedigerModal").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+async function lastOppBatchBilde(input) {
+  var fil = input.files[0]; if (!fil) return; input.value = "";
+  var st = document.getElementById("batchBildeStatus");
+  st.style.display = "block"; st.className = "bilde-upload-status uploading"; st.textContent = "Laster opp…";
+  try {
+    var dataUrl = await komprimerTilBase64(fil);
+    document.getElementById("batchBildeUrl").value = dataUrl;
+    st.className = "bilde-upload-status success"; st.textContent = "Klar!";
+    setTimeout(function() { st.style.display = "none"; }, 2000);
+  } catch(e) { st.className = "bilde-upload-status feil"; st.textContent = "Feil: " + e.message; }
+}
+
+async function lagreBatchRediger() {
+  var hylle   = document.getElementById("batchHylle").value.trim();
+  var kat     = document.getElementById("batchKategori").value;
+  var boksVal = document.getElementById("batchBoksId").value;
+  var status  = document.getElementById("batchStatus").value;
+  var bildeRaw = document.getElementById("batchBildeUrl").value.trim();
+  var bilde   = bildeRaw.startsWith("data:") ? bildeRaw : konverterBildeUrl(bildeRaw);
+  var btn = document.querySelector("#batchRedigerModal .btn-save");
+  btn.disabled = true; btn.textContent = "Lagrer…";
+  var ids = Array.from(valgte);
+  for (var id of ids) {
+    var g = gjenstander.find(function(x) { return x.id === id; });
+    if (!g) continue;
+    var oppdatert = Object.assign({}, g);
+    if (hylle)   oppdatert.hylleplassering = hylle;
+    if (kat)     oppdatert.kategori = kat;
+    if (status)  oppdatert.status = status;
+    if (bilde)   oppdatert.bilde_url = bilde;
+    if (boksVal === "__fjern__") oppdatert.boks_id = null;
+    else if (boksVal) oppdatert.boks_id = boksVal;
+    await db.from("gjenstander").upsert(oppdatert, {onConflict:"id"});
+  }
+  lukkBatchRediger(); clearValg(); await lastInn();
+  visBanner(ids.length + " gjenstander oppdatert", "success");
+  btn.disabled = false; btn.textContent = "Oppdater alle valgte";
+}
+
+// ---- RASK STATUS ----
+async function raskStatus(id, sel) {
+  var ny = sel.value;
+  var g  = gjenstander.find(function(x) { return x.id === id; });
+  if (!g || g.status === ny) return;
+  if (ny === "Utlånt" && !g.utlant_til) { apneUtlanModal([id]); sel.value = g.status; return; }
+  var ok = Object.assign({}, g, {status: ny});
+  if (ny !== "Utlånt") { ok.utlant_til = ""; ok.utlansdato = ""; ok.innleveringsdato = ""; }
+  sel.className = "inline-status status-select-" + sk(ny);
+  document.querySelector("[data-id='" + id + "']").className = "item-row row-" + sk(ny);
+  var r = await db.from("gjenstander").upsert(ok, {onConflict:"id"});
+  if (r.error) { visBanner("Feil: " + r.error.message, "error"); sel.value = g.status; }
+  else { Object.assign(g, ok); oppdaterStats(); viseSammendrag(); visBanner(ny, "success"); }
+}
+
+// ---- REDIGER ----
+function apneRediger(id, forceStatus) {
+  var g = gjenstander.find(function(x) { return x.id === id; });
+  if (!g) return;
+  editingId = id;
+  document.getElementById("editModalTitle").textContent = g.navn;
+  document.getElementById("editNavn").value             = g.navn || "";
+  document.getElementById("editKategori").value         = g.kategori || "Annet";
+  document.getElementById("editSerienummer").value      = g.serienummer || "";
+  document.getElementById("editHylle").value            = g.hylleplassering || "";
+  document.getElementById("editBildeUrl").value         = g.bilde_url || "";
+  document.getElementById("editStatus").value           = forceStatus || g.status || "Tilgjengelig";
+  document.getElementById("editUtlantTil").value        = g.utlant_til || "";
+  document.getElementById("editUtlansdato").value       = g.utlansdato || "";
+  document.getElementById("editInnlevering").value      = g.innleveringsdato || "";
+  document.getElementById("editNotater").value          = g.notater || "";
+  document.getElementById("editBoksId").value           = g.boks_id || "";
+  populerBoksSelect();
+  viseBildePrev(g.bilde_url);
+  toggleUtlan(forceStatus || g.status);
+  document.getElementById("editModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function lukkRedigerModal() {
+  document.getElementById("editModal").classList.remove("open");
+  document.body.style.overflow = "";
+  editingId = null;
+}
+
+function toggleUtlan(s) {
+  document.getElementById("utlanSection").style.display = s === "Utlånt" ? "block" : "none";
+}
+
+function viseBildePrev(url) {
+  var konv = konverterBildeUrl(url);
+  var img  = document.getElementById("editBildePrev");
+  var ing  = document.getElementById("editBildeIngen");
+  if (konv) {
+    img.src = konv; img.style.display = "block"; ing.style.display = "none";
+    img.onerror = function() { img.style.display = "none"; ing.style.display = "flex"; ing.textContent = "Bildet lastet ikke"; };
+  } else {
+    img.style.display = "none"; ing.style.display = "flex"; ing.textContent = "Ingen bilde";
+  }
+}
+
+async function lagreRediger() {
+  var btn = document.getElementById("saveEditBtn");
+  btn.disabled = true; btn.textContent = "Lagrer\u2026";
+  var status      = document.getElementById("editStatus").value;
+  var utlant_til  = document.getElementById("editUtlantTil").value.trim();
+  var utlansdato  = document.getElementById("editUtlansdato").value;
+  var innlevering = document.getElementById("editInnlevering").value;
+
+  // Batch mode
+  if (window._batchUtlanIds && window._batchUtlanIds.length > 1) {
+    var bids = window._batchUtlanIds;
+    for (var bid of bids) {
+      var bg = gjenstander.find(function(x) { return x.id === bid; });
+      if (bg) await db.from("gjenstander").upsert(Object.assign({}, bg, {
+        status: status, utlant_til: utlant_til, utlansdato: utlansdato, innleveringsdato: innlevering
+      }), {onConflict:"id"});
+    }
+    window._batchUtlanIds = null;
+    clearValg(); await lastInn(); lukkRedigerModal();
+    visBanner(bids.length + " oppdatert!", "success");
+    btn.disabled = false; btn.textContent = "Lagre";
+    return;
+  }
+
+  if (!editingId) return;
+  var bildeRaw = document.getElementById("editBildeUrl").value.trim();
+  var oppdatert = {
+    id: editingId,
+    navn:            document.getElementById("editNavn").value.trim(),
+    kategori:        document.getElementById("editKategori").value,
+    serienummer:     document.getElementById("editSerienummer").value.trim(),
+    hylleplassering: document.getElementById("editHylle").value.trim(),
+    bilde_url:       bildeRaw.startsWith("data:") ? bildeRaw : konverterBildeUrl(bildeRaw),
+    boks_id:         document.getElementById("editBoksId").value || null,
+    status: status, utlant_til: utlant_til, utlansdato: utlansdato, innleveringsdato: innlevering,
+    notater: document.getElementById("editNotater").value.trim(),
+  };
+  var r = await db.from("gjenstander").upsert(oppdatert, {onConflict:"id"});
+  if (r.error) { visBanner("Feil: " + r.error.message, "error"); }
+  else { await lastInn(); lukkRedigerModal(); visBanner("Lagret!", "success"); }
+  btn.disabled = false; btn.textContent = "Lagre";
+}
+
+// ---- BILDEOPPLASTING ----
+async function lastOppBilde(input) {
+  var fil = input.files[0]; if (!fil) return; input.value = "";
+  var st = document.getElementById("bildeUploadStatus");
+  st.style.display = "block"; st.className = "bilde-upload-status uploading"; st.textContent = fil.name + "...";
+  try {
+    var dataUrl = await komprimerTilBase64(fil);
+    document.getElementById("editBildeUrl").value = dataUrl;
+    viseBildePrev(dataUrl);
+    st.className = "bilde-upload-status success"; st.textContent = "Bilde klart!";
+    setTimeout(function() { st.style.display = "none"; }, 2500);
+  } catch(e) { st.className = "bilde-upload-status feil"; st.textContent = "Feil: " + e.message; }
+}
+
+async function lastOppBildeAdd(input) {
+  var fil = input.files[0]; if (!fil) return; input.value = "";
+  var st = document.getElementById("addBildeStatus");
+  st.style.display = "block"; st.className = "bilde-upload-status uploading"; st.textContent = fil.name + "...";
+  try {
+    var dataUrl = await komprimerTilBase64(fil);
+    document.getElementById("addBildeUrl").value = dataUrl;
+    var prev = document.getElementById("addBildePrev");
+    prev.src = dataUrl; prev.style.display = "block";
+    st.className = "bilde-upload-status success"; st.textContent = "Klar!";
+    setTimeout(function() { st.style.display = "none"; }, 2000);
+  } catch(e) { st.className = "bilde-upload-status feil"; st.textContent = "Feil: " + e.message; }
+}
+
+// ---- LEGG TIL ----
+function nesteNummer(pref) {
+  var maks = 0;
+  gjenstander.forEach(function(g) {
+    var escaped = pref.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    var re = new RegExp("^" + escaped + "-(\\d+)$", "i");
+    var m = g.id.match(re);
+    if (m) maks = Math.max(maks, parseInt(m[1]));
+  });
+  return maks + 1;
+}
+
+function autofyllHylle() {
+  var boksId = document.getElementById("itemBoksId") ? document.getElementById("itemBoksId").value : "";
+  var boks = bokser.find(function(b) { return b.id === boksId; });
+  var hylleEl = document.getElementById("itemHylle");
+  if (!hylleEl) return;
+  if (boks && boks.hylleplassering) hylleEl.value = boks.hylleplassering;
+  else if (!boksId) hylleEl.value = "";
+}
+
+async function leggTil(e) {
+  e.preventDefault();
+  var navn    = document.getElementById("itemName").value.trim();
+  var kat     = document.getElementById("itemKategori").value;
+  var enhet   = document.getElementById("itemEnhet").value.trim() || "stk";
+  var antall  = parseInt(document.getElementById("itemAntall").value) || 1;
+  var pref    = (document.getElementById("itemPrefix").value.trim() || navn.slice(0,3)).toUpperCase();
+  var start   = parseInt(document.getElementById("itemStartNr").value) || 1;
+  var not     = document.getElementById("itemNotater").value.trim();
+  var bildeUrl = document.getElementById("addBildeUrl").value.trim();
+  var boksId  = document.getElementById("itemBoksId") ? document.getElementById("itemBoksId").value || null : null;
+  var hylle   = document.getElementById("itemHylle") ? document.getElementById("itemHylle").value.trim() : "";
+  var btn = document.getElementById("addBtn");
+  btn.disabled = true; btn.textContent = "Legger til…";
+  var nye = [];
+  for (var i = 0; i < antall; i++) {
+    nye.push({
+      id: pref + "-" + String(start + i).padStart(2, "0"),
+      navn: navn, kategori: kat, enhet: enhet,
+      serienummer: pref + "-" + String(start + i).padStart(3, "0"),
+      status: "Tilgjengelig",
+      utlant_til: "", utlansdato: "", innleveringsdato: "",
+      hylleplassering: hylle, notater: not,
+      bilde_url: bildeUrl.startsWith("data:") ? bildeUrl : konverterBildeUrl(bildeUrl),
+      boks_id: boksId || null,
+      er_bulk: false, antall_totalt: 1, antall_utlant: 0,
+    });
+  }
+  var r = await db.from("gjenstander").upsert(nye, {onConflict:"id"});
+  if (r.error) { visBanner("Feil: " + r.error.message, "error"); }
+  else {
+    visBanner(antall + " gjenstand" + (antall > 1 ? "er" : "") + " lagt til", "success");
+    document.getElementById("addItemForm").reset();
+    document.getElementById("itemAntall").value = "1";
+    document.getElementById("addBildeUrl").value = "";
+    document.getElementById("addBildePrev").style.display = "none";
+    oppdaterPrev();
+    await lastInn();
+    lukkLeggTilModal();
+  }
+  btn.disabled = false; btn.textContent = "Legg til i lageret";
+}
+
+// ---- SLETT ----
+function bekreftSlett(id, navn, skipBekreft) {
+  _slettFn = async function() {
+    var r = await db.from("gjenstander").delete().eq("id", id);
+    if (!r.error) { lukkSlettModal(); await lastInn(); visBanner("Slettet", "success"); }
+    else visBanner("Feil: " + r.error.message, "error");
+  };
+  if (skipBekreft) { _slettFn(); return; }
+  document.getElementById("deleteItemName").textContent = navn + " (" + id + ")";
+  document.getElementById("deleteModal").classList.add("open");
+  document.getElementById("confirmDeleteBtn").onclick = _slettFn;
+  setTimeout(function() { document.getElementById("confirmDeleteBtn").focus(); }, 50);
+}
+function lukkSlettModal() { document.getElementById("deleteModal").classList.remove("open"); _slettFn = null; }
+
+// ---- QR VISNING ----
+function apneQr(id, navn) {
+  _qrAktivId = id;
+  document.getElementById("qrModalTitle").textContent = navn;
+  var cont = document.getElementById("qrContainer");
+  cont.innerHTML = "";
+  var url = APP_BASE_URL + "item.html?id=" + enc(id);
+  document.getElementById("qrUrl").textContent = url;
+  new QRCode(cont, { text: url, width: 160, height: 160, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+  var iKo = printKo.includes(id);
+  var btn = document.getElementById("leggIKoBtn");
+  if (btn) { btn.textContent = iKo ? "I utskriftsko" : "Legg i utskriftsko"; btn.classList.toggle("i-ko", iKo); }
+  document.getElementById("qrModal").classList.add("open");
+}
+
+function lukkQrModal() {
+  document.getElementById("qrModal").classList.remove("open");
+  document.getElementById("qrContainer").innerHTML = "";
+  _qrAktivId = null;
+}
+
+function lagQrCanvas(url, size) {
+  return new Promise(function(resolve) {
+    var wrap = document.createElement("div");
+    wrap.style.cssText = "position:absolute;left:-9999px;top:-9999px;visibility:hidden";
+    document.body.appendChild(wrap);
+    new QRCode(wrap, { text: url, width: size, height: size, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+    setTimeout(function() {
+      var canvas = wrap.querySelector("canvas");
+      var src = canvas ? canvas.toDataURL("image/png") : (wrap.querySelector("img")||{}).src || "";
+      document.body.removeChild(wrap);
+      resolve("<img src='" + src + "' width='190' height='190' style='display:block'>");
+    }, 120);
+  });
+}
+
+function etikettHTML(g, qrHTML) {
+  return "<div class='print-label'><div class='print-label-qr'>" + qrHTML + "</div>" +
+    "<div class='print-label-info'><div class='print-label-navn'>" + g.navn + "</div>" +
+    "<div class='print-label-id'>" + g.id + "</div>" +
+    (g.hylleplassering ? "<div class='print-label-hylle'>" + g.hylleplassering + "</div>" : "") +
+    "<div class='print-label-org'>1. Haugerud</div></div></div>";
+}
+
+async function skrivUtEtikett() {
+  if (!_qrAktivId) return;
+  var g = gjenstander.find(function(x) { return x.id === _qrAktivId; });
+  var url = APP_BASE_URL + "item.html?id=" + enc(_qrAktivId);
+  var qrHTML = await lagQrCanvas(url, 110);
+  document.getElementById("printArea").innerHTML = etikettHTML(g, qrHTML);
+  await triggerPrint();
+}
+
+async function skrivUtAlle() {
+  if (!printKo.length) return;
+  var btn = document.getElementById("printAlleBtn");
+  btn.disabled = true; btn.textContent = "Genererer...";
+  var etiketter = [];
+  for (var id of printKo) {
+    var g = gjenstander.find(function(x) { return x.id === id; });
+    if (!g) continue;
+    var url = APP_BASE_URL + "item.html?id=" + enc(id);
+    var qrHTML = await lagQrCanvas(url, 110);
+    etiketter.push(etikettHTML(g, qrHTML));
+  }
+  var PER_SIDE = 24;
+  var sider = [];
+  for (var i = 0; i < etiketter.length; i += PER_SIDE) sider.push(etiketter.slice(i, i + PER_SIDE));
+  document.getElementById("printArea").innerHTML = sider.map(function(side, idx) {
+    return "<div class='print-side" + (idx < sider.length-1 ? " print-side-break" : "") + "'>" + side.join("") + "</div>";
+  }).join("");
+  await triggerPrint();
+  btn.disabled = false; btn.textContent = "Skriv ut alle";
+}
+
+function triggerPrint() {
+  return new Promise(function(resolve) {
+    var area = document.getElementById("printArea");
+    area.style.removeProperty("display");
+    setTimeout(function() {
+      window.print();
+      setTimeout(function() { area.style.display = "none"; resolve(); }, 200);
+    }, 400);
+  });
+}
+
+// ---- UTSKRIFTSKO ----
+function toggleKo(id) {
+  if (printKo.includes(id)) { fjernFraKo(id); visBanner("Fjernet fra ko", "success"); }
+  else { printKo.push(id); oppdaterKoUI(); visBanner("Lagt til i ko (" + printKo.length + " stk)", "success"); }
+}
+
+function leggIKo() {
+  if (!_qrAktivId || _qrAktivId.startsWith("BOKS:")) return;
+  var iKo = printKo.includes(_qrAktivId);
+  if (iKo) fjernFraKo(_qrAktivId);
+  else { printKo.push(_qrAktivId); visBanner("Lagt til i ko", "success"); }
+  var btn = document.getElementById("leggIKoBtn");
+  if (btn) { btn.textContent = !iKo ? "I utskriftsko" : "Legg i utskriftsko"; btn.classList.toggle("i-ko", !iKo); }
+  oppdaterKoUI();
+}
+
+function leggAlleIKo() {
+  gjenstander.forEach(function(g) { if (!printKo.includes(g.id)) printKo.push(g.id); });
+  visBanner("Alle (" + printKo.length + ") lagt til i ko", "success");
+  oppdaterKoUI();
+}
+
+function fjernFraKo(id) { printKo = printKo.filter(function(x) { return x !== id; }); oppdaterKoUI(); }
+
+function tomKo() { printKo = []; oppdaterKoUI(); visBanner("Ko tomt", "success"); }
+
+function toggleDrawer() {
+  drawerOpen = !drawerOpen;
+  document.getElementById("printDrawer").classList.toggle("open", drawerOpen);
+  document.querySelector(".btn-ko-lukk").textContent = drawerOpen ? "v" : "^";
+}
+
+function oppdaterKoUI() {
+  var n = printKo.length;
+  document.getElementById("koTeller").textContent = n;
+  document.getElementById("drawerBadge").textContent = n;
+  var toggleBtn = document.getElementById("drawerToggleBtn");
+  toggleBtn.style.display = n > 0 ? "flex" : "none";
+  if (n > 0 && !drawerOpen) { drawerOpen = true; document.getElementById("printDrawer").classList.add("open"); }
+  if (n === 0 && drawerOpen) { drawerOpen = false; document.getElementById("printDrawer").classList.remove("open"); }
+  var printBtn = document.getElementById("printAlleBtn");
+  if (printBtn) printBtn.disabled = n === 0;
+  var liste = document.getElementById("koListe");
+  if (!liste) return;
+  liste.innerHTML = printKo.map(function(id) {
+    var g = gjenstander.find(function(x) { return x.id === id; });
+    if (!g) return "";
+    return "<div class='ko-chip'><span class='ko-chip-id'>" + g.id + "</span><span>" + g.navn + "</span>" +
+      "<button class='ko-chip-fjern' onclick='fjernFraKo(\"" + id + "\")' title='Fjern'>x</button></div>";
+  }).join("");
+}
+
+// ---- QR SCANNER ----
+function apneScanner() {
+  skannede.clear();
+  document.getElementById("scannerLog").innerHTML = "";
+  document.getElementById("scanCount").textContent = "0";
+  document.getElementById("scannerStatus").textContent = "Starter kamera…";
+  document.getElementById("scannerModal").classList.add("open");
+  setTimeout(startKamera, 100);
+}
+
+async function startKamera() {
+  var statusEl = document.getElementById("scannerStatus");
+  try {
+    html5QrScanner = new Html5Qrcode("html5qr-scanner", { verbose: false });
+    await html5QrScanner.start(
+      { facingMode: "environment" },
+      { fps: 15, qrbox: { width: 200, height: 200 }, aspectRatio: 1.0 },
+      function(decodedText) { behandleQrResultat(decodedText); },
+      function() {}
+    );
+    statusEl.textContent = "Scan en QR-kode…";
+  } catch(e) {
+    statusEl.textContent = "Kamera ikke tilgjengelig: " + e.message;
+  }
+}
+
+function spillScanLyd() {
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = "square"; osc.frequency.setValueAtTime(1850, ctx.currentTime);
+    gain.gain.setValueAtTime(0.18, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.0, ctx.currentTime + 0.12);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.12);
+  } catch(e) {}
+}
+
+function behandleQrResultat(url) {
+  var match = url.match(/[?&]id=([^&]+)/);
+  if (!match) { leggTilScanLog(null, "Ukjent QR: " + url.slice(0,40), true); return; }
+  var id = decodeURIComponent(match[1]);
+  if (skannede.has(id)) return;
+  skannede.add(id);
+  var g = gjenstander.find(function(x) { return x.id === id; });
+  if (!g) { leggTilScanLog(null, "Ukjent ID: " + id, true); return; }
+  valgte.add(id);
+  spillScanLyd();
+  leggTilScanLog(id, g.navn, false, g.hylleplassering);
+  document.getElementById("scanCount").textContent = skannede.size;
+  var statusEl = document.getElementById("scannerStatus");
+  statusEl.textContent = g.navn;
+  setTimeout(function() {
+    if (document.getElementById("scannerModal").classList.contains("open")) statusEl.textContent = "Scan neste…";
+  }, 700);
+}
+
+function leggTilScanLog(id, tekst, feil, hylle) {
+  var log = document.getElementById("scannerLog");
+  var item = document.createElement("div");
+  item.className = "scanner-log-item" + (feil ? " feil" : "");
+  item.dataset.id = id || "";
+  var label = document.createElement("span");
+  label.className = "scanner-log-label";
+  label.textContent = tekst + (hylle ? "  " + hylle : "") + "  " + (id||"");
+  item.appendChild(label);
+  if (!feil && id) {
+    var fjern = document.createElement("button");
+    fjern.className = "scanner-log-fjern";
+    fjern.textContent = "x";
+    fjern.onclick = function() {
+      valgte.delete(id); skannede.delete(id); item.remove();
+      document.getElementById("scanCount").textContent = skannede.size;
+    };
+    item.appendChild(fjern);
+  }
+  log.appendChild(item);
+  log.scrollTop = log.scrollHeight;
+}
+
+async function lukkScanner(visValgt) {
+  clearInterval(fokusTriggerInterval); fokusTriggerInterval = null;
+  if (html5QrScanner) {
+    try { await html5QrScanner.stop(); html5QrScanner.clear(); } catch(e) {}
+    html5QrScanner = null;
+  }
+  document.getElementById("scannerModal").classList.remove("open");
+  if (visValgt && valgte.size > 0) { filtrerOgVis(); oppdaterValg(); visBanner(valgte.size + " gjenstander valgt", "success"); }
+}
+
+// ---- SAMMENDRAG ----
+function viseSammendrag() {
+  var total = gjenstander.length;
+  var tilg  = gjenstander.filter(function(g) { return g.status === "Tilgjengelig"; }).length;
+  var utl   = gjenstander.filter(function(g) { return g.status === "Utlånt"; }).length;
+  var rep   = gjenstander.filter(function(g) { return g.status === "Til reparasjon"; }).length;
+  var tapt  = gjenstander.filter(function(g) { return g.status === "Tapt"; }).length;
+  var forf  = gjenstander.filter(function(g) { return g.status === "Utlånt" && g.innleveringsdato && new Date(g.innleveringsdato) < new Date(); }).length;
+  var kpis = [
+    {icon:"&#128230;", val:total, label:"Totalt",       color:"#46bdc6"},
+    {icon:"&#9989;",   val:tilg,  label:"Tilgjengelig", color:"#34d399"},
+    {icon:"&#128228;", val:utl,   label:"Utlånt",       color:"#f87171"},
+    {icon:"&#128295;", val:rep,   label:"Reparasjon",   color:"#fbbf24"},
+    {icon:"&#10060;",  val:tapt,  label:"Tapt",         color:"#94a3b8"},
+  ];
+  if (forf > 0) kpis.push({icon:"&#9888;&#65039;", val:forf, label:"Forfalt", color:"#fb923c"});
+  document.getElementById("kpiGrid").innerHTML = kpis.map(function(k) {
+    return "<div class='kpi-card'><div class='kpi-icon'>" + k.icon + "</div><div class='kpi-value' style='color:" + k.color + "'>" + k.val + "</div><div class='kpi-label'>" + k.label + "</div></div>";
+  }).join("");
+
+  var kb = document.getElementById("katTabell");
+  kb.innerHTML = "";
+  KATEGORIER.forEach(function(kat) {
+    var items = gjenstander.filter(function(g) { return g.kategori === kat; });
+    if (!items.length) return;
+    var kT = items.filter(function(g) { return g.status === "Tilgjengelig"; }).length;
+    var kU = items.filter(function(g) { return g.status === "Utlånt"; }).length;
+    var kR = items.filter(function(g) { return g.status === "Til reparasjon"; }).length;
+    var kL = items.filter(function(g) { return g.status === "Tapt"; }).length;
+    var pst = Math.round(kT / items.length * 100);
+    var farge = pst > 80 ? "#34d399" : pst > 50 ? "#fbbf24" : "#f87171";
+    kb.innerHTML += "<tr><td class='kat-navn' style='padding-left:16px'>" + kat + "</td>" +
+      "<td class='center'>" + items.length + "</td><td class='center green-text fw'>" + kT + "</td>" +
+      "<td class='center'>" + (kU > 0 ? "<span class='red-text fw'>"+kU+"</span>" : "0") + "</td>" +
+      "<td class='center'>" + (kR > 0 ? "<span class='orange-text'>"+kR+"</span>" : "0") + "</td>" +
+      "<td class='center muted-text'>" + kL + "</td>" +
+      "<td style='padding-right:16px'><div class='andel-row'><div class='andel-bar'><div class='andel-fill' style='width:" + pst + "%;background:" + farge + "'></div></div><span class='andel-pst'>" + pst + "%</span></div></td></tr>";
+  });
+
+  var ul = gjenstander.filter(function(g) { return g.status === "Utlånt"; });
+  document.getElementById("utlant-count").textContent = ul.length;
+  var ub = document.getElementById("utlantTabell");
+  ub.innerHTML = !ul.length
+    ? "<tr><td colspan='7' class='empty-row'>Ingen utlante</td></tr>"
+    : ul.map(function(g) {
+        var f = g.innleveringsdato && new Date(g.innleveringsdato) < new Date();
+        return "<tr class='" + (f ? "row-forfalt" : "") + "'>" +
+          "<td class='mono' style='padding-left:16px'><a class='item-link' href='item.html?id=" + enc(g.id) + "'>" + g.id + "</a></td>" +
+          "<td>" + g.navn + "</td><td>" + (g.utlant_til||"-") + "</td>" +
+          "<td class='mono small-text center'>" + formatDato(g.utlansdato) + "</td>" +
+          "<td class='mono small-text center " + (f ? "orange-text fw" : "") + "'>" + formatDato(g.innleveringsdato) + (f ? " !" : "") + "</td>" +
+          "<td class='center'>" + (f ? "<span class='badge-forfalt'>FORFALT</span>" : "OK") + "</td>" +
+          "<td class='center'><button class='btn-action btn-edit' onclick='apneRediger(\"" + g.id + "\")'>&#9998;&#65039;</button></td></tr>";
+      }).join("");
+}
+
+// ---- BOKSER ----
+async function visBokser() {
+  var tbody = document.getElementById("bokserBody");
+  if (!tbody) return;
+  if (!bokser.length) { tbody.innerHTML = "<tr><td colspan='5' class='empty-row'>Ingen bokser</td></tr>"; return; }
+  tbody.innerHTML = bokser.map(function(b) {
+    var gib    = gjenstander.filter(function(g) { return g.boks_id === b.id; });
+    var typer  = new Set(gib.map(function(g) { return g.navn; })).size;
+    var tilgj  = gib.filter(function(g) { return g.status === "Tilgjengelig"; }).length;
+    var totalt = gib.length;
+    var gjTekst = totalt === 0
+      ? "<span class='muted-text'>Tom</span>"
+      : "<span class='green-text fw'>" + tilgj + "</span><span class='muted-text'>/" + totalt + " stk " + typer + " type" + (typer !== 1 ? "r" : "") + "</span>";
+    return "<tr class='item-row'>" +
+      "<td class='tc mono'><a class='item-link' href='boks.html?id=" + enc(b.id) + "'>" + b.id + "</a></td>" +
+      "<td class='tc'><a class='item-name-link' href='boks.html?id=" + enc(b.id) + "'>" + b.navn + "</a></td>" +
+      "<td class='tc muted-text'>" + (b.hylleplassering||"-") + "</td>" +
+      "<td class='tc'>" + gjTekst + "</td>" +
+      "<td class='tc'><div class='actions-cell'>" +
+      "<button class='btn-action btn-edit' onclick='window.location.href=\"boks.html?id=" + enc(b.id) + "\"'>Apne</button>" +
+      "<button class='btn-action btn-qr' onclick='apneBoksQr(\"" + b.id + "\",\"" + b.navn.replace(/"/g,"") + "\")'>QR</button>" +
+      "<button class='btn-action btn-delete' onclick='bekreftSlettBoks(\"" + b.id + "\",\"" + b.navn.replace(/"/g,"") + "\")'>Slett</button>" +
+      "</div></td></tr>";
+  }).join("");
+}
+
+function apneNyBoks() {
+  ["nyBoksHylle","nyBoksId","nyBoksNavn","nyBoksBeskrivelse"].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.value = "";
+  });
+  var bildeUrl = document.getElementById("nyBoksBildeUrl"); if (bildeUrl) bildeUrl.value = "";
+  var prev = document.getElementById("nyBoksBildePrev"); if (prev) prev.style.display = "none";
+  var st = document.getElementById("nyBoksBildeStatus"); if (st) st.style.display = "none";
+  var inp = document.getElementById("nyBoksBildeInput"); if (inp) inp.value = "";
+  window._nyBoksBildeData = null;
+  document.getElementById("nyBoksModal").classList.add("open");
+  setTimeout(function() { var el = document.getElementById("nyBoksHylle"); if (el) el.focus(); }, 100);
+}
+function lukkNyBoks() { document.getElementById("nyBoksModal").classList.remove("open"); }
+
+function genererBoksId() {
+  var hylle = (document.getElementById("nyBoksHylle") ? document.getElementById("nyBoksHylle").value : "").trim().toUpperCase().replace(/\s+/g, "");
+  var idEl = document.getElementById("nyBoksId"); if (!idEl) return;
+  if (!hylle) { idEl.value = ""; return; }
+  var m = hylle.match(/^([A-Z]+)(\d+)$/);
+  var base = m ? "B-" + m[1] + m[2].padStart(2, "0") : "B-" + hylle.replace(/[^A-Z0-9]/g, "").slice(0, 6);
+  var id = base, n = 2;
+  while (bokser.find(function(b) { return b.id === id; })) { id = base + "-" + n; n++; }
+  idEl.value = id;
+}
+
+async function forhandsvisBoksBilde(input) {
+  var fil = input.files[0]; if (!fil) return;
+  var st = document.getElementById("nyBoksBildeStatus");
+  if (st) { st.style.display = "block"; st.className = "bilde-upload-status uploading"; st.textContent = "Laster opp…"; }
+  try {
+    var dataUrl = await komprimerTilBase64(fil);
+    window._nyBoksBildeData = dataUrl;
+    var prev = document.getElementById("nyBoksBildePrev");
+    if (prev) { prev.src = dataUrl; prev.style.display = "block"; }
+    if (st) { st.className = "bilde-upload-status success"; st.textContent = "Klar!"; setTimeout(function() { st.style.display = "none"; }, 2000); }
+  } catch(e) { if (st) { st.className = "bilde-upload-status feil"; st.textContent = "Feil: " + e.message; } }
+}
+
+async function lagreNyBoks() {
+  var id    = document.getElementById("nyBoksId") ? document.getElementById("nyBoksId").value.trim() : "";
+  var navn  = document.getElementById("nyBoksNavn") ? document.getElementById("nyBoksNavn").value.trim() : "";
+  var hylle = document.getElementById("nyBoksHylle") ? document.getElementById("nyBoksHylle").value.trim() : "";
+  var beskr = document.getElementById("nyBoksBeskrivelse") ? document.getElementById("nyBoksBeskrivelse").value.trim() : "";
+  var bildeUrl = document.getElementById("nyBoksBildeUrl") ? document.getElementById("nyBoksBildeUrl").value.trim() : "";
+  var bilde = window._nyBoksBildeData || (bildeUrl ? konverterBildeUrl(bildeUrl) : null);
+  if (!hylle) { visBanner("Hylleplassering er påkrevd", "error"); return; }
+  if (!id)    { visBanner("Fyll inn hylleplassering for å generere ID", "error"); return; }
+  if (!navn)  { visBanner("Navn er påkrevd", "error"); return; }
+  var btn = document.querySelector("#nyBoksModal .btn-save");
+  btn.disabled = true; btn.textContent = "Lagrer…";
+  var r = await db.from("bokser").insert({ id: id, navn: navn, hylleplassering: hylle, beskrivelse: beskr || null, bilde_url: bilde || null });
+  if (r.error) { visBanner("Feil: " + r.error.message, "error"); }
+  else { lukkNyBoks(); await lastInnBokser(); visBanner("Boks opprettet!", "success"); settFane("bokser"); }
+  btn.disabled = false; btn.textContent = "Opprett boks";
+}
+
+function apneBoksQr(id, navn) {
+  document.getElementById("qrModalTitle").textContent = navn + " (boks)";
+  var cont = document.getElementById("qrContainer");
+  cont.innerHTML = "";
+  var url = APP_BASE_URL + "boks.html?id=" + enc(id);
+  document.getElementById("qrUrl").textContent = url;
+  new QRCode(cont, { text: url, width: 200, height: 200, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+  _qrAktivId = "BOKS:" + id;
+  document.getElementById("qrModal").classList.add("open");
+}
+
+function bekreftSlettBoks(id, navn) {
+  document.getElementById("deleteItemName").textContent = navn + " (" + id + ")";
+  document.getElementById("deleteModal").classList.add("open");
+  document.getElementById("confirmDeleteBtn").onclick = async function() {
+    var r = await db.from("bokser").delete().eq("id", id);
+    if (!r.error) { lukkSlettModal(); await lastInnBokser(); visBanner("Boks slettet", "success"); }
+    else visBanner("Feil: " + r.error.message, "error");
+  };
+}
+
+function populerBoksSelect() {
+  ["editBoksId","itemBoksId"].forEach(function(selId) {
+    var sel = document.getElementById(selId);
+    if (!sel) return;
+    var curr = sel.value;
+    sel.innerHTML = "<option value=''>- Ingen boks —</option>" +
+      bokser.map(function(b) { return "<option value='" + b.id + "'>" + b.navn + " (" + b.id + ")</option>"; }).join("");
+    sel.value = curr;
+  });
+}
+
+// ---- LEGG TIL MODAL ----
+function apneLeggTilModal() {
+  var sel = document.getElementById("itemBoksId");
+  if (sel) {
+    sel.innerHTML = "<option value=''>- Ingen boks —</option>" +
+      bokser.map(function(b) { return "<option value='" + b.id + "'>" + b.navn + " (" + b.id + ")</option>"; }).join("");
+  }
+  document.getElementById("leggTilModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function lukkLeggTilModal() {
+  document.getElementById("leggTilModal").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function toggleAddBulk(cb) {
+  var el = document.getElementById("addBulkFields");
+  if (el) el.style.display = cb.checked ? "block" : "none";
+}
+
+// ---- FANER ----
+function settFane(navn) {
+  document.querySelectorAll(".tab").forEach(function(t) { t.classList.toggle("active", t.dataset.tab === navn); });
+  document.querySelectorAll(".hmeny-tab").forEach(function(t) { t.classList.toggle("active", t.dataset.tab === navn); });
+  document.querySelectorAll(".tab-content").forEach(function(c) { c.classList.toggle("active", c.id === navn); });
+  document.getElementById("hamburgerMeny") && document.getElementById("hamburgerMeny").classList.remove("open");
+  document.getElementById("hamburger") && document.getElementById("hamburger").classList.remove("open");
+  if (navn === "sammendrag") viseSammendrag();
+  if (navn === "bokser") visBokser();
+}
+
+// ---- PREVIEW ----
+function oppdaterPrev() {
+  var navn  = document.getElementById("itemName") ? document.getElementById("itemName").value : "";
+  var pref  = ((document.getElementById("itemPrefix") ? document.getElementById("itemPrefix").value.trim() : "") || navn.slice(0,3) || "GJN").toUpperCase();
+  var ant   = parseInt(document.getElementById("itemAntall") ? document.getElementById("itemAntall").value : 1) || 1;
+  var startEl = document.getElementById("itemStartNr");
+  if (startEl && pref.length >= 2) startEl.value = nesteNummer(pref);
+  var start = parseInt(startEl ? startEl.value : 1) || 1;
+  var vis = [];
+  for (var i = 0; i < Math.min(3, ant); i++) vis.push(pref + "-" + String(start + i).padStart(3, "0"));
+  var el = document.getElementById("previewText");
+  if (el) el.textContent = vis.join(", ") + (ant > 3 ? " ... (" + ant + " totalt)" : "");
+}
+
+// ---- SELECTS ----
+function populerSelects() {
+  var filterKat = document.getElementById("filterKategori");
+  if (filterKat) filterKat.innerHTML = "<option value='Alle'>Alle kategorier</option>";
+  ["itemKategori","editKategori"].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.innerHTML = "";
+  });
+  KATEGORIER.forEach(function(k) {
+    if (filterKat) filterKat.innerHTML += "<option value='" + k + "'>" + k + "</option>";
+    ["itemKategori","editKategori"].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.innerHTML += "<option value='" + k + "'>" + k + "</option>";
+    });
+  });
+}
+
+// ---- LISTENERS ----
+function setupListeners() {
+  document.getElementById("searchInput").addEventListener("input", filtrerOgVis);
+  document.getElementById("filterKategori").addEventListener("change", filtrerOgVis);
+  document.getElementById("filterStatus").addEventListener("change", filtrerOgVis);
+  document.querySelectorAll(".tab").forEach(function(btn) {
+    btn.addEventListener("click", function(e) { settFane(e.currentTarget.dataset.tab); });
+  });
+  document.querySelectorAll(".hmeny-tab").forEach(function(btn) {
+    btn.addEventListener("click", function(e) { settFane(e.currentTarget.dataset.tab); });
+  });
+  document.getElementById("addItemForm").addEventListener("submit", leggTil);
+  var utlanDatoEl = document.getElementById("utlanDato");
+  if (utlanDatoEl) utlanDatoEl.addEventListener("change", function() { oppdaterDatoVis("utlanDato","utlanDatoVis"); });
+  var utlanFristEl = document.getElementById("utlanFrist");
+  if (utlanFristEl) utlanFristEl.addEventListener("change", function() { oppdaterDatoVis("utlanFrist","utlanFristVis"); });
+  var utlanModalEl = document.getElementById("utlanModal");
+  if (utlanModalEl) utlanModalEl.addEventListener("click", function(e) { if (e.target.id === "utlanModal") lukkUtlanModal(); });
+  ["itemName","itemPrefix","itemAntall","itemStartNr"].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("input", oppdaterPrev);
+  });
+  document.getElementById("editStatus").addEventListener("change", function(e) { toggleUtlan(e.target.value); });
+  document.getElementById("editBildeUrl").addEventListener("input", function(e) { viseBildePrev(e.target.value); });
+  document.getElementById("addBildeUrl").addEventListener("input", function(e) {
+    var prev = document.getElementById("addBildePrev");
+    var url = konverterBildeUrl(e.target.value);
+    if (url) { prev.src = url; prev.style.display = "block"; } else { prev.style.display = "none"; }
+  });
+  ["editModal","qrModal","deleteModal","scannerModal","leggTilModal","batchRedigerModal","nyBoksModal"].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("click", function(e) {
+      if (e.target.id === id) { lukkRedigerModal(); lukkQrModal(); lukkSlettModal(); lukkLeggTilModal(); lukkBatchRediger(); lukkNyBoks(); if (id === "scannerModal") lukkScanner(); }
+    });
+  });
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") { lukkRedigerModal(); lukkQrModal(); lukkSlettModal(); lukkScanner(); lukkLeggTilModal(); lukkBatchRediger(); }
+    if (e.key === "Enter" && document.getElementById("deleteModal").classList.contains("open")) {
+      e.preventDefault(); if (_slettFn) _slettFn();
+    }
+  });
+  oppdaterPrev();
+}
+
+</script>
+<script>
+function toggleMeny() {
+  document.getElementById("hamburgerMeny").classList.toggle("open");
+  document.getElementById("hamburger").classList.toggle("open");
+}
+document.addEventListener("click", function(e) {
+  const meny = document.getElementById("hamburgerMeny");
+  const btn  = document.getElementById("hamburger");
+  if (meny && !meny.contains(e.target) && !btn.contains(e.target)) {
+    meny.classList.remove("open");
+    btn.classList.remove("open");
+  }
+});
+// Restore tab if coming back from a boks/item page
+const _tab = sessionStorage.getItem("aktivTab");
+if (_tab) { sessionStorage.removeItem("aktivTab"); document.addEventListener("DOMContentLoaded", () => settFane(_tab)); }
+</script>
+</body>
+</html>
