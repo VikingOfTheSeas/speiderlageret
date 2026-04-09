@@ -622,15 +622,16 @@ a { color: var(--primary); text-decoration: none; }
 
   /* Explicit page container — browser cannot split this */
   .print-side {
-    width: 194mm;          /* 210 - 2×8mm */
-    height: 270mm;         /* 8×32mm + 7×2mm gaps — fits in 281mm usable */
+    width: 190mm;
+    padding: 8mm 10mm;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(8, 32mm);
-    gap: 2mm;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 60mm);
+    gap: 4mm;
     box-sizing: border-box;
     background: white;
     overflow: hidden;
+    page-break-inside: avoid;
   }
 
   .print-side-break {
@@ -640,21 +641,21 @@ a { color: var(--primary); text-decoration: none; }
 
   .print-label {
     box-sizing: border-box;
-    border: 0.3mm solid #ccc;
-    border-radius: 1.5mm;
+    border: 0.5mm solid #999;
+    border-radius: 3mm;
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 2mm;
-    gap: 2mm;
+    padding: 4mm;
+    gap: 4mm;
     background: white;
     overflow: hidden;
   }
 
-  .print-label-qr { flex-shrink: 0; width: 26mm; height: 26mm; }
+  .print-label-qr { flex-shrink: 0; width: 48mm; height: 48mm; }
   .print-label-qr img {
-    width: 26mm !important;
-    height: 26mm !important;
+    width: 48mm !important;
+    height: 48mm !important;
     display: block !important;
   }
 
@@ -663,11 +664,11 @@ a { color: var(--primary); text-decoration: none; }
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.5mm;
+    gap: 1.5mm;
     overflow: hidden;
   }
-  .print-label-navn  { font-size: 7pt;   font-weight: 700; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .print-label-id    { font-size: 9pt;   font-family: monospace; font-weight: 700; color: #000; white-space: nowrap; }
-  .print-label-hylle { font-size: 6.5pt; color: #444; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .print-label-org   { font-size: 5.5pt; color: #aaa; white-space: nowrap; }
+  .print-label-navn  { font-size: 14pt;  font-weight: 700; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .print-label-id    { font-size: 16pt;  font-family: monospace; font-weight: 700; color: #000; white-space: nowrap; }
+  .print-label-hylle { font-size: 11pt;  color: #444; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .print-label-org   { font-size: 9pt;   color: #aaa; white-space: nowrap; }
 }

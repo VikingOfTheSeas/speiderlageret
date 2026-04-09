@@ -1006,7 +1006,7 @@ function apneQr(id, navn) {
   new QRCode(cont, { text: url, width: 160, height: 160, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
   var iKo = printKo.includes(id);
   var btn = document.getElementById("leggIKoBtn");
-  if (btn) { btn.textContent = iKo ? "I utskriftsko" : "Legg i utskriftsko"; btn.classList.toggle("i-ko", iKo); }
+  if (btn) { btn.textContent = iKo ? "I utskriftskø" : "Legg i utskriftskø"; btn.classList.toggle("i-ko", iKo); }
   document.getElementById("qrModal").classList.add("open");
 }
 
@@ -1065,13 +1065,23 @@ async function skrivUtAlle() {
   btn.disabled = true; btn.textContent = "Genererer...";
   var etiketter = [];
   for (var id of printKo) {
-    var g = gjenstander.find(function(x) { return x.id === id; });
-    if (!g) continue;
-    var url = APP_BASE_URL + "item.html?id=" + enc(id);
+    var erBoks = id.startsWith("BOKS:");
+    var faktiskId = erBoks ? id.replace("BOKS:", "") : id;
+    var g, url;
+    if (erBoks) {
+      var b = bokser.find(function(x) { return x.id === faktiskId; });
+      if (!b) continue;
+      g = { navn: b.navn, id: b.id, hylleplassering: b.hylleplassering };
+      url = APP_BASE_URL + "boks.html?id=" + enc(faktiskId);
+    } else {
+      g = gjenstander.find(function(x) { return x.id === id; });
+      if (!g) continue;
+      url = APP_BASE_URL + "item.html?id=" + enc(id);
+    }
     var qrHTML = await lagQrCanvas(url, 110);
     etiketter.push(etikettHTML(g, qrHTML));
   }
-  var PER_SIDE = 24;
+  var PER_SIDE = 8;
   var sider = [];
   for (var i = 0; i < etiketter.length; i += PER_SIDE) sider.push(etiketter.slice(i, i + PER_SIDE));
   document.getElementById("printArea").innerHTML = sider.map(function(side, idx) {
@@ -1094,29 +1104,29 @@ function triggerPrint() {
 
 // ---- UTSKRIFTSKO ----
 function toggleKo(id) {
-  if (printKo.includes(id)) { fjernFraKo(id); visBanner("Fjernet fra ko", "success"); }
-  else { printKo.push(id); oppdaterKoUI(); visBanner("Lagt til i ko (" + printKo.length + " stk)", "success"); }
+  if (printKo.includes(id)) { fjernFraKo(id); visBanner("Fjernet fra kø", "success"); }
+  else { printKo.push(id); oppdaterKoUI(); visBanner("Lagt til i kø (" + printKo.length + " stk)", "success"); }
 }
 
 function leggIKo() {
-  if (!_qrAktivId || _qrAktivId.startsWith("BOKS:")) return;
+  if (!_qrAktivId) return;
   var iKo = printKo.includes(_qrAktivId);
   if (iKo) fjernFraKo(_qrAktivId);
-  else { printKo.push(_qrAktivId); visBanner("Lagt til i ko", "success"); }
+  else { printKo.push(_qrAktivId); visBanner("Lagt til i kø", "success"); }
   var btn = document.getElementById("leggIKoBtn");
-  if (btn) { btn.textContent = !iKo ? "I utskriftsko" : "Legg i utskriftsko"; btn.classList.toggle("i-ko", !iKo); }
+  if (btn) { btn.textContent = !iKo ? "I utskriftskø" : "Legg i utskriftskø"; btn.classList.toggle("i-ko", !iKo); }
   oppdaterKoUI();
 }
 
 function leggAlleIKo() {
   gjenstander.forEach(function(g) { if (!printKo.includes(g.id)) printKo.push(g.id); });
-  visBanner("Alle (" + printKo.length + ") lagt til i ko", "success");
+  visBanner("Alle (" + printKo.length + ") lagt til i kø", "success");
   oppdaterKoUI();
 }
 
 function fjernFraKo(id) { printKo = printKo.filter(function(x) { return x !== id; }); oppdaterKoUI(); }
 
-function tomKo() { printKo = []; oppdaterKoUI(); visBanner("Ko tomt", "success"); }
+function tomKo() { printKo = []; oppdaterKoUI(); visBanner("Kø tømt", "success"); }
 
 function toggleDrawer() {
   drawerOpen = !drawerOpen;
@@ -1137,10 +1147,18 @@ function oppdaterKoUI() {
   var liste = document.getElementById("koListe");
   if (!liste) return;
   liste.innerHTML = printKo.map(function(id) {
-    var g = gjenstander.find(function(x) { return x.id === id; });
-    if (!g) return "";
+    var erBoks = id.startsWith("BOKS:");
+    var g;
+    if (erBoks) {
+      var b = bokser.find(function(x) { return x.id === id.replace("BOKS:",""); });
+      if (!b) return "";
+      g = { id: b.id, navn: "📦 " + b.navn };
+    } else {
+      g = gjenstander.find(function(x) { return x.id === id; });
+      if (!g) return "";
+    }
     return "<div class='ko-chip'><span class='ko-chip-id'>" + g.id + "</span><span>" + g.navn + "</span>" +
-      "<button class='ko-chip-fjern' onclick='fjernFraKo(\"" + id + "\")' title='Fjern'>x</button></div>";
+      "<button class='ko-chip-fjern' onclick='fjernFraKo(\"" + id.replace(/"/g,"&quot;") + "\")' title='Fjern'>x</button></div>";
   }).join("");
 }
 
@@ -1434,6 +1452,9 @@ function apneBoksQr(id, navn) {
   document.getElementById("qrUrl").textContent = url;
   new QRCode(cont, { text: url, width: 200, height: 200, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
   _qrAktivId = "BOKS:" + id;
+  var iKo = printKo.includes(_qrAktivId);
+  var koBtn = document.getElementById("leggIKoBtn");
+  if (koBtn) { koBtn.textContent = iKo ? "I utskriftskø" : "Legg i utskriftskø"; koBtn.classList.toggle("i-ko", iKo); }
   document.getElementById("qrModal").classList.add("open");
 }
 
