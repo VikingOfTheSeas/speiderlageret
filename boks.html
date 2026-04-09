@@ -609,24 +609,20 @@ async function lastNedBoksQr() {
   var ctx = c.getContext("2d");
   ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
 
-  // Row 1 left: hylle text scaled to fill area
+  // Row 1 left: hylle box with text scaled to fill
+  var hylleX = PAD;
+  ctx.strokeStyle = "#000000"; ctx.lineWidth = 4;
+  ctx.strokeRect(hylleX, PAD, BOX_W, QR_SIZE);
   var hylleTekst = currentBoks.hylleplassering || "—";
   ctx.fillStyle = "#000000"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  // Scale font to fill the box area (80% of width, 70% of height)
-  var targetW = BOX_W * 0.8, targetH = QR_SIZE * 0.7;
-  var fontSize = 400;
+  var targetW = BOX_W * 0.85, targetH = QR_SIZE * 0.75;
+  var fontSize = 600;
   ctx.font = "700 " + fontSize + "px Arial,sans-serif";
   var mw = ctx.measureText(hylleTekst).width;
   if (mw > targetW) fontSize = Math.floor(fontSize * targetW / mw);
   if (fontSize > targetH) fontSize = Math.floor(targetH);
   ctx.font = "700 " + fontSize + "px Arial,sans-serif";
-  ctx.fillText(hylleTekst, PAD + BOX_W / 2, PAD + QR_SIZE / 2);
-
-  // Divider: rounded thick line between hylle and QR
-  var divX = PAD + BOX_W + GAP / 2;
-  var divTop = PAD + 40, divBot = PAD + QR_SIZE - 40;
-  ctx.strokeStyle = "#000000"; ctx.lineWidth = 8; ctx.lineCap = "round";
-  ctx.beginPath(); ctx.moveTo(divX, divTop); ctx.lineTo(divX, divBot); ctx.stroke();
+  ctx.fillText(hylleTekst, hylleX + BOX_W / 2, PAD + QR_SIZE / 2);
 
   // Row 1 right: QR code
   ctx.drawImage(qrImg, PAD + BOX_W + GAP, PAD, QR_SIZE, QR_SIZE);
