@@ -1119,8 +1119,15 @@ function leggIKo() {
 }
 
 function leggAlleIKo() {
-  gjenstander.forEach(function(g) { if (!printKo.includes(g.id)) printKo.push(g.id); });
-  visBanner("Alle (" + printKo.length + ") lagt til i kø", "success");
+  var aktivFane = document.querySelector(".tab.active");
+  var fane = aktivFane ? aktivFane.dataset.tab : "lager";
+  if (fane === "bokser") {
+    bokser.forEach(function(b) { var kid = "BOKS:" + b.id; if (!printKo.includes(kid)) printKo.push(kid); });
+    visBanner("📦 Alle bokser (" + printKo.length + ") lagt til i kø", "success");
+  } else {
+    gjenstander.forEach(function(g) { if (!printKo.includes(g.id)) printKo.push(g.id); });
+    visBanner("🛠️ Alle gjenstander (" + printKo.length + ") lagt til i kø", "success");
+  }
   oppdaterKoUI();
 }
 
@@ -1156,6 +1163,7 @@ function oppdaterKoUI() {
     } else {
       g = gjenstander.find(function(x) { return x.id === id; });
       if (!g) return "";
+      g = { id: g.id, navn: "🛠️ " + g.navn };
     }
     return "<div class='ko-chip'><span class='ko-chip-id'>" + g.id + "</span><span>" + g.navn + "</span>" +
       "<button class='ko-chip-fjern' onclick='fjernFraKo(\"" + id.replace(/"/g,"&quot;") + "\")' title='Fjern'>x</button></div>";
