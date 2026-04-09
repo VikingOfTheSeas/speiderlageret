@@ -615,8 +615,8 @@ async function lastNedBoksQr() {
   ctx.strokeRect(hylleX, PAD, BOX_W, QR_SIZE);
   var hylleTekst = currentBoks.hylleplassering || "—";
   ctx.fillStyle = "#000000"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  var targetW = BOX_W * 0.85, targetH = QR_SIZE * 0.75;
-  var fontSize = 600;
+  var targetW = BOX_W * 0.95, targetH = QR_SIZE * 0.9;
+  var fontSize = 800;
   ctx.font = "700 " + fontSize + "px Arial,sans-serif";
   var mw = ctx.measureText(hylleTekst).width;
   if (mw > targetW) fontSize = Math.floor(fontSize * targetW / mw);
