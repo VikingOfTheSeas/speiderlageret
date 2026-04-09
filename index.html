@@ -1125,10 +1125,10 @@ function leggAlleIKo() {
   var fane = aktivFane ? aktivFane.dataset.tab : "lager";
   if (fane === "bokser") {
     bokser.forEach(function(b) { var kid = "BOKS:" + b.id; if (!printKo.includes(kid)) printKo.push(kid); });
-    visBanner("📦 Alle bokser (" + printKo.length + ") lagt til i kø", "success");
+    visBanner("📦 Alle bokser (" + bokser.length + ") lagt til i kø", "success");
   } else {
     gjenstander.forEach(function(g) { if (!printKo.includes(g.id)) printKo.push(g.id); });
-    visBanner("🛠️ Alle gjenstander (" + printKo.length + ") lagt til i kø", "success");
+    visBanner("🛠️ Alle gjenstander (" + gjenstander.length + ") lagt til i kø", "success");
   }
   oppdaterKoUI();
 }
