@@ -1032,9 +1032,11 @@ function lagQrCanvas(url, size) {
 }
 
 function etikettHTML(g, qrHTML) {
+  var typeTekst = g._erBoks ? "📦 Boks" : "🛠️ Utstyr";
   return "<div class='print-label'><div class='print-label-qr'>" + qrHTML + "</div>" +
     "<div class='print-label-info'><div class='print-label-navn'>" + g.navn + "</div>" +
     "<div class='print-label-id'>" + g.id + "</div>" +
+    "<div class='print-label-type'>" + typeTekst + "</div>" +
     (g.hylleplassering ? "<div class='print-label-hylle'>📍 " + g.hylleplassering + "</div>" : "") +
     "<div class='print-label-org'>1. Haugerud</div></div></div>";
 }
@@ -1047,7 +1049,7 @@ async function skrivUtEtikett() {
   if (erBoks) {
     var b = bokser.find(function(x) { return x.id === faktiskId; });
     if (!b) return;
-    g = { navn: b.navn, id: b.id, hylleplassering: b.hylleplassering };
+    g = { navn: b.navn, id: b.id, hylleplassering: b.hylleplassering, _erBoks: true };
     url = APP_BASE_URL + "boks.html?id=" + enc(faktiskId);
   } else {
     g = gjenstander.find(function(x) { return x.id === _qrAktivId; });
@@ -1071,7 +1073,7 @@ async function skrivUtAlle() {
     if (erBoks) {
       var b = bokser.find(function(x) { return x.id === faktiskId; });
       if (!b) continue;
-      g = { navn: b.navn, id: b.id, hylleplassering: b.hylleplassering };
+      g = { navn: b.navn, id: b.id, hylleplassering: b.hylleplassering, _erBoks: true };
       url = APP_BASE_URL + "boks.html?id=" + enc(faktiskId);
     } else {
       g = gjenstander.find(function(x) { return x.id === id; });

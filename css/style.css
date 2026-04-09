@@ -669,6 +669,7 @@ a { color: var(--primary); text-decoration: none; }
   }
   .print-label-navn  { font-size: 14pt;  font-weight: 700; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .print-label-id    { font-size: 16pt;  font-family: monospace; font-weight: 700; color: #000; white-space: nowrap; }
+  .print-label-type  { font-size: 10pt;  color: #666; font-weight: 600; white-space: nowrap; }
   .print-label-hylle { font-size: 11pt;  color: #444; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .print-label-org   { font-size: 9pt;   color: #aaa; white-space: nowrap; }
 }
