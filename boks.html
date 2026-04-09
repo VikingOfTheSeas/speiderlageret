@@ -587,21 +587,63 @@ async function skrivUtBoksEtikett() {
 }
 
 async function lastNedBoksQr() {
-  var QR_SIZE = 1200, PAD = 40, FONT = 72;
+  var QR_SIZE = 1000, GAP = 40, PAD = 60;
   var src = await lagQrBoksCanvas(QR_SIZE);
   var qrImg = new Image();
   qrImg.src = src;
   await new Promise(function(r) { qrImg.onload = r; });
-  var labelText = currentBoks.navn + "  -  " + currentBoks.id + (currentBoks.hylleplassering ? "  -  " + currentBoks.hylleplassering : "") + "  -  1. Haugerud";
-  var W = QR_SIZE + PAD * 2, H = QR_SIZE + PAD + FONT + PAD;
+
+  var BOX_W = QR_SIZE; // hylle box same size as QR
+  var ROW1_W = QR_SIZE + GAP + BOX_W; // top row width
+  var W = ROW1_W + PAD * 2;
+
+  // Measure text rows
+  var ORG_FONT = 120, INFO_FONT = 72;
+  var ROW2_H = ORG_FONT + 40; // "1. Haugerud"
+  var ROW3_H = INFO_FONT + 20; // navn
+  var ROW4_H = INFO_FONT + 20; // id
+  var H = PAD + QR_SIZE + GAP + ROW2_H + ROW3_H + ROW4_H + PAD;
+
   var c = document.createElement("canvas");
   c.width = W; c.height = H;
   var ctx = c.getContext("2d");
   ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
-  ctx.drawImage(qrImg, PAD, 0, QR_SIZE, QR_SIZE);
-  ctx.font = "700 " + FONT + "px Arial,sans-serif";
+
+  // Row 1 left: hylle box with border and large text
+  var hylleX = PAD;
+  ctx.strokeStyle = "#000000"; ctx.lineWidth = 4;
+  ctx.strokeRect(hylleX, PAD, BOX_W, QR_SIZE);
+  var hylleTekst = currentBoks.hylleplassering || "—";
   ctx.fillStyle = "#000000"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  ctx.fillText(labelText, W / 2, QR_SIZE + PAD + FONT / 2, W - PAD * 2);
+  ctx.font = "700 200px Arial,sans-serif";
+  // Scale down if text is too wide
+  var maxTextW = BOX_W - 60;
+  var measured = ctx.measureText(hylleTekst).width;
+  if (measured > maxTextW) {
+    var scaledSize = Math.floor(200 * maxTextW / measured);
+    ctx.font = "700 " + scaledSize + "px Arial,sans-serif";
+  }
+  ctx.fillText(hylleTekst, hylleX + BOX_W / 2, PAD + QR_SIZE / 2);
+
+  // Row 1 right: QR code
+  ctx.drawImage(qrImg, PAD + BOX_W + GAP, PAD, QR_SIZE, QR_SIZE);
+
+  // Row 2: "1. Haugerud" centered
+  var y2 = PAD + QR_SIZE + GAP + ROW2_H / 2;
+  ctx.font = "700 " + ORG_FONT + "px Arial,sans-serif";
+  ctx.fillStyle = "#000000"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText("1. Haugerud", W / 2, y2);
+
+  // Row 3: Boks navn
+  var y3 = PAD + QR_SIZE + GAP + ROW2_H + ROW3_H / 2;
+  ctx.font = "700 " + INFO_FONT + "px Arial,sans-serif";
+  ctx.fillText(currentBoks.navn, W / 2, y3);
+
+  // Row 4: ID
+  var y4 = PAD + QR_SIZE + GAP + ROW2_H + ROW3_H + ROW4_H / 2;
+  ctx.font = "400 " + INFO_FONT + "px monospace";
+  ctx.fillText(currentBoks.id, W / 2, y4);
+
   var a = document.createElement("a");
   a.download = "QR-" + currentBoks.id + ".png";
   a.href = c.toDataURL("image/png");
