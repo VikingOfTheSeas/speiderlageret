@@ -171,7 +171,7 @@ a { color: var(--primary); text-decoration: none; }
 .items-table th, .items-table td.tc { text-align: center; }
 .items-table td { text-align: center; }
 .sum-table td { text-align: center; }
-.sum-table th { text-align: center; }
+.sum-table th { text-align: center; white-space: nowrap; user-select: none; font-size: 11px; }
 .actions-cell { justify-content: center; }
 .items-table tr:last-child td { border-bottom: none; }
 

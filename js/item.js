@@ -98,6 +98,7 @@ async function lagreLan() {
   if (!til) { visBanner("Skriv hvem som låner!", "error"); return; }
   const dato  = document.getElementById("loanDato").value;
   const frist = document.getElementById("loanFrist").value;
+  if (frist && dato > frist) { visBanner("Utlånsdato kan ikke være etter innleveringsdato", "error"); return; }
   const notater = document.getElementById("loanNotater").value.trim() || currentItem.notater;
   const oppdatert = {
     ...currentItem, status: "Utlånt", utlant_til: til,
