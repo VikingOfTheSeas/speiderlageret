@@ -121,10 +121,10 @@
       <div style="overflow-x:auto">
         <table class="sum-table" style="min-width:360px">
           <thead><tr>
-            <th class="left" style="padding-left:16px">Gjenstand</th>
-            <th class="center">Ant.</th>
-            <th class="center">Låntaker</th>
-            <th class="center">Frist</th>
+            <th class="left" style="padding-left:16px;cursor:pointer" onclick="sorterUtlan('navn')">Gjenstand ⇅</th>
+            <th class="center" style="cursor:pointer" onclick="sorterUtlan('antall')">Ant. ⇅</th>
+            <th class="center" style="cursor:pointer" onclick="sorterUtlan('utlant_til')">Låntaker ⇅</th>
+            <th class="center" style="cursor:pointer" onclick="sorterUtlan('frist')">Frist ⇅</th>
             <th class="center">Lever</th>
           </tr></thead>
           <tbody id="boksUtlanslogg"></tbody>
@@ -177,6 +177,8 @@ var boksGjenstander = [];
 var aktiveUtlan = [];
 var boksSortField = "navn";
 var boksSortDir = "asc";
+var utlanSortField = "navn";
+var utlanSortDir = "asc";
 
 // ---- INIT ----
 document.addEventListener("DOMContentLoaded", function() {
@@ -293,7 +295,8 @@ function renderBoks() {
       gr.antall++;
     });
     var uhtml = "";
-    utMap.forEach(function(gr) {
+    var sortedUtlan = sorterUtlanGrupper(utMap);
+    sortedUtlan.forEach(function(gr) {
       var forfalt = gr.innleveringsdato !== "-" && new Date(gr.innleveringsdato) < new Date();
       var idStr = gr.ids.join(",");
       var frist = formatDato(gr.innleveringsdato);
@@ -344,6 +347,27 @@ function sorterBoks(felt) {
   renderBoks();
 }
 
+function sorterUtlan(felt) {
+  if (utlanSortField === felt) utlanSortDir = utlanSortDir === "asc" ? "desc" : "asc";
+  else { utlanSortField = felt; utlanSortDir = "asc"; }
+  renderBoks();
+}
+
+function sorterUtlanGrupper(utMap) {
+  var arr = [];
+  utMap.forEach(function(gr) { arr.push(gr); });
+  var dir = utlanSortDir === "asc" ? 1 : -1;
+  arr.sort(function(a, b) {
+    var va, vb;
+    if (utlanSortField === "navn") { va = (a.navn || "").toLowerCase(); vb = (b.navn || "").toLowerCase(); return va < vb ? -dir : va > vb ? dir : 0; }
+    if (utlanSortField === "antall") { return (a.antall - b.antall) * dir; }
+    if (utlanSortField === "utlant_til") { va = (a.utlant_til || "").toLowerCase(); vb = (b.utlant_til || "").toLowerCase(); return va < vb ? -dir : va > vb ? dir : 0; }
+    if (utlanSortField === "frist") { va = a.innleveringsdato || ""; vb = b.innleveringsdato || ""; return va < vb ? -dir : va > vb ? dir : 0; }
+    return 0;
+  });
+  return arr;
+}
+
 // ---- UTLAN ----
 function apneUtlan() { byggUtlanModal(null); }
 function apneUtlanForNavn(navn) { byggUtlanModal(navn); }
@@ -362,8 +386,8 @@ function byggUtlanModal(forhNavn) {
   html += "</select></div>";
   html += "<div class='form-field'><label>Antall</label><input type='number' id='utlanAntall' value='1' min='1' style='width:100%'></div>";
   html += "<div class='form-field'><label>Låntaker *</label><input type='text' id='utlanTil' placeholder='Navn eller gruppe' style='width:100%'></div>";
-  html += "<div class='form-grid2'><div class='form-field'><label>Utlånsdato</label><input type='text' id='utlanDato' placeholder='DD/MM/YYYY' maxlength='10' oninput='autoFormatDato(event)' value='" + tilDatoFelt(iDag()) + "'></div>";
-  html += "<div class='form-field'><label>Leveres inn</label><input type='text' id='utlanFrist' placeholder='DD/MM/YYYY' maxlength='10' oninput='autoFormatDato(event)'></div></div>";
+  html += "<div class='form-grid2'><div class='form-field'><label>Utlånsdato</label><input type='date' id='utlanDato' value='" + iDag() + "'></div>";
+  html += "<div class='form-field'><label>Leveres inn</label><input type='date' id='utlanFrist'></div></div>";
 
   document.getElementById("utlanBody").innerHTML = html;
   oppdaterMaks();
@@ -383,8 +407,8 @@ async function lagreUtlan() {
   var navn = document.getElementById("utlanGjenstand").value;
   var antall = parseInt(document.getElementById("utlanAntall").value);
   var til = document.getElementById("utlanTil").value.trim();
-  var dato = fraDatoFelt(document.getElementById("utlanDato").value);
-  var frist = fraDatoFelt(document.getElementById("utlanFrist").value);
+  var dato = document.getElementById("utlanDato").value;
+  var frist = document.getElementById("utlanFrist").value;
 
   if (!til) { visBanner("Fyll inn låntaker", "error"); return; }
 

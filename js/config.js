@@ -14,25 +14,6 @@ function konverterBildeUrl(url) {
   return url;
 }
 
-// DD/MM/YYYY ↔ YYYY-MM-DD konvertering for dato-felt
-function tilDatoFelt(iso) {
-  if (!iso) return '';
-  var d = iso.split('-');
-  return d.length === 3 ? d[2] + '/' + d[1] + '/' + d[0] : iso;
-}
-function fraDatoFelt(ddmmyyyy) {
-  if (!ddmmyyyy) return '';
-  var d = ddmmyyyy.split('/');
-  return d.length === 3 ? d[2] + '-' + d[1] + '-' + d[0] : ddmmyyyy;
-}
-function autoFormatDato(e) {
-  var v = e.target.value.replace(/[^0-9]/g, '');
-  if (v.length > 8) v = v.slice(0, 8);
-  if (v.length >= 5) v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
-  else if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2);
-  e.target.value = v;
-}
-
 function komprimerTilBase64(fil) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
