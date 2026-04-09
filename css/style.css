@@ -651,7 +651,7 @@ a { color: var(--primary); text-decoration: none; }
     overflow: hidden;
   }
 
-  .print-label-qr { flex-shrink: 0; }
+  .print-label-qr { flex-shrink: 0; width: 26mm; height: 26mm; }
   .print-label-qr img {
     width: 26mm !important;
     height: 26mm !important;

@@ -579,10 +579,10 @@ async function lagreBokseBildeUrl() {
 
 // ---- QR / PRINT ----
 async function skrivUtBoksEtikett() {
-  var src = await lagQrBoksCanvas(190);
+  var src = await lagQrBoksCanvas(110);
   var area = document.getElementById("printArea");
-  area.innerHTML = boksEtikettHTML(src);
-  area.style.display = "flex";
+  area.innerHTML = "<div class='print-side'>" + boksEtikettHTML(src) + "</div>";
+  area.style.removeProperty("display");
   setTimeout(function() { window.print(); area.style.display = "none"; }, 400);
 }
 
@@ -626,11 +626,11 @@ function lagQrBoksCanvas(size) {
 
 function boksEtikettHTML(qrSrc) {
   return "<div class='print-label'>" +
-    "<div class='print-label-qr'><img src='" + qrSrc + "' width='190' height='190' style='display:block'></div>" +
+    "<div class='print-label-qr'><img src='" + qrSrc + "' style='display:block;width:100%;height:100%'></div>" +
     "<div class='print-label-info'>" +
     "<div class='print-label-navn'>" + currentBoks.navn + "</div>" +
     "<div class='print-label-id'>" + currentBoks.id + "</div>" +
-    (currentBoks.hylleplassering ? "<div class='print-label-hylle'>" + currentBoks.hylleplassering + "</div>" : "") +
+    (currentBoks.hylleplassering ? "<div class='print-label-hylle'>📍 " + currentBoks.hylleplassering + "</div>" : "") +
     "<div class='print-label-org'>1. Haugerud</div>" +
     "</div></div>";
 }
