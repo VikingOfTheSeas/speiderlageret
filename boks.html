@@ -284,7 +284,7 @@ function renderBoks() {
   } else {
     var utMap = new Map();
     utlante.forEach(function(g) {
-      var key = (g.navn || "") + "|" + (g.utlant_til || "");
+      var key = (g.navn || "") + "|" + (g.utlant_til || "") + "|" + (g.innleveringsdato || "");
       if (!utMap.has(key)) utMap.set(key, { navn: g.navn, utlant_til: g.utlant_til || "-", innleveringsdato: g.innleveringsdato || "-", ids: [], antall: 0 });
       var gr = utMap.get(key);
       gr.ids.push(g.id);
@@ -675,7 +675,10 @@ function boksEtikettHTML(qrSrc) {
 }
 
 // ---- HELPERS ----
-function iDag() { return new Date().toISOString().split("T")[0]; }
+function iDag() {
+  var d = new Date();
+  return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0"+d.getDate()).slice(-2);
+}
 
 function formatDato(s) {
   if (!s || s === "-") return "-";

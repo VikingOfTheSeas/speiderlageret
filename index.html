@@ -521,7 +521,10 @@ function sk(s) {
   return m[s] || "tilgjengelig";
 }
 function enc(s) { return encodeURIComponent(s); }
-function _idag() { return new Date().toISOString().split("T")[0]; }
+function _idag() {
+  var d = new Date();
+  return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0"+d.getDate()).slice(-2);
+}
 function formatDato(d) {
   if (!d) return "-";
   if (d === _idag()) return "I dag";
