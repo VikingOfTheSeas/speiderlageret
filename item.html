@@ -20,8 +20,12 @@
         <div class="topbar-sub">GJENSTANDSDETALJER</div>
       </div>
     </a>
+    <nav class="tabs">
+      <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','lager')">📦 Lager</a>
+      <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','bokser')">🗃️ Bokser</a>
+      <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','sammendrag')">📊 Sammendrag</a>
+    </nav>
     <div class="topbar-right">
-      <a href="index.html" class="back-btn">← Tilbake</a>
       <button class="btn-qr-scan" onclick="window.location.href='index.html?scan=1'" title="Scan QR-koder">📷 Scan</button>
       <button class="btn-logout item-logout-desktop" onclick="loggUt()">🚪 Logg ut</button>
       <button class="hamburger" id="hamburger" onclick="toggleItemMeny()" aria-label="Meny">

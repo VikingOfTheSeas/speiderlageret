@@ -21,18 +21,13 @@
         <div class="topbar-sub">BOKS</div>
       </div>
     </a>
+    <nav class="tabs">
+      <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','lager')">📦 Lager</a>
+      <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','bokser')">🗃️ Bokser</a>
+      <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','sammendrag')">📊 Sammendrag</a>
+    </nav>
     <div class="topbar-right">
-      <a href="index.html" class="back-btn" onclick="sessionStorage.setItem('aktivTab','lager')">&#8592; Lager</a>
-      <a href="index.html" class="back-btn" style="margin-left:6px" onclick="sessionStorage.setItem('aktivTab','bokser')">&#8593; Bokser</a>
       <button class="btn-logout item-logout-desktop" onclick="loggUt()">Logg ut</button>
-      <button class="hamburger" id="hamburger" onclick="toggleBoksMeny()" aria-label="Meny">
-        <span></span><span></span><span></span>
-      </button>
-      <div class="hamburger-meny" id="hamburgerMeny">
-        <a href="index.html" class="hmeny-tab">&#8592; Tilbake til lager</a>
-        <div class="hmeny-divider"></div>
-        <button class="hmeny-logout" onclick="loggUt()">Logg ut</button>
-      </div>
     </div>
   </div>
 </header>
@@ -304,7 +299,7 @@ function renderBoks() {
       uhtml += "<tr class='" + (forfalt ? "row-forfalt" : "") + "'>";
       uhtml += "<td style='padding-left:16px'><div style='font-weight:600;font-size:13px'>" + gr.navn + "</div></td>";
       uhtml += "<td class='tc small-text'>" + gr.utlant_til + "</td>";
-      uhtml += "<td class='tc mono small-text " + (forfalt ? "orange-text fw" : "") + "'>" + frist + (forfalt ? " !" : "") + "</td>";
+      uhtml += "<td class='tc mono small-text " + (forfalt ? "orange-text fw" : "") + "'>" + frist + (forfalt ? "!" : "") + "</td>";
       uhtml += "<td class='tc' style='white-space:nowrap'>";
       uhtml += "<button class='btn-action btn-green' onclick='leverGjenstander(\"" + idStr + "\"," + gr.antall + ")' title='Lever inn alle'>&#9989;</button>";
       uhtml += "<button class='btn-action btn-green' onclick='apneLeverDelvis(\"" + idStr + "\"," + gr.antall + ")' title='Lever inn delvis'>&#9999;&#65039;</button>";
@@ -387,9 +382,9 @@ function byggUtlanModal(forhNavn) {
   });
   html += "</select></div>";
   html += "<div class='form-field'><label>Antall</label><input type='number' id='utlanAntall' value='1' min='1' style='width:100%'></div>";
-  html += "<div class='form-field'><label>Låntaker *</label><input type='text' id='utlanTil' placeholder='Navn eller gruppe' style='width:100%'></div>";
   html += "<div class='form-grid2'><div class='form-field'><label>Utlånsdato</label><input type='date' id='utlanDato' value='" + iDag() + "'></div>";
   html += "<div class='form-field'><label>Leveres inn</label><input type='date' id='utlanFrist'></div></div>";
+  html += "<div class='form-field'><label>Låntaker *</label><input type='text' id='utlanTil' placeholder='Navn eller gruppe' autocomplete='name' style='width:100%'></div>";
 
   document.getElementById("utlanBody").innerHTML = html;
   oppdaterMaks();

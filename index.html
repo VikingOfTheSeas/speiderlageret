@@ -330,12 +330,7 @@
         <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Gjenstander som lånes ut</div>
         <div id="utlanGjenstanderListe" style="display:flex;flex-direction:column;gap:4px"></div>
       </div>
-      <!-- Låntaker -->
-      <div class="form-field">
-        <label>Låntaker *</label>
-        <input type="text" id="utlanTil" placeholder="Navn eller gruppe" autocomplete="off">
-      </div>
-      <!-- Datoer -->
+      <!-- Datoer (før låntaker for å unngå at Safari autofyller navn og hopper til datovelger) -->
       <div class="form-grid2">
         <div class="form-field">
           <label>Utlånsdato *</label>
@@ -347,6 +342,11 @@
           <input type="date" id="utlanFrist">
           <span class="field-hint" id="utlanFristVis" style="color:var(--muted)"></span>
         </div>
+      </div>
+      <!-- Låntaker -->
+      <div class="form-field">
+        <label>Låntaker *</label>
+        <input type="text" id="utlanTil" placeholder="Navn eller gruppe" autocomplete="name">
       </div>
     </div>
     <div class="modal-footer">
@@ -683,7 +683,6 @@ function apneUtlanModal(ids) {
   oppdaterDatoVis("utlanFrist", "utlanFristVis");
   document.getElementById("utlanModal").classList.add("open");
   document.body.style.overflow = "hidden";
-  setTimeout(function() { document.getElementById("utlanTil").focus(); }, 100);
 }
 
 function lukkUtlanModal() {
@@ -1356,7 +1355,7 @@ function viseSammendrag() {
         return "<tr class='" + (f ? "row-forfalt" : "") + "'>" +
           "<td style='padding-left:16px'><a class='item-name-link' href='item.html?id=" + enc(g.id) + "'>" + g.navn + "</a></td>" +
           "<td class='center'>" + (g.utlant_til||"-") + "</td>" +
-          "<td class='mono small-text center " + (f ? "orange-text fw" : "") + "'>" + formatDato(g.innleveringsdato) + (f ? " !" : "") + "</td>" +
+          "<td class='mono small-text center " + (f ? "orange-text fw" : "") + "'>" + formatDato(g.innleveringsdato) + (f ? "!" : "") + "</td>" +
           "<td class='center'><button class='btn-action btn-edit' onclick='apneRediger(\"" + g.id + "\")'>&#9998;&#65039;</button></td>" +
           "<td class='mono center col-extra'><a class='item-link' href='item.html?id=" + enc(g.id) + "'>" + g.id + "</a></td>" +
           "<td class='mono small-text center col-extra'>" + formatDato(g.utlansdato) + "</td>" +
