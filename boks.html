@@ -102,14 +102,14 @@
 
     <div class="section-box" style="margin-bottom:16px">
       <div class="section-header">Innhold i boksen</div>
-      <div style="overflow-x:auto">
-        <table class="items-table" style="min-width:340px">
+      <div class="scroll-x">
+        <table class="items-table" style="min-width:460px">
           <thead><tr>
             <th style="text-align:center;padding-left:14px;cursor:pointer" onclick="sorterBoks('navn')">Navn ⇅</th>
             <th style="text-align:center;cursor:pointer" onclick="sorterBoks('tilgj')">Ledig ⇅</th>
-            <th style="text-align:center;cursor:pointer" onclick="sorterBoks('utlant')">Utlånt ⇅</th>
-            <th style="text-align:center;cursor:pointer" onclick="sorterBoks('totalt')">Totalt ⇅</th>
             <th style="text-align:center">Handling</th>
+            <th class="col-extra" style="text-align:center;cursor:pointer" onclick="sorterBoks('utlant')">Utlånt ⇅</th>
+            <th class="col-extra" style="text-align:center;cursor:pointer" onclick="sorterBoks('totalt')">Totalt ⇅</th>
           </tr></thead>
           <tbody id="boksInnhold"></tbody>
         </table>
@@ -118,14 +118,14 @@
 
     <div class="section-box">
       <div class="section-header">Aktive utlån <span class="count-badge" id="aktivUtlanCount">0</span></div>
-      <div style="overflow-x:auto">
-        <table class="sum-table" style="min-width:360px">
+      <div class="scroll-x">
+        <table class="sum-table" style="min-width:520px">
           <thead><tr>
             <th class="center" style="padding-left:16px;cursor:pointer" onclick="sorterUtlan('navn')">Gjenstand ⇅</th>
-            <th class="center" style="cursor:pointer" onclick="sorterUtlan('antall')">Ant. ⇅</th>
             <th class="center" style="cursor:pointer" onclick="sorterUtlan('utlant_til')">Låntaker ⇅</th>
             <th class="center" style="cursor:pointer" onclick="sorterUtlan('frist')">Frist ⇅</th>
             <th class="center">Lever</th>
+            <th class="center col-extra" style="cursor:pointer" onclick="sorterUtlan('antall')">Ant. ⇅</th>
           </tr></thead>
           <tbody id="boksUtlanslogg"></tbody>
         </table>
@@ -267,13 +267,14 @@ function renderBoks() {
       html += "<tr>";
       html += "<td style='padding-left:14px'><a class='item-name-link' href='item.html?id=" + encodeURIComponent(gr.alle[0].id) + "'>" + navn + "</a></td>";
       html += "<td class='tc green-text fw'>" + gr.tilgj + "</td>";
-      html += "<td class='tc " + (gr.utlant > 0 ? "red-text" : "muted-text") + "'>" + gr.utlant + "</td>";
-      html += "<td class='tc muted-text'>" + gr.alle.length + "</td>";
       html += "<td class='tc' style='white-space:nowrap'>";
       html += "<button class='btn-action btn-edit' onclick='window.location.href=\"item.html?id=" + encodeURIComponent(gr.alle[0].id) + "\"' title='Rediger'>&#9998;&#65039;</button>";
       html += "<button class='btn-action btn-red' onclick='apneUtlanForNavn(\"" + sn + "\")' title='Lån ut'>&#128228;</button>";
       html += "<button class='btn-action btn-green' onclick='apneLeverForNavn(\"" + sn + "\")' title='Lever inn'>&#128229;</button>";
-      html += "</td></tr>";
+      html += "</td>";
+      html += "<td class='tc col-extra " + (gr.utlant > 0 ? "red-text" : "muted-text") + "'>" + gr.utlant + "</td>";
+      html += "<td class='tc muted-text col-extra'>" + gr.alle.length + "</td>";
+      html += "</tr>";
     });
     tbody.innerHTML = html;
   }
@@ -302,13 +303,14 @@ function renderBoks() {
       var frist = formatDato(gr.innleveringsdato);
       uhtml += "<tr class='" + (forfalt ? "row-forfalt" : "") + "'>";
       uhtml += "<td style='padding-left:16px'><div style='font-weight:600;font-size:13px'>" + gr.navn + "</div></td>";
-      uhtml += "<td class='tc fw'>" + gr.antall + "</td>";
       uhtml += "<td class='tc small-text'>" + gr.utlant_til + "</td>";
       uhtml += "<td class='tc mono small-text " + (forfalt ? "orange-text fw" : "") + "'>" + frist + (forfalt ? " !" : "") + "</td>";
       uhtml += "<td class='tc' style='white-space:nowrap'>";
       uhtml += "<button class='btn-action btn-green' onclick='leverGjenstander(\"" + idStr + "\"," + gr.antall + ")' title='Lever inn alle'>&#9989;</button>";
       uhtml += "<button class='btn-action btn-green' onclick='apneLeverDelvis(\"" + idStr + "\"," + gr.antall + ")' title='Lever inn delvis'>&#9999;&#65039;</button>";
-      uhtml += "</td></tr>";
+      uhtml += "</td>";
+      uhtml += "<td class='tc fw col-extra'>" + gr.antall + "</td>";
+      uhtml += "</tr>";
     });
     uTbody.innerHTML = uhtml;
   }

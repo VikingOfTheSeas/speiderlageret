@@ -184,7 +184,8 @@ a { color: var(--primary); text-decoration: none; }
     border-left: 1px solid rgba(70,189,198,0.15);
     background: rgba(70,189,198,0.02);
   }
-  .items-table th.col-extra {
+  .items-table th.col-extra,
+  .sum-table th.col-extra {
     border-left: 1px solid rgba(70,189,198,0.15);
     background: rgba(70,189,198,0.05);
     color: rgba(100,116,139,0.7) !important;
@@ -196,6 +197,8 @@ a { color: var(--primary); text-decoration: none; }
   /* Keep item name normal colour on mobile */
   .item-name-link { color: var(--text) !important; }
 }
+
+.scroll-x { overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; }
 
 .row-tilgjengelig td { background: transparent; }
 .row-utlant       td { background: rgba(248,113,113,0.07) !important; }

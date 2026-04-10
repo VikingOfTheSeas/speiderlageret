@@ -159,26 +159,37 @@
     <div class="kpi-grid" id="kpiGrid"></div>
     <div class="section-box">
       <div class="section-header">📦 Oversikt per kategori</div>
-      <table class="sum-table">
+      <div class="scroll-x">
+      <table class="sum-table" style="min-width:640px">
         <thead><tr>
           <th class="center" style="padding-left:16px;cursor:pointer" onclick="sorterKat('kat')">Kategori ⇅</th>
-          <th class="center" style="cursor:pointer" onclick="sorterKat('totalt')">Totalt ⇅</th><th class="center" style="cursor:pointer" onclick="sorterKat('tilgj')">Tilgjengelig ⇅</th>
-          <th class="center" style="cursor:pointer" onclick="sorterKat('utlant')">Utlånt ⇅</th><th class="center" style="cursor:pointer" onclick="sorterKat('rep')">Reparasjon ⇅</th>
-          <th class="center" style="cursor:pointer" onclick="sorterKat('tapt')">Tapt ⇅</th><th style="padding-right:16px;cursor:pointer" onclick="sorterKat('pst')">% Ledig ⇅</th>
+          <th class="center" style="cursor:pointer" onclick="sorterKat('tilgj')">Tilgjengelig ⇅</th>
+          <th class="center" style="cursor:pointer" onclick="sorterKat('utlant')">Utlånt ⇅</th>
+          <th class="center" style="cursor:pointer" onclick="sorterKat('totalt')">Totalt ⇅</th>
+          <th class="center col-extra" style="cursor:pointer" onclick="sorterKat('rep')">Reparasjon ⇅</th>
+          <th class="center col-extra" style="cursor:pointer" onclick="sorterKat('tapt')">Tapt ⇅</th>
+          <th class="col-extra" style="padding-right:16px;cursor:pointer" onclick="sorterKat('pst')">% Ledig ⇅</th>
         </tr></thead>
         <tbody id="katTabell"></tbody>
       </table>
+      </div>
     </div>
     <div class="section-box">
       <div class="section-header">📤 Utlånte gjenstander <span class="count-badge" id="utlant-count">0</span></div>
-      <table class="sum-table">
+      <div class="scroll-x">
+      <table class="sum-table" style="min-width:720px">
         <thead><tr>
-          <th class="center" style="padding-left:16px;cursor:pointer" onclick="sorterUtlante('id')">ID ⇅</th><th class="center" style="cursor:pointer" onclick="sorterUtlante('navn')">Gjenstand ⇅</th>
-          <th class="center" style="cursor:pointer" onclick="sorterUtlante('utlant_til')">Utlånt til ⇅</th><th class="center" style="cursor:pointer" onclick="sorterUtlante('utlansdato')">Dato ⇅</th>
-          <th class="center" style="cursor:pointer" onclick="sorterUtlante('innleveringsdato')">Frist ⇅</th><th class="center" style="cursor:pointer" onclick="sorterUtlante('status')">Status ⇅</th><th class="center">Handling</th>
+          <th class="center" style="padding-left:16px;cursor:pointer" onclick="sorterUtlante('navn')">Gjenstand ⇅</th>
+          <th class="center" style="cursor:pointer" onclick="sorterUtlante('utlant_til')">Utlånt til ⇅</th>
+          <th class="center" style="cursor:pointer" onclick="sorterUtlante('innleveringsdato')">Frist ⇅</th>
+          <th class="center">Handling</th>
+          <th class="center col-extra" style="cursor:pointer" onclick="sorterUtlante('id')">ID ⇅</th>
+          <th class="center col-extra" style="cursor:pointer" onclick="sorterUtlante('utlansdato')">Dato ⇅</th>
+          <th class="center col-extra" style="cursor:pointer" onclick="sorterUtlante('status')">Status ⇅</th>
         </tr></thead>
         <tbody id="utlantTabell"></tbody>
       </table>
+      </div>
     </div>
   </section>
 
@@ -189,13 +200,13 @@
       <button class="btn-save" style="padding:7px 16px;font-size:13px" onclick="apneNyBoks()">➕ Ny boks</button>
     </div>
     <div class="table-wrap">
-      <table class="items-table">
+      <table class="items-table" style="min-width:560px">
         <thead><tr>
-          <th onclick="sorterBokser('id')" style="cursor:pointer">ID ⇅</th>
           <th onclick="sorterBokser('navn')" style="cursor:pointer">Navn ⇅</th>
-          <th onclick="sorterBokser('hylleplassering')" style="cursor:pointer">Hylleplassering ⇅</th>
+          <th onclick="sorterBokser('hylleplassering')" style="cursor:pointer">Hylle ⇅</th>
           <th onclick="sorterBokser('gjenstander')" style="cursor:pointer">Gjenstander ⇅</th>
           <th>Handling</th>
+          <th onclick="sorterBokser('id')" class="col-extra" style="cursor:pointer">ID ⇅</th>
         </tr></thead>
         <tbody id="bokserBody"></tbody>
       </table>
@@ -1320,11 +1331,12 @@ function viseSammendrag() {
   kb.innerHTML = katRader.map(function(r) {
     var farge = r.pst > 80 ? "#34d399" : r.pst > 50 ? "#fbbf24" : "#f87171";
     return "<tr><td class='kat-navn' style='padding-left:16px'>" + r.kat + "</td>" +
-      "<td class='center'>" + r.totalt + "</td><td class='center green-text fw'>" + r.tilgj + "</td>" +
+      "<td class='center green-text fw'>" + r.tilgj + "</td>" +
       "<td class='center'>" + (r.utlant > 0 ? "<span class='red-text fw'>"+r.utlant+"</span>" : "0") + "</td>" +
-      "<td class='center'>" + (r.rep > 0 ? "<span class='orange-text'>"+r.rep+"</span>" : "0") + "</td>" +
-      "<td class='center muted-text'>" + r.tapt + "</td>" +
-      "<td style='padding-right:16px'><div class='andel-row'><div class='andel-bar'><div class='andel-fill' style='width:" + r.pst + "%;background:" + farge + "'></div></div><span class='andel-pst'>" + r.pst + "%</span></div></td></tr>";
+      "<td class='center'>" + r.totalt + "</td>" +
+      "<td class='center col-extra'>" + (r.rep > 0 ? "<span class='orange-text'>"+r.rep+"</span>" : "0") + "</td>" +
+      "<td class='center muted-text col-extra'>" + r.tapt + "</td>" +
+      "<td class='col-extra' style='padding-right:16px'><div class='andel-row'><div class='andel-bar'><div class='andel-fill' style='width:" + r.pst + "%;background:" + farge + "'></div></div><span class='andel-pst'>" + r.pst + "%</span></div></td></tr>";
   }).join("");
 
   // Utlånte gjenstander med sortering
@@ -1342,12 +1354,14 @@ function viseSammendrag() {
     : ul.map(function(g) {
         var f = g.innleveringsdato && new Date(g.innleveringsdato) < new Date();
         return "<tr class='" + (f ? "row-forfalt" : "") + "'>" +
-          "<td class='mono' style='padding-left:16px'><a class='item-link' href='item.html?id=" + enc(g.id) + "'>" + g.id + "</a></td>" +
-          "<td>" + g.navn + "</td><td>" + (g.utlant_til||"-") + "</td>" +
-          "<td class='mono small-text center'>" + formatDato(g.utlansdato) + "</td>" +
+          "<td style='padding-left:16px'><a class='item-name-link' href='item.html?id=" + enc(g.id) + "'>" + g.navn + "</a></td>" +
+          "<td class='center'>" + (g.utlant_til||"-") + "</td>" +
           "<td class='mono small-text center " + (f ? "orange-text fw" : "") + "'>" + formatDato(g.innleveringsdato) + (f ? " !" : "") + "</td>" +
-          "<td class='center'>" + (f ? "<span class='badge-forfalt'>FORFALT</span>" : "OK") + "</td>" +
-          "<td class='center'><button class='btn-action btn-edit' onclick='apneRediger(\"" + g.id + "\")'>&#9998;&#65039;</button></td></tr>";
+          "<td class='center'><button class='btn-action btn-edit' onclick='apneRediger(\"" + g.id + "\")'>&#9998;&#65039;</button></td>" +
+          "<td class='mono center col-extra'><a class='item-link' href='item.html?id=" + enc(g.id) + "'>" + g.id + "</a></td>" +
+          "<td class='mono small-text center col-extra'>" + formatDato(g.utlansdato) + "</td>" +
+          "<td class='center col-extra'>" + (f ? "<span class='badge-forfalt'>FORFALT</span>" : "OK") + "</td>" +
+          "</tr>";
       }).join("");
 }
 
@@ -1386,7 +1400,6 @@ async function visBokser() {
       ? "<span class='muted-text'>Tom</span>"
       : "<span class='green-text fw'>" + tilgj + "</span><span class='muted-text'>/" + totalt + " stk " + typer + " type" + (typer !== 1 ? "r" : "") + "</span>";
     return "<tr class='item-row'>" +
-      "<td class='tc mono'><a class='item-link' href='boks.html?id=" + enc(b.id) + "'>" + b.id + "</a></td>" +
       "<td class='tc'><a class='item-name-link' href='boks.html?id=" + enc(b.id) + "'>" + b.navn + "</a></td>" +
       "<td class='tc muted-text'>" + (b.hylleplassering||"-") + "</td>" +
       "<td class='tc'>" + gjTekst + "</td>" +
@@ -1394,7 +1407,9 @@ async function visBokser() {
       "<button class='btn-action btn-edit' onclick='window.location.href=\"boks.html?id=" + enc(b.id) + "\"' title='Åpne'>&#9998;&#65039;</button>" +
       "<button class='btn-action btn-qr' onclick='apneBoksQr(\"" + b.id + "\",\"" + b.navn.replace(/"/g,"") + "\")' title='QR-kode'>&#11035;</button>" +
       "<button class='btn-action btn-delete' onclick='bekreftSlettBoks(\"" + b.id + "\",\"" + b.navn.replace(/"/g,"") + "\")' title='Slett'>&#128465;&#65039;</button>" +
-      "</div></td></tr>";
+      "</div></td>" +
+      "<td class='tc mono col-extra'><a class='item-link' href='boks.html?id=" + enc(b.id) + "'>" + b.id + "</a></td>" +
+      "</tr>";
   }).join("");
 }
 
