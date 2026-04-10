@@ -271,8 +271,8 @@ function renderBoks() {
       html += "<td class='tc muted-text'>" + gr.alle.length + "</td>";
       html += "<td class='tc' style='white-space:nowrap'>";
       html += "<button class='btn-action btn-edit' onclick='window.location.href=\"item.html?id=" + encodeURIComponent(gr.alle[0].id) + "\"' title='Rediger'>&#9998;&#65039;</button>";
-      html += "<button class='btn-action btn-qr' onclick='apneUtlanForNavn(\"" + sn + "\")' title='Lån ut'>&#128228;</button>";
-      html += "<button class='btn-action btn-delete' onclick='apneLeverForNavn(\"" + sn + "\")' title='Lever inn'>&#128229;</button>";
+      html += "<button class='btn-action btn-red' onclick='apneUtlanForNavn(\"" + sn + "\")' title='Lån ut'>&#128228;</button>";
+      html += "<button class='btn-action btn-green' onclick='apneLeverForNavn(\"" + sn + "\")' title='Lever inn'>&#128229;</button>";
       html += "</td></tr>";
     });
     tbody.innerHTML = html;
@@ -306,8 +306,8 @@ function renderBoks() {
       uhtml += "<td class='tc small-text'>" + gr.utlant_til + "</td>";
       uhtml += "<td class='tc mono small-text " + (forfalt ? "orange-text fw" : "") + "'>" + frist + (forfalt ? " !" : "") + "</td>";
       uhtml += "<td class='tc' style='white-space:nowrap'>";
-      uhtml += "<button class='btn-action btn-qr' onclick='leverGjenstander(\"" + idStr + "\"," + gr.antall + ")' title='Lever inn alle'>&#9989;</button>";
-      uhtml += "<button class='btn-action btn-edit' onclick='apneLeverDelvis(\"" + idStr + "\"," + gr.antall + ")' title='Lever inn delvis'>&#9999;&#65039;</button>";
+      uhtml += "<button class='btn-action btn-green' onclick='leverGjenstander(\"" + idStr + "\"," + gr.antall + ")' title='Lever inn alle'>&#9989;</button>";
+      uhtml += "<button class='btn-action btn-green' onclick='apneLeverDelvis(\"" + idStr + "\"," + gr.antall + ")' title='Lever inn delvis'>&#9999;&#65039;</button>";
       uhtml += "</td></tr>";
     });
     uTbody.innerHTML = uhtml;
