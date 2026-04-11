@@ -383,7 +383,7 @@ function byggUtlanModal(forhNavn) {
   html += "</select></div>";
   html += "<div class='form-field'><label>Antall</label><input type='number' id='utlanAntall' value='1' min='1' style='width:100%'></div>";
   html += "<div class='form-grid2'><div class='form-field'><label>Utlånsdato</label><input type='date' id='utlanDato' value='" + iDag() + "'></div>";
-  html += "<div class='form-field'><label>Leveres inn</label><input type='date' id='utlanFrist'></div></div>";
+  html += "<div class='form-field'><label>Leveres inn</label><input type='date' id='utlanFrist' value='" + iDag() + "'></div></div>";
   html += "<div class='form-field'><label>Låntaker *</label><input type='text' id='utlanTil' placeholder='Navn eller gruppe' autocomplete='name' style='width:100%'></div>";
 
   document.getElementById("utlanBody").innerHTML = html;
@@ -408,6 +408,8 @@ async function lagreUtlan() {
   var frist = document.getElementById("utlanFrist").value;
 
   if (!til) { visBanner("Fyll inn låntaker", "error"); return; }
+  if (!dato) { visBanner("Fyll inn utlånsdato", "error"); return; }
+  if (dato < iDag()) { visBanner("Utlånsdato kan ikke være før i dag", "error"); return; }
   if (frist && dato > frist) { visBanner("Utlånsdato kan ikke være etter innleveringsdato", "error"); return; }
 
   var grupper = lagGrupper();

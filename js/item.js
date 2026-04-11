@@ -37,13 +37,21 @@ function renderItem(g) {
   const banner = document.getElementById("utlanBanner");
   if (g.status === "Utlånt") {
     banner.style.display = "block";
-    document.getElementById("bannerTil").textContent  = g.utlant_til || "—";
-    document.getElementById("bannerDato").textContent = g.utlansdato || "—";
-    const fristEl = document.getElementById("bannerFrist");
     const iDagStr = (function(){ const dd=new Date(); return dd.getFullYear()+"-"+("0"+(dd.getMonth()+1)).slice(-2)+"-"+("0"+dd.getDate()).slice(-2); })();
+    const fmtDato = s => {
+      if (!s) return "—";
+      const sp = s.toString().substring(0,10);
+      if (sp === iDagStr) return "I dag";
+      const d = new Date(sp);
+      if (isNaN(d)) return s;
+      return ("0"+d.getDate()).slice(-2) + "/" + ("0"+(d.getMonth()+1)).slice(-2) + "/" + d.getFullYear();
+    };
+    document.getElementById("bannerTil").textContent  = g.utlant_til || "—";
+    document.getElementById("bannerDato").textContent = fmtDato(g.utlansdato);
+    const fristEl = document.getElementById("bannerFrist");
     const fristDel = (g.innleveringsdato || "").toString().substring(0,10);
     const forfalt = fristDel && fristDel < iDagStr;
-    fristEl.textContent = (g.innleveringsdato || "—") + (forfalt ? " ⚠️" : "");
+    fristEl.textContent = fmtDato(g.innleveringsdato) + (forfalt ? " ⚠️" : "");
     fristEl.className = "utlan-banner-val mono" + (forfalt ? " forfalt-text" : "");
   } else { banner.style.display = "none"; }
 
@@ -87,9 +95,10 @@ async function endreStatus(ny) {
 }
 
 function apneLanModal() {
+  const idag = (function(){ const dd=new Date(); return dd.getFullYear()+"-"+("0"+(dd.getMonth()+1)).slice(-2)+"-"+("0"+dd.getDate()).slice(-2); })();
   document.getElementById("loanTil").value    = currentItem?.utlant_til    || "";
-  document.getElementById("loanDato").value   = currentItem?.utlansdato    || new Date().toISOString().split("T")[0];
-  document.getElementById("loanFrist").value  = currentItem?.innleveringsdato || "";
+  document.getElementById("loanDato").value   = currentItem?.utlansdato    || idag;
+  document.getElementById("loanFrist").value  = currentItem?.innleveringsdato || idag;
   document.getElementById("loanNotater").value = currentItem?.notater      || "";
   document.getElementById("loanModal").classList.add("open");
 }
@@ -100,11 +109,14 @@ async function lagreLan() {
   if (!til) { visBanner("Skriv hvem som låner!", "error"); return; }
   const dato  = document.getElementById("loanDato").value;
   const frist = document.getElementById("loanFrist").value;
+  const idag = (function(){ const dd=new Date(); return dd.getFullYear()+"-"+("0"+(dd.getMonth()+1)).slice(-2)+"-"+("0"+dd.getDate()).slice(-2); })();
+  if (!dato) { visBanner("Fyll inn utlånsdato", "error"); return; }
+  if (dato < idag) { visBanner("Utlånsdato kan ikke være før i dag", "error"); return; }
   if (frist && dato > frist) { visBanner("Utlånsdato kan ikke være etter innleveringsdato", "error"); return; }
   const notater = document.getElementById("loanNotater").value.trim() || currentItem.notater;
   const oppdatert = {
     ...currentItem, status: "Utlånt", utlant_til: til,
-    utlansdato: dato, innleveringsdato: frist, notater,
+    utlansdato: dato, innleveringsdato: frist || null, notater,
   };
   const { error } = await db.from("gjenstander").upsert(oppdatert, { onConflict: "id" });
   if (!error) {

@@ -684,7 +684,7 @@ function apneUtlanModal(ids) {
   }).join("");
   document.getElementById("utlanTil").value = "";
   document.getElementById("utlanDato").value = idag;
-  document.getElementById("utlanFrist").value = "";
+  document.getElementById("utlanFrist").value = idag;
   oppdaterDatoVis("utlanDato", "utlanDatoVis");
   oppdaterDatoVis("utlanFrist", "utlanFristVis");
   document.getElementById("utlanModal").classList.add("open");
@@ -709,6 +709,7 @@ async function lagreUtlanModal() {
   var frist = document.getElementById("utlanFrist").value;
   if (!til)  { visBanner("Fyll inn låntaker", "error"); return; }
   if (!dato) { visBanner("Fyll inn utlånsdato", "error"); return; }
+  if (dato < _idag()) { visBanner("Utlånsdato kan ikke være før i dag", "error"); return; }
   if (frist && dato > frist) { visBanner("Utlånsdato kan ikke være etter innleveringsdato", "error"); return; }
   var btn = document.querySelector("#utlanModal .btn-save");
   btn.disabled = true; btn.textContent = "Lagrer…";
