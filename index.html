@@ -525,10 +525,13 @@ function _idag() {
   var d = new Date();
   return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0"+d.getDate()).slice(-2);
 }
+function _datoDel(s) { return (s || "").toString().substring(0, 10); }
+function erForfalt(s) { var d = _datoDel(s); return d && d < _idag(); }
 function formatDato(d) {
   if (!d) return "-";
-  if (d === _idag()) return "I dag";
-  var dt = new Date(d);
+  var dp = _datoDel(d);
+  if (dp === _idag()) return "I dag";
+  var dt = new Date(dp);
   if (isNaN(dt)) return d;
   return ("0"+dt.getDate()).slice(-2) + "/" + ("0"+(dt.getMonth()+1)).slice(-2) + "/" + dt.getFullYear();
 }
@@ -1299,7 +1302,7 @@ function viseSammendrag() {
   var utl   = gjenstander.filter(function(g) { return g.status === "Utlånt"; }).length;
   var rep   = gjenstander.filter(function(g) { return g.status === "Til reparasjon"; }).length;
   var tapt  = gjenstander.filter(function(g) { return g.status === "Tapt"; }).length;
-  var forf  = gjenstander.filter(function(g) { return g.status === "Utlånt" && g.innleveringsdato && new Date(g.innleveringsdato) < new Date(); }).length;
+  var forf  = gjenstander.filter(function(g) { return g.status === "Utlånt" && erForfalt(g.innleveringsdato); }).length;
   var kpis = [
     {icon:"&#128230;", val:total, label:"Totalt",       color:"#46bdc6"},
     {icon:"&#9989;",   val:tilg,  label:"Tilgjengelig", color:"#34d399"},
@@ -1354,7 +1357,7 @@ function viseSammendrag() {
   ub.innerHTML = !ul.length
     ? "<tr><td colspan='7' class='empty-row'>Ingen utlante</td></tr>"
     : ul.map(function(g) {
-        var f = g.innleveringsdato && new Date(g.innleveringsdato) < new Date();
+        var f = erForfalt(g.innleveringsdato);
         return "<tr class='" + (f ? "row-forfalt" : "") + "'>" +
           "<td style='padding-left:16px'><a class='item-name-link' href='item.html?id=" + enc(g.id) + "'>" + g.navn + "</a></td>" +
           "<td class='center'>" + (g.utlant_til||"-") + "</td>" +

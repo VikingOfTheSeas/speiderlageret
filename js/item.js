@@ -40,7 +40,9 @@ function renderItem(g) {
     document.getElementById("bannerTil").textContent  = g.utlant_til || "—";
     document.getElementById("bannerDato").textContent = g.utlansdato || "—";
     const fristEl = document.getElementById("bannerFrist");
-    const forfalt = g.innleveringsdato && new Date(g.innleveringsdato) < new Date();
+    const iDagStr = (function(){ const dd=new Date(); return dd.getFullYear()+"-"+("0"+(dd.getMonth()+1)).slice(-2)+"-"+("0"+dd.getDate()).slice(-2); })();
+    const fristDel = (g.innleveringsdato || "").toString().substring(0,10);
+    const forfalt = fristDel && fristDel < iDagStr;
     fristEl.textContent = (g.innleveringsdato || "—") + (forfalt ? " ⚠️" : "");
     fristEl.className = "utlan-banner-val mono" + (forfalt ? " forfalt-text" : "");
   } else { banner.style.display = "none"; }

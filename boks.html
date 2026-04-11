@@ -293,7 +293,7 @@ function renderBoks() {
     var uhtml = "";
     var sortedUtlan = sorterUtlanGrupper(utMap);
     sortedUtlan.forEach(function(gr) {
-      var forfalt = gr.innleveringsdato !== "-" && new Date(gr.innleveringsdato) < new Date();
+      var forfalt = erForfalt(gr.innleveringsdato);
       var idStr = gr.ids.join(",");
       var frist = formatDato(gr.innleveringsdato);
       uhtml += "<tr class='" + (forfalt ? "row-forfalt" : "") + "'>";
@@ -679,11 +679,14 @@ function iDag() {
   var d = new Date();
   return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0"+d.getDate()).slice(-2);
 }
+function _datoDel(s) { return (s || "").toString().substring(0, 10); }
+function erForfalt(s) { var d = _datoDel(s); return d && d !== "-" && d < iDag(); }
 
 function formatDato(s) {
   if (!s || s === "-") return "-";
-  if (s === iDag()) return "I dag";
-  var d = new Date(s);
+  var sp = _datoDel(s);
+  if (sp === iDag()) return "I dag";
+  var d = new Date(sp);
   if (isNaN(d)) return s;
   return ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth()+1)).slice(-2) + "/" + d.getFullYear();
 }
