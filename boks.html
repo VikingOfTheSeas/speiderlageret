@@ -93,10 +93,10 @@
           <div class="info-row"><span class="info-label">Hylle</span><span class="info-value" id="boksHylleInfo">-</span></div>
           <div class="info-row"><span class="info-label">Beskrivelse</span><span class="info-value muted-text" id="boksBeskInfo">-</span></div>
         </div>
-        <div class="info-card qr-card">
+        <div class="info-card qr-card admin-only">
           <h3>QR-kode</h3>
           <div class="qr-code-box" id="boksQrCode"></div>
-          <div class="qr-hint">Scan for a apne denne boksen</div>
+          <div class="qr-hint">Scan for å åpne denne boksen</div>
           <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px" class="admin-only">
             <button class="btn-print" onclick="skrivUtBoksEtikett()">Skriv ut</button>
             <button class="btn-print" onclick="lastNedBoksQr()" style="background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.3);color:#34d399">Last ned QR</button>
@@ -555,6 +555,7 @@ async function lagreLeverModal(utMap) {
 }
 
 async function leverGjenstander(idStr, antall) {
+  if (!confirm("Er du sikker på at du vil levere inn " + antall + " stk?")) return;
   var ids = idStr.split(",").slice(0, antall);
   for (var i = 0; i < ids.length; i++) {
     await db.from("gjenstander").update({ status: "Tilgjengelig", utlant_til: "", utlansdato: "", innleveringsdato: "" }).eq("id", ids[i]);

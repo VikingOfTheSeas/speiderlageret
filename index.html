@@ -66,11 +66,11 @@
       <button class="btn-save admin-only" style="margin-left:auto;padding:7px 14px;font-size:13px;white-space:nowrap" onclick="apneLeggTilModal()">➕ Legg til</button>
     </div>
 
-    <div id="batchBar" class="batch-bar admin-only">
+    <div id="batchBar" class="batch-bar">
       <span id="batchCount">0 valgt</span>
       <button class="btn-batch-utlan" onclick="batchUtlan()">📤 Utlånt</button>
       <button class="btn-batch-tilg"  onclick="batchTilgjengelig()">✅ Tilgjengelig</button>
-      <button class="btn-save" style="padding:5px 12px;font-size:12px" onclick="apneBatchRediger()">✏️ Rediger</button>
+      <button class="btn-save admin-only" style="padding:5px 12px;font-size:12px" onclick="apneBatchRediger()">✏️ Rediger</button>
       <button class="btn-batch-clear" onclick="clearValg()">✕ Avbryt</button>
     </div>
 
@@ -78,7 +78,7 @@
       <table class="items-table">
         <thead>
           <tr>
-            <th style="width:36px" class="admin-only"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="row-checkbox"></th>
+            <th style="width:36px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="row-checkbox"></th>
             <th onclick="setSorter('id')">ID ⇅</th>
             <th onclick="setSorter('navn')">Navn ⇅</th>
             <th onclick="setSorter('status')">Status ⇅</th>
@@ -620,7 +620,7 @@ function visTabell(liste) {
     var sel = valgte.has(g.id);
     var opts = STATUSER.map(function(s) { return "<option" + (s===g.status?" selected":"") + ">" + s + "</option>"; }).join("");
     return "<tr class='item-row row-" + sk(g.status) + (sel?" row-selected":"") + "' data-id='" + g.id + "'>" +
-      "<td class='tc admin-only'><input type='checkbox' class='row-checkbox' value='" + g.id + "' onchange='oppdaterValg()'" + (sel?" checked":"") + "></td>" +
+      "<td class='tc'><input type='checkbox' class='row-checkbox' value='" + g.id + "' onchange='oppdaterValg()'" + (sel?" checked":"") + "></td>" +
       "<td class='tc'><a class='item-link mono' href='item.html?id=" + enc(g.id) + "'>" + g.id + "</a></td>" +
       "<td class='tc'><span class='item-name-link' style='cursor:pointer' onclick='apneRediger(\"" + g.id + "\")'>" + g.navn + "</span></td>" +
       "<td class='tc'><select class='inline-status status-select-" + sk(g.status) + "' onchange='raskStatus(\"" + g.id + "\",this)'>" + opts + "</select></td>" +
