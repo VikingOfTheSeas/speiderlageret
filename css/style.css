@@ -85,6 +85,26 @@ a { color: var(--primary); text-decoration: none; }
 }
 .btn-logout:hover { background: rgba(248,113,113,0.2); }
 
+/* ── ADMIN MODE ────────────────────────────────────────────────────── */
+body:not(.admin-mode) .admin-only { display: none !important; }
+
+.hamburger {
+  display: flex !important;
+}
+
+.hmeny-admin {
+  padding: 11px 14px; background: rgba(70,189,198,0.08);
+  border: 2px solid transparent; border-radius: 8px;
+  color: var(--muted); cursor: pointer;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  text-align: left; transition: all .15s;
+}
+.hmeny-admin:hover { background: rgba(70,189,198,0.15); color: var(--text); }
+.hmeny-admin.active {
+  background: rgba(70,189,198,0.18); color: var(--primary);
+  border-color: var(--primary);
+}
+
 /* ── MAIN ───────────────────────────────────────────────────────────── */
 .main { max-width: 1400px; margin: 0 auto; padding: 20px; }
 .tab-content        { display: none; }
@@ -538,7 +558,7 @@ a { color: var(--primary); text-decoration: none; }
 
 /* ── HAMBURGER ──────────────────────────────────────────────────────── */
 .hamburger {
-  display: none;
+  display: flex;
   flex-direction: column; justify-content: center; align-items: center;
   gap: 5px; width: 38px; height: 38px;
   background: rgba(255,255,255,0.06); border: 1px solid var(--border);
@@ -594,7 +614,6 @@ a { color: var(--primary); text-decoration: none; }
   .topbar-logo { width: 26px; height: 26px; }
   .tabs { display: flex; gap: 2px; flex: 1; justify-content: center; }
   .tab { padding: 5px 6px; font-size: 11px; }
-  .hamburger { display: none; }
   .topbar-right { gap: 4px; }
   .topbar-right .btn-logout { display: none; }
   .filters-row { flex-wrap: wrap; }

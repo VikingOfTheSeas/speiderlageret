@@ -25,23 +25,23 @@
       <button class="tab" data-tab="bokser">🗃️ Bokser</button>
       <button class="tab" data-tab="sammendrag">📊 Sammendrag</button>
     </nav>
-    <button class="hamburger" id="hamburger" onclick="toggleMeny()" aria-label="Meny">
-      <span></span><span></span><span></span>
-    </button>
-    <div class="hamburger-meny" id="hamburgerMeny">
-      <button class="hmeny-tab active" data-tab="lager">📦 Lager</button>
-      <button class="hmeny-tab" data-tab="bokser">🗃️ Bokser</button>
-      <button class="hmeny-tab" data-tab="sammendrag">📊 Sammendrag</button>
-      <div class="hmeny-divider"></div>
-      <button class="hmeny-logout" onclick="loggUt()">🚪 Logg ut</button>
-    </div>
     <div class="topbar-right">
       <div class="topbar-stats">
         <span><span class="stat-blue" id="stat-total">0</span> stk</span>
         <span><span class="stat-green" id="stat-tilgjengelig">0</span> ledig</span>
         <span><span class="stat-red" id="stat-utlant">0</span> utlånt</span>
       </div>
-      <button class="btn-logout" onclick="loggUt()">🚪 Logg ut</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMeny()" aria-label="Meny">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="hamburger-meny" id="hamburgerMeny">
+        <button class="hmeny-tab active" data-tab="lager">📦 Lager</button>
+        <button class="hmeny-tab" data-tab="bokser">🗃️ Bokser</button>
+        <button class="hmeny-tab" data-tab="sammendrag">📊 Sammendrag</button>
+        <div class="hmeny-divider"></div>
+        <button class="hmeny-admin" id="adminToggle" onclick="toggleAdmin()">🔧 Administrer</button>
+        <button class="hmeny-logout" onclick="loggUt()">🚪 Logg ut</button>
+      </div>
     </div>
   </div>
 </header>
@@ -62,11 +62,11 @@
       <input type="text" id="searchInput" class="search-input" placeholder="Søk…" style="max-width:130px;flex:0 0 130px">
       <div class="filter-count"><span id="count-shown">0</span>&thinsp;/&thinsp;<span id="count-total">0</span></div>
       <button class="btn-qr-scan" onclick="apneScanner()" title="Scan QR-koder">📷</button>
-      <button class="btn-ko-toggle" id="drawerToggleBtn" onclick="toggleDrawer()" title="Utskriftskø" style="display:none">🖨️ <span id="drawerBadge">0</span></button>
-      <button class="btn-save" style="margin-left:auto;padding:7px 14px;font-size:13px;white-space:nowrap" onclick="apneLeggTilModal()">➕ Legg til</button>
+      <button class="btn-ko-toggle admin-only" id="drawerToggleBtn" onclick="toggleDrawer()" title="Utskriftskø" style="display:none">🖨️ <span id="drawerBadge">0</span></button>
+      <button class="btn-save admin-only" style="margin-left:auto;padding:7px 14px;font-size:13px;white-space:nowrap" onclick="apneLeggTilModal()">➕ Legg til</button>
     </div>
 
-    <div id="batchBar" class="batch-bar">
+    <div id="batchBar" class="batch-bar admin-only">
       <span id="batchCount">0 valgt</span>
       <button class="btn-batch-utlan" onclick="batchUtlan()">📤 Utlånt</button>
       <button class="btn-batch-tilg"  onclick="batchTilgjengelig()">✅ Tilgjengelig</button>
@@ -78,11 +78,11 @@
       <table class="items-table">
         <thead>
           <tr>
-            <th style="width:36px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="row-checkbox"></th>
+            <th style="width:36px" class="admin-only"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="row-checkbox"></th>
             <th onclick="setSorter('id')">ID ⇅</th>
             <th onclick="setSorter('navn')">Navn ⇅</th>
             <th onclick="setSorter('status')">Status ⇅</th>
-            <th>Handling</th>
+            <th class="admin-only">Handling</th>
             <th onclick="setSorter('hylleplassering')" class="col-extra">Hylle ⇅</th>
             <th onclick="setSorter('kategori')" class="col-extra">Kategori ⇅</th>
             <th onclick="setSorter('utlant_til')" class="col-extra">Utlånt til ⇅</th>
@@ -182,9 +182,9 @@
           <th class="center" style="padding-left:16px;cursor:pointer" onclick="sorterUtlante('navn')">Gjenstand ⇅</th>
           <th class="center" style="cursor:pointer" onclick="sorterUtlante('utlant_til')">Utlånt til ⇅</th>
           <th class="center" style="cursor:pointer" onclick="sorterUtlante('innleveringsdato')">Frist ⇅</th>
-          <th class="center">Handling</th>
+          <th class="center admin-only">Handling</th>
           <th class="center col-extra" style="cursor:pointer" onclick="sorterUtlante('id')">ID ⇅</th>
-          <th class="center col-extra" style="cursor:pointer" onclick="sorterUtlante('utlansdato')">Dato ⇅</th>
+          <th class="center col-extra" style="cursor:pointer" onclick="sorterUtlante('utlansdato')">Lånt ut ⇅</th>
           <th class="center col-extra" style="cursor:pointer" onclick="sorterUtlante('status')">Status ⇅</th>
         </tr></thead>
         <tbody id="utlantTabell"></tbody>
@@ -197,7 +197,7 @@
   <section id="bokser" class="tab-content">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
       <div style="font-size:13px;color:var(--muted)">Bokser med QR-kode. Klikk for å se innhold og registrere utlån.</div>
-      <button class="btn-save" style="padding:7px 16px;font-size:13px" onclick="apneNyBoks()">➕ Ny boks</button>
+      <button class="btn-save admin-only" style="padding:7px 16px;font-size:13px" onclick="apneNyBoks()">➕ Ny boks</button>
     </div>
     <div class="table-wrap">
       <table class="items-table" style="min-width:560px">
@@ -205,7 +205,7 @@
           <th onclick="sorterBokser('navn')" style="cursor:pointer">Navn ⇅</th>
           <th onclick="sorterBokser('hylleplassering')" style="cursor:pointer">Hylle ⇅</th>
           <th onclick="sorterBokser('gjenstander')" style="cursor:pointer">Gjenstander ⇅</th>
-          <th>Handling</th>
+          <th class="admin-only">Handling</th>
           <th onclick="sorterBokser('id')" class="col-extra" style="cursor:pointer">ID ⇅</th>
         </tr></thead>
         <tbody id="bokserBody"></tbody>
@@ -218,7 +218,7 @@
 
 <!-- PRINT AREA -->
 <!-- PRINT DRAWER -->
-<div id="printDrawer" class="print-drawer">
+<div id="printDrawer" class="print-drawer admin-only">
   <div class="print-drawer-header">
     <span>🖨️ Utskriftskø <span id="koTeller" class="count-badge">0</span></span>
     <div style="display:flex;gap:8px;margin-left:auto">
@@ -620,11 +620,11 @@ function visTabell(liste) {
     var sel = valgte.has(g.id);
     var opts = STATUSER.map(function(s) { return "<option" + (s===g.status?" selected":"") + ">" + s + "</option>"; }).join("");
     return "<tr class='item-row row-" + sk(g.status) + (sel?" row-selected":"") + "' data-id='" + g.id + "'>" +
-      "<td class='tc'><input type='checkbox' class='row-checkbox' value='" + g.id + "' onchange='oppdaterValg()'" + (sel?" checked":"") + "></td>" +
+      "<td class='tc admin-only'><input type='checkbox' class='row-checkbox' value='" + g.id + "' onchange='oppdaterValg()'" + (sel?" checked":"") + "></td>" +
       "<td class='tc'><a class='item-link mono' href='item.html?id=" + enc(g.id) + "'>" + g.id + "</a></td>" +
       "<td class='tc'><span class='item-name-link' style='cursor:pointer' onclick='apneRediger(\"" + g.id + "\")'>" + g.navn + "</span></td>" +
       "<td class='tc'><select class='inline-status status-select-" + sk(g.status) + "' onchange='raskStatus(\"" + g.id + "\",this)'>" + opts + "</select></td>" +
-      "<td class='tc'><div class='actions-cell'>" +
+      "<td class='tc admin-only'><div class='actions-cell'>" +
       "<button class='btn-action btn-edit' onclick='apneRediger(\"" + g.id + "\")'>&#9998;&#65039;</button>" +
       "<button class='btn-action btn-qr' onclick='event.shiftKey?toggleKo(\"" + g.id + "\"):apneQr(\"" + g.id + "\",\"" + sn + "\")'>&#11035;</button>" +
       "<button class='btn-action btn-delete' onclick='event.shiftKey?bekreftSlett(\"" + g.id + "\",\"" + sn + "\",true):bekreftSlett(\"" + g.id + "\",\"" + sn + "\")'>&#128465;&#65039;</button>" +
@@ -1363,7 +1363,7 @@ function viseSammendrag() {
           "<td style='padding-left:16px'><a class='item-name-link' href='item.html?id=" + enc(g.id) + "'>" + g.navn + "</a></td>" +
           "<td class='center'>" + (g.utlant_til||"-") + "</td>" +
           "<td class='mono small-text center " + (f ? "orange-text fw" : "") + "'>" + formatDato(g.innleveringsdato) + (f ? "!" : "") + "</td>" +
-          "<td class='center'><button class='btn-action btn-edit' onclick='apneRediger(\"" + g.id + "\")'>&#9998;&#65039;</button></td>" +
+          "<td class='center admin-only'><button class='btn-action btn-edit' onclick='apneRediger(\"" + g.id + "\")'>&#9998;&#65039;</button></td>" +
           "<td class='mono center col-extra'><a class='item-link' href='item.html?id=" + enc(g.id) + "'>" + g.id + "</a></td>" +
           "<td class='mono small-text center col-extra'>" + formatDato(g.utlansdato) + "</td>" +
           "<td class='center col-extra'>" + (f ? "<span class='badge-forfalt'>FORFALT</span>" : "OK") + "</td>" +
@@ -1409,7 +1409,7 @@ async function visBokser() {
       "<td class='tc'><a class='item-name-link' href='boks.html?id=" + enc(b.id) + "'>" + b.navn + "</a></td>" +
       "<td class='tc muted-text'>" + (b.hylleplassering||"-") + "</td>" +
       "<td class='tc'>" + gjTekst + "</td>" +
-      "<td class='tc'><div class='actions-cell'>" +
+      "<td class='tc admin-only'><div class='actions-cell'>" +
       "<button class='btn-action btn-edit' onclick='window.location.href=\"boks.html?id=" + enc(b.id) + "\"' title='Åpne'>&#9998;&#65039;</button>" +
       "<button class='btn-action btn-qr' onclick='apneBoksQr(\"" + b.id + "\",\"" + b.navn.replace(/"/g,"") + "\")' title='QR-kode'>&#11035;</button>" +
       "<button class='btn-action btn-delete' onclick='bekreftSlettBoks(\"" + b.id + "\",\"" + b.navn.replace(/"/g,"") + "\")' title='Slett'>&#128465;&#65039;</button>" +
@@ -1631,6 +1631,19 @@ document.addEventListener("click", function(e) {
     btn.classList.remove("open");
   }
 });
+function toggleAdmin() {
+  var active = document.body.classList.toggle("admin-mode");
+  sessionStorage.setItem("adminMode", active ? "1" : "");
+  var btn = document.getElementById("adminToggle");
+  if (btn) btn.classList.toggle("active", active);
+}
+(function() {
+  if (sessionStorage.getItem("adminMode") === "1") {
+    document.body.classList.add("admin-mode");
+    var btn = document.getElementById("adminToggle");
+    if (btn) btn.classList.add("active");
+  }
+})();
 // Restore tab if coming back from a boks/item page
 const _tab = sessionStorage.getItem("aktivTab");
 if (_tab) { sessionStorage.removeItem("aktivTab"); document.addEventListener("DOMContentLoaded", () => settFane(_tab)); }

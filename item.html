@@ -27,13 +27,15 @@
     </nav>
     <div class="topbar-right">
       <button class="btn-qr-scan" onclick="window.location.href='index.html?scan=1'" title="Scan QR-koder">📷 Scan</button>
-      <button class="btn-logout item-logout-desktop" onclick="loggUt()">🚪 Logg ut</button>
-      <button class="hamburger" id="hamburger" onclick="toggleItemMeny()" aria-label="Meny">
+      <button class="hamburger" id="hamburger" onclick="toggleMeny()" aria-label="Meny">
         <span></span><span></span><span></span>
       </button>
       <div class="hamburger-meny" id="hamburgerMeny">
-        <a href="index.html" class="hmeny-tab">← Tilbake til lager</a>
+        <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','lager')">📦 Lager</a>
+        <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','bokser')">🗃️ Bokser</a>
+        <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','sammendrag')">📊 Sammendrag</a>
         <div class="hmeny-divider"></div>
+        <button class="hmeny-admin" id="adminToggle" onclick="toggleAdmin()">🔧 Administrer</button>
         <button class="hmeny-logout" onclick="loggUt()">🚪 Logg ut</button>
       </div>
     </div>
@@ -63,7 +65,7 @@
       </div>
       <div class="item-status-col">
         <span id="itemStatus" class="status-badge">—</span>
-        <button class="btn-edit-loan" style="background:rgba(70,189,198,0.12);border-color:rgba(70,189,198,0.3);color:var(--primary)" onclick="apneRedigerItem()">✏️ Rediger gjenstand</button>
+        <button class="btn-edit-loan admin-only" style="background:rgba(70,189,198,0.12);border-color:rgba(70,189,198,0.3);color:var(--primary)" onclick="apneRedigerItem()">✏️ Rediger gjenstand</button>
         <div class="quick-status-btns" id="quickStatusBtns"></div>
       </div>
     </div>
@@ -71,7 +73,7 @@
     <div id="utlanBanner" class="utlan-banner" style="display:none">
       <div class="utlan-banner-inner">
         <div><div class="utlan-banner-label">📤 Utlånt til</div><div class="utlan-banner-val" id="bannerTil">—</div></div>
-        <div><div class="utlan-banner-label">📅 Dato</div><div class="utlan-banner-val mono" id="bannerDato">—</div></div>
+        <div><div class="utlan-banner-label">📅 Lånt ut</div><div class="utlan-banner-val mono" id="bannerDato">—</div></div>
         <div><div class="utlan-banner-label">⏰ Frist</div><div class="utlan-banner-val mono" id="bannerFrist">—</div></div>
         <button class="btn-edit-loan" onclick="apneLanModal()">✏️ Rediger utlån</button>
       </div>
@@ -87,7 +89,7 @@
         <div id="bildePlaceholder" class="hylle-placeholder">
           <span class="ph-icon">📦</span><span>Ingen hyllebilde</span>
         </div>
-        <div class="bilde-upload-row">
+        <div class="bilde-upload-row admin-only">
           <label class="btn-file-upload" for="bildeFilInput">📁 Last opp fra enhet</label>
           <input type="file" id="bildeFilInput" accept="image/*" style="display:none" onchange="lastOppBildeItem(this)">
           <span class="bilde-upload-sep">eller</span>
@@ -115,8 +117,8 @@
           <div class="qr-hint">Scan → åpner denne siden</div>
           <div class="qr-url" id="qrUrl"></div>
           <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-            <button class="btn-print" onclick="skrivUtItemEtikett()">🖨️ Skriv ut etikett</button>
-            <button class="btn-print" onclick="lastNedQr()" style="background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.3);color:#34d399">⬇️ Last ned QR</button>
+            <button class="btn-print admin-only" onclick="skrivUtItemEtikett()">🖨️ Skriv ut etikett</button>
+            <button class="btn-print admin-only" onclick="lastNedQr()" style="background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.3);color:#34d399">⬇️ Last ned QR</button>
           </div>
         </div>
       </div>
@@ -252,7 +254,7 @@ function skrivUtItemEtikett() {
 </script>
 
 <script>
-function toggleItemMeny() {
+function toggleMeny() {
   document.getElementById("hamburgerMeny").classList.toggle("open");
   document.getElementById("hamburger").classList.toggle("open");
 }
@@ -264,10 +266,19 @@ document.addEventListener("click", function(e) {
     btn.classList.remove("open");
   }
 });
-// Auto-open scanner if redirected from scan button
-if (new URLSearchParams(location.search).get("scan") === "1") {
-  // No scanner on item page - just go back cleanly
+function toggleAdmin() {
+  var active = document.body.classList.toggle("admin-mode");
+  sessionStorage.setItem("adminMode", active ? "1" : "");
+  var btn = document.getElementById("adminToggle");
+  if (btn) btn.classList.toggle("active", active);
 }
+(function() {
+  if (sessionStorage.getItem("adminMode") === "1") {
+    document.body.classList.add("admin-mode");
+    var btn = document.getElementById("adminToggle");
+    if (btn) btn.classList.add("active");
+  }
+})();
 </script>
 </body>
 </html>

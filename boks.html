@@ -27,7 +27,17 @@
       <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','sammendrag')">📊 Sammendrag</a>
     </nav>
     <div class="topbar-right">
-      <button class="btn-logout item-logout-desktop" onclick="loggUt()">Logg ut</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMeny()" aria-label="Meny">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="hamburger-meny" id="hamburgerMeny">
+        <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','lager')">📦 Lager</a>
+        <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','bokser')">🗃️ Bokser</a>
+        <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','sammendrag')">📊 Sammendrag</a>
+        <div class="hmeny-divider"></div>
+        <button class="hmeny-admin" id="adminToggle" onclick="toggleAdmin()">🔧 Administrer</button>
+        <button class="hmeny-logout" onclick="loggUt()">🚪 Logg ut</button>
+      </div>
     </div>
   </div>
 </header>
@@ -67,7 +77,7 @@
         <div id="bildePlaceholder" class="hylle-placeholder">
           <span class="ph-icon">&#128230;</span><span>Ingen bilde</span>
         </div>
-        <div class="bilde-upload-row">
+        <div class="bilde-upload-row admin-only">
           <label class="btn-file-upload" for="boksBildeFilInput">Last opp</label>
           <input type="file" id="boksBildeFilInput" accept="image/*" style="display:none" onchange="lastOppBokseBilde(this)">
           <span class="bilde-upload-sep">eller</span>
@@ -87,7 +97,7 @@
           <h3>QR-kode</h3>
           <div class="qr-code-box" id="boksQrCode"></div>
           <div class="qr-hint">Scan for a apne denne boksen</div>
-          <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px">
+          <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px" class="admin-only">
             <button class="btn-print" onclick="skrivUtBoksEtikett()">Skriv ut</button>
             <button class="btn-print" onclick="lastNedBoksQr()" style="background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.3);color:#34d399">Last ned QR</button>
           </div>
@@ -114,12 +124,13 @@
     <div class="section-box">
       <div class="section-header">Aktive utlån <span class="count-badge" id="aktivUtlanCount">0</span></div>
       <div class="scroll-x">
-        <table class="sum-table" style="min-width:520px">
+        <table class="sum-table" style="min-width:620px">
           <thead><tr>
             <th class="center" style="padding-left:16px;cursor:pointer" onclick="sorterUtlan('navn')">Gjenstand ⇅</th>
             <th class="center" style="cursor:pointer" onclick="sorterUtlan('utlant_til')">Låntaker ⇅</th>
             <th class="center" style="cursor:pointer" onclick="sorterUtlan('frist')">Frist ⇅</th>
             <th class="center">Lever</th>
+            <th class="center col-extra" style="cursor:pointer" onclick="sorterUtlan('utlansdato')">Lånt ut ⇅</th>
             <th class="center col-extra" style="cursor:pointer" onclick="sorterUtlan('antall')">Ant. ⇅</th>
           </tr></thead>
           <tbody id="boksUtlanslogg"></tbody>
@@ -263,7 +274,7 @@ function renderBoks() {
       html += "<td style='padding-left:14px'><a class='item-name-link' href='item.html?id=" + encodeURIComponent(gr.alle[0].id) + "'>" + navn + "</a></td>";
       html += "<td class='tc green-text fw'>" + gr.tilgj + "</td>";
       html += "<td class='tc' style='white-space:nowrap'>";
-      html += "<button class='btn-action btn-edit' onclick='window.location.href=\"item.html?id=" + encodeURIComponent(gr.alle[0].id) + "\"' title='Rediger'>&#9998;&#65039;</button>";
+      html += "<button class='btn-action btn-edit admin-only' onclick='window.location.href=\"item.html?id=" + encodeURIComponent(gr.alle[0].id) + "\"' title='Rediger'>&#9998;&#65039;</button>";
       html += "<button class='btn-action btn-red' onclick='apneUtlanForNavn(\"" + sn + "\")' title='Lån ut'>&#128228;</button>";
       html += "<button class='btn-action btn-green' onclick='apneLeverForNavn(\"" + sn + "\")' title='Lever inn'>&#128229;</button>";
       html += "</td>";
@@ -280,12 +291,12 @@ function renderBoks() {
   var uTbody = document.getElementById("boksUtlanslogg");
 
   if (!utlante.length) {
-    uTbody.innerHTML = '<tr><td colspan="5" class="empty-row">Ingen aktive utlån</td></tr>';
+    uTbody.innerHTML = '<tr><td colspan="6" class="empty-row">Ingen aktive utlån</td></tr>';
   } else {
     var utMap = new Map();
     utlante.forEach(function(g) {
       var key = (g.navn || "") + "|" + (g.utlant_til || "") + "|" + (g.innleveringsdato || "");
-      if (!utMap.has(key)) utMap.set(key, { navn: g.navn, utlant_til: g.utlant_til || "-", innleveringsdato: g.innleveringsdato || "-", ids: [], antall: 0 });
+      if (!utMap.has(key)) utMap.set(key, { navn: g.navn, utlant_til: g.utlant_til || "-", utlansdato: g.utlansdato || "-", innleveringsdato: g.innleveringsdato || "-", ids: [], antall: 0 });
       var gr = utMap.get(key);
       gr.ids.push(g.id);
       gr.antall++;
@@ -304,6 +315,7 @@ function renderBoks() {
       uhtml += "<button class='btn-action btn-green' onclick='leverGjenstander(\"" + idStr + "\"," + gr.antall + ")' title='Lever inn alle'>&#9989;</button>";
       uhtml += "<button class='btn-action btn-green' onclick='apneLeverDelvis(\"" + idStr + "\"," + gr.antall + ")' title='Lever inn delvis'>&#9999;&#65039;</button>";
       uhtml += "</td>";
+      uhtml += "<td class='tc mono small-text col-extra'>" + formatDato(gr.utlansdato) + "</td>";
       uhtml += "<td class='tc fw col-extra'>" + gr.antall + "</td>";
       uhtml += "</tr>";
     });
@@ -360,6 +372,7 @@ function sorterUtlanGrupper(utMap) {
     if (utlanSortField === "antall") { return (a.antall - b.antall) * dir; }
     if (utlanSortField === "utlant_til") { va = (a.utlant_til || "").toLowerCase(); vb = (b.utlant_til || "").toLowerCase(); return va < vb ? -dir : va > vb ? dir : 0; }
     if (utlanSortField === "frist") { va = a.innleveringsdato || ""; vb = b.innleveringsdato || ""; return va < vb ? -dir : va > vb ? dir : 0; }
+    if (utlanSortField === "utlansdato") { va = a.utlansdato || ""; vb = b.utlansdato || ""; return va < vb ? -dir : va > vb ? dir : 0; }
     return 0;
   });
   return arr;
@@ -710,7 +723,7 @@ document.getElementById("utlanModal").addEventListener("click", function(e) { if
 document.getElementById("leverModal").addEventListener("click", function(e) { if (e.target.id === "leverModal") lukkLever(); });
 document.addEventListener("keydown", function(e) { if (e.key === "Escape") { lukkUtlan(); lukkLever(); } });
 
-function toggleBoksMeny() {
+function toggleMeny() {
   document.getElementById("hamburgerMeny").classList.toggle("open");
   document.getElementById("hamburger").classList.toggle("open");
 }
@@ -721,6 +734,19 @@ document.addEventListener("click", function(e) {
     meny.classList.remove("open"); btn.classList.remove("open");
   }
 });
+function toggleAdmin() {
+  var active = document.body.classList.toggle("admin-mode");
+  sessionStorage.setItem("adminMode", active ? "1" : "");
+  var btn = document.getElementById("adminToggle");
+  if (btn) btn.classList.toggle("active", active);
+}
+(function() {
+  if (sessionStorage.getItem("adminMode") === "1") {
+    document.body.classList.add("admin-mode");
+    var btn = document.getElementById("adminToggle");
+    if (btn) btn.classList.add("active");
+  }
+})();
 </script>
 </body>
 </html>
