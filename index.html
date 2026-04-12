@@ -86,6 +86,7 @@
             <th onclick="setSorter('hylleplassering')" class="col-extra">Hylle ⇅</th>
             <th onclick="setSorter('kategori')" class="col-extra">Kategori ⇅</th>
             <th onclick="setSorter('utlant_til')" class="col-extra">Utlånt til ⇅</th>
+            <th onclick="setSorter('boks_id')" class="col-extra">Boks ⇅</th>
           </tr>
         </thead>
         <tbody id="itemsBody"></tbody>
@@ -261,7 +262,7 @@
         <div class="form-field"><label>Kategori</label><select id="editKategori"></select></div>
       </div>
       <div class="form-grid2">
-        <div class="form-field"><label>Hylleplassering</label><input type="text" id="editHylle" placeholder="f.eks. A1, B3…"></div>
+        <div class="form-field"><label>Hylleplassering</label><input type="text" id="editHylle" placeholder="f.eks. A1, B3…"><span class="field-hint" id="editHylleHint" style="color:var(--muted);font-size:11px;display:none">Fjern fra boks for å endre hylle</span></div>
       </div>
       <div class="form-grid2">
         <div class="form-field">
@@ -632,6 +633,7 @@ function visTabell(liste) {
       "<td class='tc col-extra col-extra-text mono small-text'>" + (g.hylleplassering||"<span class='dash'>-</span>") + "</td>" +
       "<td class='tc col-extra col-extra-text'>" + (g.kategori||"-") + "</td>" +
       "<td class='tc col-extra col-extra-text small-text'>" + (g.utlant_til||"<span class='dash'>-</span>") + "</td>" +
+      "<td class='tc col-extra col-extra-text small-text'>" + (g.boks_id ? "<a class='item-link' href='boks.html?id=" + enc(g.boks_id) + "'>" + (function(){ var b = bokser.find(function(x){return x.id===g.boks_id;}); return b ? b.navn : g.boks_id; })() + "</a>" : "<span class='dash'>-</span>") + "</td>" +
       "</tr>";
   }).join("");
 }
@@ -837,6 +839,7 @@ function apneRediger(id, forceStatus) {
   populerBoksSelect();
   viseBildePrev(g.bilde_url);
   toggleUtlan(forceStatus || g.status);
+  oppdaterHylleLas();
   document.getElementById("editModal").classList.add("open");
   document.body.style.overflow = "hidden";
 }
@@ -849,6 +852,21 @@ function lukkRedigerModal() {
 
 function toggleUtlan(s) {
   document.getElementById("utlanSection").style.display = s === "Utlånt" ? "block" : "none";
+}
+
+function oppdaterHylleLas() {
+  var boksVal = document.getElementById("editBoksId").value;
+  var hylleEl = document.getElementById("editHylle");
+  var hintEl  = document.getElementById("editHylleHint");
+  if (boksVal) {
+    hylleEl.disabled = true;
+    hylleEl.style.opacity = "0.5";
+    hintEl.style.display = "block";
+  } else {
+    hylleEl.disabled = false;
+    hylleEl.style.opacity = "1";
+    hintEl.style.display = "none";
+  }
 }
 
 function viseBildePrev(url) {
@@ -1311,7 +1329,7 @@ function viseSammendrag() {
     {icon:"&#128295;", val:rep,   label:"Reparasjon",   color:"#fbbf24"},
     {icon:"&#10060;",  val:tapt,  label:"Tapt",         color:"#94a3b8"},
   ];
-  if (forf > 0) kpis.push({icon:"&#9888;&#65039;", val:forf, label:"Forfalt", color:"#fb923c"});
+  kpis.push({icon:"&#9888;&#65039;", val:forf, label:"Forfalt", color:"#fb923c"});
   document.getElementById("kpiGrid").innerHTML = kpis.map(function(k) {
     return "<div class='kpi-card'><div class='kpi-icon'>" + k.icon + "</div><div class='kpi-value' style='color:" + k.color + "'>" + k.val + "</div><div class='kpi-label'>" + k.label + "</div></div>";
   }).join("");
@@ -1595,6 +1613,7 @@ function setupListeners() {
     if (el) el.addEventListener("input", oppdaterPrev);
   });
   document.getElementById("editStatus").addEventListener("change", function(e) { toggleUtlan(e.target.value); });
+  document.getElementById("editBoksId").addEventListener("change", oppdaterHylleLas);
   document.getElementById("editBildeUrl").addEventListener("input", function(e) { viseBildePrev(e.target.value); });
   document.getElementById("addBildeUrl").addEventListener("input", function(e) {
     var prev = document.getElementById("addBildePrev");

@@ -170,6 +170,23 @@
   </div>
 </div>
 
+<!-- Bekreft modal -->
+<div id="bekreftModal" class="modal-overlay" style="display:none">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header">
+      <span class="modal-title" id="bekreftTittel">Bekreft</span>
+      <button class="modal-close" onclick="lukkBekreft()">X</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:20px">
+      <p id="bekreftMelding" style="font-size:15px;margin:0"></p>
+    </div>
+    <div class="modal-footer" style="justify-content:center;gap:12px">
+      <button class="btn-cancel" onclick="lukkBekreft()">Avbryt</button>
+      <button class="btn-save" id="bekreftOkBtn">Ja, lever inn</button>
+    </div>
+  </div>
+</div>
+
 <div id="banner" class="banner"></div>
 <div id="printArea" style="display:none"></div>
 
@@ -554,8 +571,22 @@ async function lagreLeverModal(utMap) {
   btn.disabled = false; btn.textContent = "Registrer innlevering";
 }
 
+function lukkBekreft() { document.getElementById("bekreftModal").style.display = "none"; }
+
+function visBekreft(melding, onJa) {
+  document.getElementById("bekreftMelding").textContent = melding;
+  document.getElementById("bekreftModal").style.display = "flex";
+  var btn = document.getElementById("bekreftOkBtn");
+  btn.onclick = function() { lukkBekreft(); onJa(); };
+}
+
 async function leverGjenstander(idStr, antall) {
-  if (!confirm("Er du sikker på at du vil levere inn " + antall + " stk?")) return;
+  visBekreft("Er du sikker på at du vil levere inn " + antall + " stk?", async function() {
+    await _doLeverGjenstander(idStr, antall);
+  });
+}
+
+async function _doLeverGjenstander(idStr, antall) {
   var ids = idStr.split(",").slice(0, antall);
   for (var i = 0; i < ids.length; i++) {
     await db.from("gjenstander").update({ status: "Tilgjengelig", utlant_til: "", utlansdato: "", innleveringsdato: "" }).eq("id", ids[i]);
@@ -722,7 +753,8 @@ function visBanner(tekst, type) {
 
 document.getElementById("utlanModal").addEventListener("click", function(e) { if (e.target.id === "utlanModal") lukkUtlan(); });
 document.getElementById("leverModal").addEventListener("click", function(e) { if (e.target.id === "leverModal") lukkLever(); });
-document.addEventListener("keydown", function(e) { if (e.key === "Escape") { lukkUtlan(); lukkLever(); } });
+document.getElementById("bekreftModal").addEventListener("click", function(e) { if (e.target.id === "bekreftModal") lukkBekreft(); });
+document.addEventListener("keydown", function(e) { if (e.key === "Escape") { lukkUtlan(); lukkLever(); lukkBekreft(); } });
 
 function toggleMeny() {
   document.getElementById("hamburgerMeny").classList.toggle("open");
