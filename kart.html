@@ -426,7 +426,6 @@
     <!-- Zoom controls -->
     <div class="zoom-controls">
       <button class="zoom-btn" onclick="zoom(1)">+</button>
-      <button class="zoom-btn" onclick="zoom(-1)">&minus;</button>
       <button class="zoom-btn" onclick="resetZoom()" style="font-size:12px;">&#8634;</button>
     </div>
   </div>
@@ -653,7 +652,7 @@ function clampPan() {
 }
 
 function zoom(dir) {
-  currentZoom = Math.max(0.5, Math.min(3, currentZoom + dir * 0.3));
+  currentZoom = Math.max(1, Math.min(3, currentZoom + dir * 0.3));
   clampPan();
   applyTransform();
 }
