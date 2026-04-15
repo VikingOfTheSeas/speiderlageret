@@ -12,6 +12,7 @@
       '.mini-shelf{position:absolute;z-index:5;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.45);border-radius:2px;display:flex;align-items:center;justify-content:center}',
       '.mini-shelf.mini-hl{background:rgba(70,189,198,0.35);border-color:#46bdc6;box-shadow:0 0 8px rgba(70,189,198,0.5);animation:mini-pulse 1.4s ease-in-out infinite}',
       '@keyframes mini-pulse{0%,100%{box-shadow:0 0 6px rgba(70,189,198,0.4)}50%{box-shadow:0 0 14px rgba(70,189,198,0.7)}}',
+      '.mini-inner-wall{position:absolute;background:rgba(148,163,184,0.45);border-top:2px solid rgba(148,163,184,0.7);z-index:4;pointer-events:none}',
       '.mini-lbl{font-family:"DM Mono",monospace;font-size:8px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.6);pointer-events:none;line-height:1}',
       '.mini-kart-link{position:absolute;bottom:6px;right:6px;z-index:10;font-size:14px;text-decoration:none;opacity:.7;transition:opacity .15s}',
       '.mini-kart-link:hover{opacity:1}',
@@ -46,6 +47,7 @@
     html += '<div class="mini-sofakrok"></div>';
     html += '<div class="mini-door">DØR</div>';
 
+    html += '<div class="mini-inner-wall" style="top:40%;left:0;width:88%;height:1%"></div>';
     SHELVES.forEach(function (s) {
       var act = s.id === hl;
       html += '<div class="mini-shelf' + (act ? ' mini-hl' : '') +

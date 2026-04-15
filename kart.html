@@ -63,6 +63,15 @@
       background: rgba(70,189,198,0.03);
     }
 
+    /* Interior wall */
+    .room-inner-wall {
+      position: absolute;
+      background: rgba(148,163,184,0.45);
+      border-top: 3px solid rgba(148,163,184,0.7);
+      z-index: 4;
+      pointer-events: none;
+    }
+
     /* Dotted floor */
     .room-walls::before {
       content: "";
@@ -394,6 +403,8 @@
       <div class="shelf" data-shelf="H" style="top:32%;left:32%;width:14%;height:7%;" onclick="velgHylle('H')">
         <span class="shelf-label">H</span>
       </div>
+      <!-- Interior wall between H and G -->
+      <div class="room-inner-wall" style="top:40%;left:0;width:88%;height:1%;"></div>
       <div class="shelf" data-shelf="G" style="top:42%;left:32%;width:14%;height:7%;" onclick="velgHylle('G')">
         <span class="shelf-label">G</span>
       </div>
