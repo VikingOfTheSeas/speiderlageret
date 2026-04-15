@@ -643,8 +643,18 @@ let panX = 0, panY = 0;
 let isDragging = false;
 let dragStartX, dragStartY;
 
+function clampPan() {
+  const cr = container.getBoundingClientRect();
+  const inner = document.getElementById("roomInner");
+  const maxX = Math.max(0, (inner.offsetWidth  * currentZoom - cr.width)  / 2);
+  const maxY = Math.max(0, (inner.offsetHeight * currentZoom - cr.height) / 2);
+  panX = Math.max(-maxX, Math.min(maxX, panX));
+  panY = Math.max(-maxY, Math.min(maxY, panY));
+}
+
 function zoom(dir) {
   currentZoom = Math.max(0.5, Math.min(3, currentZoom + dir * 0.3));
+  clampPan();
   applyTransform();
 }
 
@@ -670,6 +680,7 @@ container.addEventListener("pointermove", e => {
   if (!isDragging) return;
   panX = e.clientX - dragStartX;
   panY = e.clientY - dragStartY;
+  clampPan();
   document.getElementById("roomInner").style.transition = "none";
   applyTransform();
 });
