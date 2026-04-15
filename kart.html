@@ -717,47 +717,50 @@ brukLagredePosisjoner();
 
 // Drag-to-move shelves in admin mode
 (function () {
-  let dragEl = null, startPx, startPy, startElX, startElY;
+  let dragEl = null, startPx, startPy, startElX, startElY, roomW, roomH, didDrag;
 
   document.querySelectorAll(".shelf").forEach(el => {
     el.addEventListener("pointerdown", e => {
       if (!document.body.classList.contains("admin-mode")) return;
       e.stopPropagation();
       e.preventDefault();
-      dragEl = el;
-      dragEl.classList.add("dragging");
-      dragEl.setPointerCapture(e.pointerId);
       const room = document.getElementById("roomInner");
       const rr   = room.getBoundingClientRect();
-      startPx = e.clientX;
-      startPy = e.clientY;
-      startElX = parseFloat(el.style.left)  || 0;
-      startElY = parseFloat(el.style.top)   || 0;
-      const elW  = parseFloat(el.style.width)  || 10;
-      const elH  = parseFloat(el.style.height) || 8;
-      // store room rect for % calculation
-      dragEl._rw = rr.width / currentZoom;
-      dragEl._rh = rr.height / currentZoom;
+      dragEl    = el;
+      didDrag   = false;
+      startPx   = e.clientX;
+      startPy   = e.clientY;
+      startElX  = parseFloat(el.style.left) || 0;
+      startElY  = parseFloat(el.style.top)  || 0;
+      // rr.width is the rendered (scaled) width; divide by zoom to get natural room width in screen pixels
+      // so that dx_screen / roomW_screen gives correct % in natural coordinates
+      roomW = rr.width;
+      roomH = rr.height;
+      dragEl.classList.add("dragging");
+      dragEl.setPointerCapture(e.pointerId);
     });
 
     el.addEventListener("pointermove", e => {
       if (!dragEl || dragEl !== el) return;
-      const dx = (e.clientX - startPx) / dragEl._rw * 100;
-      const dy = (e.clientY - startPy) / dragEl._rh * 100;
+      const dx = (e.clientX - startPx) / roomW * 100;
+      const dy = (e.clientY - startPy) / roomH * 100;
+      if (Math.abs(dx) > 0.3 || Math.abs(dy) > 0.3) didDrag = true;
       const elW = parseFloat(dragEl.style.width)  || 10;
       const elH = parseFloat(dragEl.style.height) || 8;
-      const newLeft = Math.max(0, Math.min(100 - elW, startElX + dx));
-      const newTop  = Math.max(0, Math.min(100 - elH, startElY + dy));
-      dragEl.style.left = newLeft.toFixed(1) + "%";
-      dragEl.style.top  = newTop.toFixed(1)  + "%";
+      dragEl.style.left = Math.max(0, Math.min(100 - elW, startElX + dx)).toFixed(1) + "%";
+      dragEl.style.top  = Math.max(0, Math.min(100 - elH, startElY + dy)).toFixed(1) + "%";
     });
 
-    el.addEventListener("pointerup", e => {
+    el.addEventListener("pointerup", () => {
       if (!dragEl || dragEl !== el) return;
       dragEl.classList.remove("dragging");
+      if (didDrag) lagreHyllePosisjoner();
       dragEl = null;
-      lagreHyllePosisjoner();
     });
+
+    el.addEventListener("click", e => {
+      if (didDrag) { e.stopImmediatePropagation(); didDrag = false; }
+    }, true);
   });
 })();
 
