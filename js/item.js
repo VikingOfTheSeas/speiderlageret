@@ -28,6 +28,7 @@ function renderItem(g) {
   document.getElementById("itemSerienummer2").textContent = g.serienummer || "—";
   document.getElementById("itemEnhet").textContent        = g.enhet     || "stk";
   document.getElementById("itemNotater").textContent      = g.notater   || "—";
+  if (window.renderMiniKart) renderMiniKart("miniKartContainer", g.hylleplassering);
 
   const statusEl = document.getElementById("itemStatus");
   statusEl.textContent = g.status;

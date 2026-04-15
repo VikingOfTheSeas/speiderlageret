@@ -95,6 +95,10 @@
           <div class="info-row"><span class="info-label">Hylle</span><span class="info-value" id="boksHylleInfo">-</span></div>
           <div class="info-row"><span class="info-label">Beskrivelse</span><span class="info-value muted-text" id="boksBeskInfo">-</span></div>
         </div>
+        <div class="info-card">
+          <h3>🗺️ På kartet</h3>
+          <div id="miniKartContainer"></div>
+        </div>
         <div class="info-card qr-card admin-only">
           <h3>QR-kode</h3>
           <div class="qr-code-box" id="boksQrCode"></div>
@@ -194,6 +198,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/kart-mini.js"></script>
 <script src="js/config.js"></script>
 <script>
 // ---- STATE ----
@@ -253,6 +258,7 @@ function renderBoks() {
   document.getElementById("boksIdInfo").textContent = currentBoks.id;
   document.getElementById("boksHylleInfo").textContent = currentBoks.hylleplassering || "-";
   document.getElementById("boksBeskInfo").textContent = currentBoks.beskrivelse || "-";
+  if (window.renderMiniKart) renderMiniKart("miniKartContainer", currentBoks.hylleplassering);
 
   // Bilde
   var bUrl = konverterBildeUrl(currentBoks.bilde_url);

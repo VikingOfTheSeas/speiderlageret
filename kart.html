@@ -74,22 +74,27 @@
     /* Door */
     .room-door {
       position: absolute;
-      right: 4%; bottom: 4%;
-      width: 8%; height: 3%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 600; color: var(--muted);
-      letter-spacing: 1px;
-      border-bottom: 3px solid rgba(70,189,198,0.5);
-      transform: translateY(50%);
+      left: 4%; bottom: 0;
+      width: 14%; height: 8%;
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 4px;
+      font-family: "DM Mono", monospace;
+      font-size: 13px; font-weight: 700; color: rgba(70,189,198,0.9);
+      letter-spacing: 2px;
+      border-top: 3px solid rgba(70,189,198,0.6);
+      border-left: 3px solid rgba(70,189,198,0.6);
+      border-right: 3px solid rgba(70,189,198,0.6);
+      border-bottom: none;
+      border-radius: 6px 6px 0 0;
+      background: rgba(70,189,198,0.07);
+      z-index: 6;
     }
     .room-door::before {
       content: "";
-      position: absolute; bottom: 0; left: 50%;
-      width: 24px; height: 24px;
-      border: 2px solid rgba(70,189,198,0.3);
-      border-bottom: none; border-left: none;
-      border-radius: 0 24px 0 0;
-      transform: translateX(-100%);
+      position: absolute; top: 6px; left: 6px;
+      right: 6px; bottom: 0;
+      border-top: 2px dashed rgba(70,189,198,0.25);
+      border-radius: 4px 4px 0 0;
     }
 
     /* ── SHELF ─────────────────────────────────────────────── */
@@ -99,12 +104,33 @@
       border: 2px solid rgba(239,68,68,0.5);
       border-radius: 4px;
       cursor: pointer;
-      transition: all .2s ease;
+      transition: background .2s, border-color .2s, box-shadow .2s;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 10;
     }
+    /* Admin drag mode */
+    body.admin-mode .shelf { cursor: grab; }
+    body.admin-mode .shelf.dragging { cursor: grabbing; opacity: .85; z-index: 50; transition: none; }
+    body.admin-mode .shelf::after {
+      content: "✥";
+      position: absolute; top: 2px; right: 3px;
+      font-size: 9px; color: rgba(255,255,255,0.4);
+      pointer-events: none;
+    }
+    .admin-kart-bar {
+      display: none; align-items: center; gap: 8px;
+      margin-bottom: 10px; flex-wrap: wrap;
+    }
+    body.admin-mode .admin-kart-bar { display: flex; }
+    .btn-kart-reset {
+      padding: 7px 14px; background: rgba(248,113,113,0.1);
+      border: 1px solid rgba(248,113,113,0.3); border-radius: 8px;
+      color: var(--danger); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .btn-kart-reset:hover { background: rgba(248,113,113,0.2); }
+    .admin-kart-hint { font-size: 11px; color: var(--muted); }
     .shelf:hover {
       background: rgba(239,68,68,0.35);
       border-color: rgba(239,68,68,0.8);
@@ -319,8 +345,13 @@
   <div class="kart-header">
     <h2>🗺️ Lagerkart</h2>
     <div class="kart-search-wrap">
-      <input type="text" class="kart-search" id="kartSearch" placeholder="Sok gjenstand eller hylle..." oninput="sokKart(this.value)">
+      <input type="text" class="kart-search" id="kartSearch" placeholder="Søk gjenstand eller hylle..." oninput="sokKart(this.value)">
     </div>
+  </div>
+
+  <div class="admin-kart-bar">
+    <span class="admin-kart-hint">🔧 Dra hyllene for å flytte dem</span>
+    <button class="btn-kart-reset" onclick="tilbakestillHyller()">↺ Tilbakestill posisjoner</button>
   </div>
 
   <div class="room-container" id="roomContainer">
@@ -329,7 +360,7 @@
       <div class="room-walls"></div>
 
       <!-- Door (bottom-right) -->
-      <div class="room-door">DOR</div>
+      <div class="room-door">DØR</div>
 
       <!-- Sofakrok (top-right area) -->
       <div class="sofakrok" style="top:7%;right:7%;width:18%;height:18%;">
@@ -650,6 +681,85 @@ container.addEventListener("wheel", e => {
   e.preventDefault();
   zoom(e.deltaY < 0 ? 1 : -1);
 }, { passive: false });
+
+// ── ADMIN DRAG EDITING ────────────────────────────────────
+const LS_KEY = "kartHyllePosisjoner";
+
+function lastHyllePosisjoner() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch { return {}; }
+}
+
+function lagreHyllePosisjoner() {
+  const pos = {};
+  document.querySelectorAll(".shelf").forEach(el => {
+    pos[el.dataset.shelf] = { top: el.style.top, left: el.style.left, width: el.style.width, height: el.style.height };
+  });
+  localStorage.setItem(LS_KEY, JSON.stringify(pos));
+}
+
+function tilbakestillHyller() {
+  localStorage.removeItem(LS_KEY);
+  location.reload();
+}
+
+function brukLagredePosisjoner() {
+  const pos = lastHyllePosisjoner();
+  document.querySelectorAll(".shelf").forEach(el => {
+    const p = pos[el.dataset.shelf];
+    if (!p) return;
+    el.style.top    = p.top;
+    el.style.left   = p.left;
+    el.style.width  = p.width;
+    el.style.height = p.height;
+  });
+}
+brukLagredePosisjoner();
+
+// Drag-to-move shelves in admin mode
+(function () {
+  let dragEl = null, startPx, startPy, startElX, startElY;
+
+  document.querySelectorAll(".shelf").forEach(el => {
+    el.addEventListener("pointerdown", e => {
+      if (!document.body.classList.contains("admin-mode")) return;
+      e.stopPropagation();
+      e.preventDefault();
+      dragEl = el;
+      dragEl.classList.add("dragging");
+      dragEl.setPointerCapture(e.pointerId);
+      const room = document.getElementById("roomInner");
+      const rr   = room.getBoundingClientRect();
+      startPx = e.clientX;
+      startPy = e.clientY;
+      startElX = parseFloat(el.style.left)  || 0;
+      startElY = parseFloat(el.style.top)   || 0;
+      const elW  = parseFloat(el.style.width)  || 10;
+      const elH  = parseFloat(el.style.height) || 8;
+      // store room rect for % calculation
+      dragEl._rw = rr.width / currentZoom;
+      dragEl._rh = rr.height / currentZoom;
+    });
+
+    el.addEventListener("pointermove", e => {
+      if (!dragEl || dragEl !== el) return;
+      const dx = (e.clientX - startPx) / dragEl._rw * 100;
+      const dy = (e.clientY - startPy) / dragEl._rh * 100;
+      const elW = parseFloat(dragEl.style.width)  || 10;
+      const elH = parseFloat(dragEl.style.height) || 8;
+      const newLeft = Math.max(0, Math.min(100 - elW, startElX + dx));
+      const newTop  = Math.max(0, Math.min(100 - elH, startElY + dy));
+      dragEl.style.left = newLeft.toFixed(1) + "%";
+      dragEl.style.top  = newTop.toFixed(1)  + "%";
+    });
+
+    el.addEventListener("pointerup", e => {
+      if (!dragEl || dragEl !== el) return;
+      dragEl.classList.remove("dragging");
+      dragEl = null;
+      lagreHyllePosisjoner();
+    });
+  });
+})();
 
 // ── HAMBURGER / ADMIN ─────────────────────────────────────
 function toggleMeny() {
