@@ -133,12 +133,6 @@
       margin-bottom: 10px; flex-wrap: wrap;
     }
     body.admin-mode .admin-kart-bar { display: flex; }
-    .btn-kart-reset {
-      padding: 7px 14px; background: rgba(248,113,113,0.1);
-      border: 1px solid rgba(248,113,113,0.3); border-radius: 8px;
-      color: var(--danger); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
-    }
-    .btn-kart-reset:hover { background: rgba(248,113,113,0.2); }
     .admin-kart-hint { font-size: 11px; color: var(--muted); }
     .shelf:hover {
       background: rgba(239,68,68,0.35);
@@ -360,7 +354,6 @@
 
   <div class="admin-kart-bar">
     <span class="admin-kart-hint">🔧 Dra hyllene for å flytte dem</span>
-    <button class="btn-kart-reset" onclick="tilbakestillHyller()">↺ Tilbakestill posisjoner</button>
   </div>
 
   <div class="room-container" id="roomContainer">
@@ -718,10 +711,6 @@ function lagreHyllePosisjoner() {
   localStorage.setItem(LS_KEY, JSON.stringify(pos));
 }
 
-function tilbakestillHyller() {
-  localStorage.removeItem(LS_KEY);
-  location.reload();
-}
 
 function brukLagredePosisjoner() {
   const pos = lastHyllePosisjoner();
