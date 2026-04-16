@@ -126,7 +126,10 @@
       align-items: center;
       justify-content: center;
       z-index: 10;
+      /* All shelves same rectangle; vertical ones use rotate */
+      width: 16%; height: 9%;
     }
+    .shelf[data-orientation="v"] { transform: rotate(90deg); }
     /* Admin drag mode */
     body.admin-mode .shelf { cursor: grab; }
     body.admin-mode .shelf.dragging { cursor: grabbing; opacity: .85; z-index: 50; transition: none; }
@@ -145,9 +148,10 @@
     .shelf:hover {
       background: rgba(239,68,68,0.35);
       border-color: rgba(239,68,68,0.8);
-      transform: scale(1.03);
+      filter: brightness(1.15);
       z-index: 20;
     }
+    .shelf[data-orientation="v"]:hover { transform: rotate(90deg); }
     .shelf.highlight {
       background: rgba(70,189,198,0.35);
       border-color: var(--primary);
@@ -159,6 +163,7 @@
       50% { box-shadow: 0 0 28px rgba(70,189,198,0.6); }
     }
 
+    .shelf[data-orientation="v"] .shelf-label { transform: rotate(-90deg); }
     .shelf-label {
       font-family: 'DM Mono', monospace;
       font-size: clamp(10px, 1.5vw, 16px);
@@ -381,24 +386,24 @@
       <div class="room-wall-block" style="top:4%;left:22%;width:4%;height:22%;"></div>
 
       <!-- All shelves same size: horizontal 16%×9%, vertical 9%×16% -->
-      <div class="shelf" data-shelf="L" style="top:4%;left:4%;width:16%;height:9%;" onclick="velgHylle('L')"><span class="shelf-label">L</span></div>
-      <div class="shelf" data-shelf="M" style="top:4%;left:28%;width:9%;height:16%;" onclick="velgHylle('M')"><span class="shelf-label">M</span></div>
-      <div class="shelf" data-shelf="N" style="top:4%;left:40%;width:16%;height:9%;" onclick="velgHylle('N')"><span class="shelf-label">N</span></div>
+      <div class="shelf" data-shelf="L" data-orientation="h" style="top:4%;left:4%;" onclick="velgHylle('L')"><span class="shelf-label">L</span></div>
+      <div class="shelf" data-shelf="M" data-orientation="v" style="top:4%;left:28%;" onclick="velgHylle('M')"><span class="shelf-label">M</span></div>
+      <div class="shelf" data-shelf="N" data-orientation="h" style="top:4%;left:40%;" onclick="velgHylle('N')"><span class="shelf-label">N</span></div>
 
-      <div class="shelf" data-shelf="K" style="top:32%;left:4%;width:9%;height:16%;" onclick="velgHylle('K')"><span class="shelf-label">K</span></div>
-      <div class="shelf" data-shelf="J" style="top:52%;left:4%;width:9%;height:16%;" onclick="velgHylle('J')"><span class="shelf-label">J</span></div>
-      <div class="shelf" data-shelf="I" style="top:72%;left:4%;width:9%;height:16%;" onclick="velgHylle('I')"><span class="shelf-label">I</span></div>
+      <div class="shelf" data-shelf="K" data-orientation="v" style="top:32%;left:4%;" onclick="velgHylle('K')"><span class="shelf-label">K</span></div>
+      <div class="shelf" data-shelf="J" data-orientation="v" style="top:52%;left:4%;" onclick="velgHylle('J')"><span class="shelf-label">J</span></div>
+      <div class="shelf" data-shelf="I" data-orientation="v" style="top:72%;left:4%;" onclick="velgHylle('I')"><span class="shelf-label">I</span></div>
 
-      <div class="shelf" data-shelf="H" style="top:36%;left:20%;width:16%;height:9%;" onclick="velgHylle('H')"><span class="shelf-label">H</span></div>
-      <div class="shelf" data-shelf="G" style="top:50%;left:20%;width:16%;height:9%;" onclick="velgHylle('G')"><span class="shelf-label">G</span></div>
-      <div class="shelf" data-shelf="F" style="top:38%;left:58%;width:9%;height:16%;" onclick="velgHylle('F')"><span class="shelf-label">F</span></div>
+      <div class="shelf" data-shelf="H" data-orientation="h" style="top:36%;left:20%;" onclick="velgHylle('H')"><span class="shelf-label">H</span></div>
+      <div class="shelf" data-shelf="G" data-orientation="h" style="top:50%;left:20%;" onclick="velgHylle('G')"><span class="shelf-label">G</span></div>
+      <div class="shelf" data-shelf="F" data-orientation="v" style="top:38%;left:58%;" onclick="velgHylle('F')"><span class="shelf-label">F</span></div>
 
-      <div class="shelf" data-shelf="E" style="top:72%;left:13%;width:16%;height:9%;" onclick="velgHylle('E')"><span class="shelf-label">E</span></div>
-      <div class="shelf" data-shelf="D" style="top:72%;left:32%;width:16%;height:9%;" onclick="velgHylle('D')"><span class="shelf-label">D</span></div>
-      <div class="shelf" data-shelf="C" style="top:72%;left:51%;width:16%;height:9%;" onclick="velgHylle('C')"><span class="shelf-label">C</span></div>
+      <div class="shelf" data-shelf="E" data-orientation="h" style="top:72%;left:13%;" onclick="velgHylle('E')"><span class="shelf-label">E</span></div>
+      <div class="shelf" data-shelf="D" data-orientation="h" style="top:72%;left:32%;" onclick="velgHylle('D')"><span class="shelf-label">D</span></div>
+      <div class="shelf" data-shelf="C" data-orientation="h" style="top:72%;left:51%;" onclick="velgHylle('C')"><span class="shelf-label">C</span></div>
 
-      <div class="shelf" data-shelf="B" style="top:36%;left:91%;width:9%;height:16%;" onclick="velgHylle('B')"><span class="shelf-label">B</span></div>
-      <div class="shelf" data-shelf="A" style="top:56%;left:91%;width:9%;height:16%;" onclick="velgHylle('A')"><span class="shelf-label">A</span></div>
+      <div class="shelf" data-shelf="B" data-orientation="v" style="top:36%;left:91%;" onclick="velgHylle('B')"><span class="shelf-label">B</span></div>
+      <div class="shelf" data-shelf="A" data-orientation="v" style="top:56%;left:91%;" onclick="velgHylle('A')"><span class="shelf-label">A</span></div>
     </div>
 
     <!-- Zoom controls -->
@@ -680,7 +685,7 @@ function lastHyllePosisjoner() {
 function lagreHyllePosisjoner() {
   const pos = {};
   document.querySelectorAll(".shelf").forEach(el => {
-    pos[el.dataset.shelf] = { top: el.style.top, left: el.style.left, width: el.style.width, height: el.style.height };
+    pos[el.dataset.shelf] = { top: el.style.top, left: el.style.left, orientation: el.dataset.orientation || "h" };
   });
   localStorage.setItem(LS_KEY, JSON.stringify(pos));
 }
@@ -691,10 +696,9 @@ function brukLagredePosisjoner() {
   document.querySelectorAll(".shelf").forEach(el => {
     const p = pos[el.dataset.shelf];
     if (!p) return;
-    el.style.top    = p.top;
-    el.style.left   = p.left;
-    el.style.width  = p.width;
-    el.style.height = p.height;
+    el.style.top  = p.top;
+    el.style.left = p.left;
+    if (p.orientation) el.dataset.orientation = p.orientation;
   });
 }
 brukLagredePosisjoner();
@@ -729,10 +733,9 @@ brukLagredePosisjoner();
       const dx = (e.clientX - startPx) / roomW * 100;
       const dy = (e.clientY - startPy) / roomH * 100;
       if (Math.abs(dx) > 0.3 || Math.abs(dy) > 0.3) didDrag = true;
-      const elW = parseFloat(dragEl.style.width)  || 10;
-      const elH = parseFloat(dragEl.style.height) || 8;
-      dragEl.style.left = Math.max(0, Math.min(100 - elW, startElX + dx)).toFixed(1) + "%";
-      dragEl.style.top  = Math.max(0, Math.min(100 - elH, startElY + dy)).toFixed(1) + "%";
+      // Size is defined in CSS (16%×9%), so clamp based on that
+      dragEl.style.left = Math.max(0, Math.min(84, startElX + dx)).toFixed(1) + "%";
+      dragEl.style.top  = Math.max(0, Math.min(91, startElY + dy)).toFixed(1) + "%";
     });
 
     el.addEventListener("pointerup", () => {
@@ -749,10 +752,7 @@ brukLagredePosisjoner();
     el.addEventListener("dblclick", e => {
       if (!document.body.classList.contains("admin-mode")) return;
       e.stopPropagation();
-      const w = parseFloat(el.style.width);
-      const h = parseFloat(el.style.height);
-      el.style.width  = h + "%";
-      el.style.height = w + "%";
+      el.dataset.orientation = (el.dataset.orientation === "v") ? "h" : "v";
       lagreHyllePosisjoner();
     });
   });
