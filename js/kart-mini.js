@@ -12,7 +12,7 @@
       '.mini-shelf{position:absolute;z-index:5;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.45);border-radius:2px;display:flex;align-items:center;justify-content:center}',
       '.mini-shelf.mini-hl{background:rgba(70,189,198,0.35);border-color:#46bdc6;box-shadow:0 0 8px rgba(70,189,198,0.5);animation:mini-pulse 1.4s ease-in-out infinite}',
       '@keyframes mini-pulse{0%,100%{box-shadow:0 0 6px rgba(70,189,198,0.4)}50%{box-shadow:0 0 14px rgba(70,189,198,0.7)}}',
-      '.mini-inner-wall{position:absolute;background:rgba(148,163,184,0.45);border-top:2px solid rgba(148,163,184,0.7);z-index:4;pointer-events:none}',
+      '.mini-wall-block{position:absolute;background:rgba(100,116,139,0.55);border:1px solid rgba(100,116,139,0.8);border-radius:2px;z-index:4;pointer-events:none}',
       '.mini-lbl{font-family:"DM Mono",monospace;font-size:8px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.6);pointer-events:none;line-height:1}',
       '.mini-kart-link{position:absolute;bottom:6px;right:6px;z-index:10;font-size:14px;text-decoration:none;opacity:.7;transition:opacity .15s}',
       '.mini-kart-link:hover{opacity:1}',
@@ -21,20 +21,20 @@
   }
 
   var SHELVES = [
-    { id:"L", t:4,  l:4,  w:27, h:27 },
-    { id:"M", t:4,  l:34, w:8,  h:22 },
-    { id:"N", t:4,  l:44, w:18, h:12 },
-    { id:"K", t:34, l:4,  w:7,  h:16 },
-    { id:"J", t:52, l:4,  w:7,  h:18 },
-    { id:"I", t:72, l:4,  w:7,  h:23 },
-    { id:"H", t:38, l:20, w:35, h:12 },
-    { id:"G", t:52, l:20, w:35, h:12 },
-    { id:"F", t:36, l:57, w:7,  h:28 },
-    { id:"E", t:70, l:13, w:17, h:25 },
-    { id:"D", t:70, l:32, w:17, h:25 },
-    { id:"C", t:70, l:51, w:17, h:25 },
-    { id:"B", t:38, l:91, w:6,  h:16 },
-    { id:"A", t:56, l:91, w:6,  h:28 },
+    { id:"L", t:4,  l:4,  w:16, h:9  },
+    { id:"M", t:4,  l:28, w:9,  h:16 },
+    { id:"N", t:4,  l:40, w:16, h:9  },
+    { id:"K", t:32, l:4,  w:9,  h:16 },
+    { id:"J", t:52, l:4,  w:9,  h:16 },
+    { id:"I", t:72, l:4,  w:9,  h:16 },
+    { id:"H", t:36, l:20, w:16, h:9  },
+    { id:"G", t:50, l:20, w:16, h:9  },
+    { id:"F", t:38, l:58, w:9,  h:16 },
+    { id:"E", t:72, l:13, w:16, h:9  },
+    { id:"D", t:72, l:32, w:16, h:9  },
+    { id:"C", t:72, l:51, w:16, h:9  },
+    { id:"B", t:36, l:91, w:9,  h:16 },
+    { id:"A", t:56, l:91, w:9,  h:16 },
   ];
 
   window.renderMiniKart = function (containerId, hylleplassering) {
@@ -47,7 +47,7 @@
     html += '<div class="mini-sofakrok"></div>';
     html += '<div class="mini-door">DØR</div>';
 
-    html += '<div class="mini-inner-wall" style="top:40%;left:0;width:88%;height:1%"></div>';
+    html += '<div class="mini-wall-block" style="top:4%;left:22%;width:4%;height:22%"></div>';
     SHELVES.forEach(function (s) {
       var act = s.id === hl;
       html += '<div class="mini-shelf' + (act ? ' mini-hl' : '') +
