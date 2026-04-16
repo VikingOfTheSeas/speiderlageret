@@ -28,17 +28,17 @@
     { id:"L", t:4,  l:4,  o:"h" },
     { id:"M", t:4,  l:28, o:"v" },
     { id:"N", t:4,  l:40, o:"h" },
-    { id:"K", t:32, l:4,  o:"v" },
-    { id:"J", t:52, l:4,  o:"v" },
-    { id:"I", t:72, l:4,  o:"v" },
+    { id:"K", t:20, l:4,  o:"v" },
+    { id:"J", t:38, l:4,  o:"v" },
+    { id:"I", t:56, l:4,  o:"v" },
     { id:"H", t:36, l:20, o:"h" },
     { id:"G", t:50, l:20, o:"h" },
     { id:"F", t:38, l:58, o:"v" },
     { id:"E", t:72, l:13, o:"h" },
     { id:"D", t:72, l:32, o:"h" },
     { id:"C", t:72, l:51, o:"h" },
-    { id:"B", t:36, l:86, o:"v" },
-    { id:"A", t:56, l:86, o:"v" },
+    { id:"B", t:36, l:83, o:"v" },
+    { id:"A", t:56, l:83, o:"v" },
   ];
 
   window.renderMiniKart = function (containerId, hylleplassering) {
