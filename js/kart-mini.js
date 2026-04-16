@@ -25,20 +25,20 @@
 
   // v = vertical (rotated 90°), h = horizontal (default)
   var SHELVES = [
-    { id:"L", t:4,  l:4,  o:"h" },
-    { id:"M", t:4,  l:28, o:"v" },
-    { id:"N", t:4,  l:40, o:"h" },
-    { id:"K", t:20, l:4,  o:"v" },
-    { id:"J", t:38, l:4,  o:"v" },
-    { id:"I", t:56, l:4,  o:"v" },
-    { id:"H", t:36, l:20, o:"h" },
-    { id:"G", t:50, l:20, o:"h" },
-    { id:"F", t:38, l:58, o:"v" },
-    { id:"E", t:72, l:13, o:"h" },
-    { id:"D", t:72, l:32, o:"h" },
-    { id:"C", t:72, l:51, o:"h" },
-    { id:"B", t:36, l:83, o:"v" },
-    { id:"A", t:56, l:83, o:"v" },
+    { id:"L", t:37.2, l:5,    o:"h" },
+    { id:"M", t:39.1, l:30,   o:"v" },
+    { id:"N", t:37.6, l:44.7, o:"h" },
+    { id:"K", t:48.4, l:2,    o:"v" },
+    { id:"J", t:61.1, l:2.2,  o:"v" },
+    { id:"I", t:73.3, l:2.4,  o:"v" },
+    { id:"H", t:73.3, l:23.8, o:"h" },
+    { id:"G", t:64.2, l:39.9, o:"h" },
+    { id:"F", t:68.3, l:54.3, o:"v" },
+    { id:"E", t:86,   l:13.9, o:"h" },
+    { id:"D", t:86.2, l:30.8, o:"h" },
+    { id:"C", t:86.4, l:47.8, o:"h" },
+    { id:"B", t:72.3, l:80.6, o:"v" },
+    { id:"A", t:84.8, l:80.5, o:"v" },
   ];
 
   window.renderMiniKart = function (containerId, hylleplassering) {
