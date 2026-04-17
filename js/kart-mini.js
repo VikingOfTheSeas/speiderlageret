@@ -7,8 +7,8 @@
     s.textContent = [
       '.mini-room{position:relative;width:100%;aspect-ratio:4/3;background:#10253e;border-radius:8px;overflow:hidden;border:1px solid rgba(70,189,198,0.2)}',
       '.mini-room::before{content:"";position:absolute;inset:4%;border:2px solid rgba(70,189,198,0.25);border-radius:5px;background-image:radial-gradient(circle,rgba(70,189,198,0.06) 1px,transparent 1px);background-size:12px 12px}',
-      '.mini-sofakrok{position:absolute;top:19.7%;left:61%;width:20.6%;height:33.6%;background:rgba(70,189,198,0.12);border:1px solid rgba(70,189,198,0.35);border-radius:4px;z-index:2}',
-      '.mini-door{position:absolute;left:65%;bottom:0;width:11.25%;height:12.9%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px;font-family:"DM Mono",monospace;font-size:8px;font-weight:700;color:rgba(70,189,198,0.9);letter-spacing:1px;border-top:2px solid rgba(70,189,198,0.6);border-left:2px solid rgba(70,189,198,0.6);border-right:2px solid rgba(70,189,198,0.6);border-bottom:none;border-radius:4px 4px 0 0;background:rgba(70,189,198,0.07);z-index:6}',
+      '.mini-sofakrok{position:absolute;background:rgba(70,189,198,0.12);border:1px solid rgba(70,189,198,0.35);border-radius:4px;z-index:2}',
+      '.mini-door{position:absolute;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px;font-family:"DM Mono",monospace;font-size:8px;font-weight:700;color:rgba(70,189,198,0.9);letter-spacing:1px;border-top:2px solid rgba(70,189,198,0.6);border-left:2px solid rgba(70,189,198,0.6);border-right:2px solid rgba(70,189,198,0.6);border-bottom:none;border-radius:4px 4px 0 0;background:rgba(70,189,198,0.07);z-index:6}',
       '.mini-shelf{position:absolute;z-index:5;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.45);border-radius:2px;display:flex;align-items:center;justify-content:center;width:15%;height:14.4%}',
       '.mini-shelf[data-orientation="v"]{transform:rotate(90deg)}',
       '.mini-shelf.mini-hl{background:rgba(70,189,198,0.35);border-color:#46bdc6;box-shadow:0 0 8px rgba(70,189,198,0.5);animation:mini-pulse 1.4s ease-in-out infinite}',
@@ -42,6 +42,13 @@
     { id:"A", name:"A", t:77.5, l:81.1, o:"v" },
   ];
 
+  // Default shapes (must match main kart's DEFAULT_SHAPES in kart.html)
+  var DEFAULT_SHAPES = {
+    door:     { top: "87.1%", left: "65%", width: "11.25%", height: "12.9%" },
+    sofakrok: { top: "19.7%", left: "61%", width: "20.6%",  height: "33.6%" },
+    wall:     { top: "8.5%",  left: "22%", width: "4.7%",   height: "9.6%"  },
+  };
+
   function getShelves() {
     try {
       var raw = localStorage.getItem("kartShelves");
@@ -63,10 +70,32 @@
     return DEFAULT_SHELVES;
   }
 
+  function getShapes() {
+    try {
+      var raw = localStorage.getItem("kartShapes");
+      if (raw) {
+        var obj = JSON.parse(raw);
+        if (obj && typeof obj === "object") {
+          return {
+            door:     Object.assign({}, DEFAULT_SHAPES.door,     obj.door     || {}),
+            sofakrok: Object.assign({}, DEFAULT_SHAPES.sofakrok, obj.sofakrok || {}),
+            wall:     Object.assign({}, DEFAULT_SHAPES.wall,     obj.wall     || {}),
+          };
+        }
+      }
+    } catch (e) {}
+    return DEFAULT_SHAPES;
+  }
+
+  function shapeStyle(sh) {
+    return 'top:' + sh.top + ';left:' + sh.left + ';width:' + sh.width + ';height:' + sh.height;
+  }
+
   window.renderMiniKart = function (containerId, hylleplassering) {
     var container = document.getElementById(containerId);
     if (!container) return;
     var shelves = getShelves();
+    var shapes = getShapes();
     // Match shelf by prefix (longest-first to avoid partial matches)
     var up = (hylleplassering || "").toUpperCase();
     var ids = shelves.map(function (s) { return s.id; }).sort(function (a, b) { return b.length - a.length; });
@@ -76,9 +105,9 @@
     }
 
     var html = '<div class="mini-room">';
-    html += '<div class="mini-sofakrok"></div>';
-    html += '<div class="mini-door">DØR</div>';
-    html += '<div class="mini-wall-block" style="top:8.5%;left:22%;width:4.7%;height:9.6%"></div>';
+    html += '<div class="mini-sofakrok" style="' + shapeStyle(shapes.sofakrok) + '"></div>';
+    html += '<div class="mini-door" style="' + shapeStyle(shapes.door) + '">DØR</div>';
+    html += '<div class="mini-wall-block" style="' + shapeStyle(shapes.wall) + '"></div>';
 
     shelves.forEach(function (s) {
       var act = s.id === hl;
