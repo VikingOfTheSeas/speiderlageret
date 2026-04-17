@@ -92,7 +92,7 @@
     .room-door {
       position: absolute;
       left: 65%; bottom: 0;
-      width: 12%; height: 8%;
+      width: 12%; height: 12.9%;
       display: flex; align-items: flex-end; justify-content: center;
       padding-bottom: 4px;
       font-family: "DM Mono", monospace;
@@ -127,7 +127,7 @@
       justify-content: center;
       z-index: 10;
       /* All shelves same rectangle; vertical ones use rotate */
-      width: 16%; height: 9%;
+      width: 16%; height: 14.4%;
     }
     .shelf[data-orientation="v"] { transform: rotate(90deg); }
     /* Admin drag mode */
@@ -316,7 +316,7 @@
     /* ── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 768px) {
       .kart-page { padding: 12px; }
-      .room-container { aspect-ratio: 3 / 4; max-height: 80vh; }
+      .room-container { aspect-ratio: 5 / 4; max-height: 50vh; }
       .kart-search { width: 160px; }
       .shelf-label { font-size: 10px; }
       .tabs { display: none; }
@@ -377,33 +377,33 @@
       <!-- Door (bottom-right) -->
       <div class="room-door">DØR</div>
 
-      <!-- Sofakrok (top-right) -->
-      <div class="sofakrok" style="top:4%;left:63%;width:33%;height:37%;">
+      <!-- Sofakrok (right-middle, between N and B) -->
+      <div class="sofakrok" style="top:19.7%;left:61%;width:22%;height:33.6%;">
         <span class="sofakrok-label">Sofakrok</span>
       </div>
 
-      <!-- Wall block between L and M -->
-      <div class="room-wall-block" style="top:4%;left:22%;width:4%;height:22%;"></div>
+      <!-- Wall block klump between L and M -->
+      <div class="room-wall-block" style="top:8.5%;left:22%;width:5%;height:9.6%;"></div>
 
-      <!-- All shelves same size: horizontal 16%×9%, vertical 9%×16% -->
-      <div class="shelf" data-shelf="L" data-orientation="h" style="top:37.2%;left:5%;" onclick="velgHylle('L')"><span class="shelf-label">L</span></div>
-      <div class="shelf" data-shelf="M" data-orientation="v" style="top:39.1%;left:30%;" onclick="velgHylle('M')"><span class="shelf-label">M</span></div>
-      <div class="shelf" data-shelf="N" data-orientation="h" style="top:37.6%;left:44.7%;" onclick="velgHylle('N')"><span class="shelf-label">N</span></div>
+      <!-- All shelves same size: horizontal 16%×14.4%, vertical (rotated) -->
+      <div class="shelf" data-shelf="L" data-orientation="h" style="top:4%;left:5%;" onclick="velgHylle('L')"><span class="shelf-label">L</span></div>
+      <div class="shelf" data-shelf="M" data-orientation="v" style="top:7%;left:30%;" onclick="velgHylle('M')"><span class="shelf-label">M</span></div>
+      <div class="shelf" data-shelf="N" data-orientation="h" style="top:4.6%;left:44.7%;" onclick="velgHylle('N')"><span class="shelf-label">N</span></div>
 
-      <div class="shelf" data-shelf="K" data-orientation="v" style="top:48.4%;left:2%;" onclick="velgHylle('K')"><span class="shelf-label">K</span></div>
-      <div class="shelf" data-shelf="J" data-orientation="v" style="top:61.1%;left:2.2%;" onclick="velgHylle('J')"><span class="shelf-label">J</span></div>
-      <div class="shelf" data-shelf="I" data-orientation="v" style="top:73.3%;left:2.4%;" onclick="velgHylle('I')"><span class="shelf-label">I</span></div>
+      <div class="shelf" data-shelf="K" data-orientation="v" style="top:21.9%;left:2%;" onclick="velgHylle('K')"><span class="shelf-label">K</span></div>
+      <div class="shelf" data-shelf="J" data-orientation="v" style="top:42.2%;left:2.2%;" onclick="velgHylle('J')"><span class="shelf-label">J</span></div>
+      <div class="shelf" data-shelf="I" data-orientation="v" style="top:61.8%;left:2.4%;" onclick="velgHylle('I')"><span class="shelf-label">I</span></div>
 
-      <div class="shelf" data-shelf="H" data-orientation="h" style="top:73.3%;left:23.8%;" onclick="velgHylle('H')"><span class="shelf-label">H</span></div>
-      <div class="shelf" data-shelf="G" data-orientation="h" style="top:64.2%;left:39.9%;" onclick="velgHylle('G')"><span class="shelf-label">G</span></div>
-      <div class="shelf" data-shelf="F" data-orientation="v" style="top:68.3%;left:54.3%;" onclick="velgHylle('F')"><span class="shelf-label">F</span></div>
+      <div class="shelf" data-shelf="H" data-orientation="h" style="top:61.8%;left:23.8%;" onclick="velgHylle('H')"><span class="shelf-label">H</span></div>
+      <div class="shelf" data-shelf="G" data-orientation="h" style="top:47.2%;left:39.9%;" onclick="velgHylle('G')"><span class="shelf-label">G</span></div>
+      <div class="shelf" data-shelf="F" data-orientation="v" style="top:53.8%;left:54.3%;" onclick="velgHylle('F')"><span class="shelf-label">F</span></div>
 
-      <div class="shelf" data-shelf="E" data-orientation="h" style="top:86%;left:13.9%;" onclick="velgHylle('E')"><span class="shelf-label">E</span></div>
-      <div class="shelf" data-shelf="D" data-orientation="h" style="top:86.2%;left:30.8%;" onclick="velgHylle('D')"><span class="shelf-label">D</span></div>
-      <div class="shelf" data-shelf="C" data-orientation="h" style="top:86.4%;left:47.8%;" onclick="velgHylle('C')"><span class="shelf-label">C</span></div>
+      <div class="shelf" data-shelf="E" data-orientation="h" style="top:82.1%;left:13.9%;" onclick="velgHylle('E')"><span class="shelf-label">E</span></div>
+      <div class="shelf" data-shelf="D" data-orientation="h" style="top:82.4%;left:30.8%;" onclick="velgHylle('D')"><span class="shelf-label">D</span></div>
+      <div class="shelf" data-shelf="C" data-orientation="h" style="top:82.7%;left:47.8%;" onclick="velgHylle('C')"><span class="shelf-label">C</span></div>
 
-      <div class="shelf" data-shelf="B" data-orientation="v" style="top:72.3%;left:80.6%;" onclick="velgHylle('B')"><span class="shelf-label">B</span></div>
-      <div class="shelf" data-shelf="A" data-orientation="v" style="top:84.8%;left:80.5%;" onclick="velgHylle('A')"><span class="shelf-label">A</span></div>
+      <div class="shelf" data-shelf="B" data-orientation="v" style="top:60.2%;left:80.6%;" onclick="velgHylle('B')"><span class="shelf-label">B</span></div>
+      <div class="shelf" data-shelf="A" data-orientation="v" style="top:80.2%;left:80.5%;" onclick="velgHylle('A')"><span class="shelf-label">A</span></div>
     </div>
 
     <!-- Zoom controls -->

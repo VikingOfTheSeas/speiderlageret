@@ -5,11 +5,11 @@
     var s = document.createElement('style');
     s.id = 'kart-mini-css';
     s.textContent = [
-      '.mini-room{position:relative;width:100%;aspect-ratio:4/3;background:#10253e;border-radius:8px;overflow:hidden;border:1px solid rgba(70,189,198,0.2)}',
+      '.mini-room{position:relative;width:100%;aspect-ratio:5/4;background:#10253e;border-radius:8px;overflow:hidden;border:1px solid rgba(70,189,198,0.2)}',
       '.mini-room::before{content:"";position:absolute;inset:4%;border:2px solid rgba(70,189,198,0.25);border-radius:5px;background-image:radial-gradient(circle,rgba(70,189,198,0.06) 1px,transparent 1px);background-size:12px 12px}',
-      '.mini-sofakrok{position:absolute;top:4%;left:63%;width:33%;height:37%;background:rgba(70,189,198,0.12);border:1px solid rgba(70,189,198,0.35);border-radius:4px;z-index:2}',
-      '.mini-door{position:absolute;left:65%;bottom:0;width:12%;height:9%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px;font-family:"DM Mono",monospace;font-size:8px;font-weight:700;color:rgba(70,189,198,0.9);letter-spacing:1px;border-top:2px solid rgba(70,189,198,0.6);border-left:2px solid rgba(70,189,198,0.6);border-right:2px solid rgba(70,189,198,0.6);border-bottom:none;border-radius:4px 4px 0 0;background:rgba(70,189,198,0.07);z-index:6}',
-      '.mini-shelf{position:absolute;z-index:5;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.45);border-radius:2px;display:flex;align-items:center;justify-content:center;width:16%;height:9%}',
+      '.mini-sofakrok{position:absolute;top:19.7%;left:61%;width:22%;height:33.6%;background:rgba(70,189,198,0.12);border:1px solid rgba(70,189,198,0.35);border-radius:4px;z-index:2}',
+      '.mini-door{position:absolute;left:65%;bottom:0;width:12%;height:12.9%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px;font-family:"DM Mono",monospace;font-size:8px;font-weight:700;color:rgba(70,189,198,0.9);letter-spacing:1px;border-top:2px solid rgba(70,189,198,0.6);border-left:2px solid rgba(70,189,198,0.6);border-right:2px solid rgba(70,189,198,0.6);border-bottom:none;border-radius:4px 4px 0 0;background:rgba(70,189,198,0.07);z-index:6}',
+      '.mini-shelf{position:absolute;z-index:5;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.45);border-radius:2px;display:flex;align-items:center;justify-content:center;width:16%;height:14.4%}',
       '.mini-shelf[data-orientation="v"]{transform:rotate(90deg)}',
       '.mini-shelf.mini-hl{background:rgba(70,189,198,0.35);border-color:#46bdc6;box-shadow:0 0 8px rgba(70,189,198,0.5);animation:mini-pulse 1.4s ease-in-out infinite}',
       '.mini-shelf[data-orientation="v"].mini-hl{transform:rotate(90deg)}',
@@ -25,20 +25,20 @@
 
   // v = vertical (rotated 90°), h = horizontal (default)
   var SHELVES = [
-    { id:"L", t:37.2, l:5,    o:"h" },
-    { id:"M", t:39.1, l:30,   o:"v" },
-    { id:"N", t:37.6, l:44.7, o:"h" },
-    { id:"K", t:48.4, l:2,    o:"v" },
-    { id:"J", t:61.1, l:2.2,  o:"v" },
-    { id:"I", t:73.3, l:2.4,  o:"v" },
-    { id:"H", t:73.3, l:23.8, o:"h" },
-    { id:"G", t:64.2, l:39.9, o:"h" },
-    { id:"F", t:68.3, l:54.3, o:"v" },
-    { id:"E", t:86,   l:13.9, o:"h" },
-    { id:"D", t:86.2, l:30.8, o:"h" },
-    { id:"C", t:86.4, l:47.8, o:"h" },
-    { id:"B", t:72.3, l:80.6, o:"v" },
-    { id:"A", t:84.8, l:80.5, o:"v" },
+    { id:"L", t:4,    l:5,    o:"h" },
+    { id:"M", t:7,    l:30,   o:"v" },
+    { id:"N", t:4.6,  l:44.7, o:"h" },
+    { id:"K", t:21.9, l:2,    o:"v" },
+    { id:"J", t:42.2, l:2.2,  o:"v" },
+    { id:"I", t:61.8, l:2.4,  o:"v" },
+    { id:"H", t:61.8, l:23.8, o:"h" },
+    { id:"G", t:47.2, l:39.9, o:"h" },
+    { id:"F", t:53.8, l:54.3, o:"v" },
+    { id:"E", t:82.1, l:13.9, o:"h" },
+    { id:"D", t:82.4, l:30.8, o:"h" },
+    { id:"C", t:82.7, l:47.8, o:"h" },
+    { id:"B", t:60.2, l:80.6, o:"v" },
+    { id:"A", t:80.2, l:80.5, o:"v" },
   ];
 
   window.renderMiniKart = function (containerId, hylleplassering) {
@@ -50,7 +50,7 @@
     var html = '<div class="mini-room">';
     html += '<div class="mini-sofakrok"></div>';
     html += '<div class="mini-door">DØR</div>';
-    html += '<div class="mini-wall-block" style="top:4%;left:22%;width:4%;height:22%"></div>';
+    html += '<div class="mini-wall-block" style="top:8.5%;left:22%;width:5%;height:9.6%"></div>';
 
     SHELVES.forEach(function (s) {
       var act = s.id === hl;
