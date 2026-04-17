@@ -72,12 +72,100 @@
       z-index: 4;
       pointer-events: none;
     }
-    /* Rotate handle in admin mode */
-    body.admin-mode .shelf::after {
-      content: "⟳";
-      position: absolute; top: 2px; right: 3px;
-      font-size: 10px; color: rgba(255,255,255,0.5);
+    body.admin-mode .room-wall-block { pointer-events: auto; }
+
+    /* Drag cursors in admin mode for movable shapes */
+    body.admin-mode .room-door,
+    body.admin-mode .sofakrok,
+    body.admin-mode .room-wall-block {
+      cursor: grab;
+    }
+    body.admin-mode .room-door.dragging,
+    body.admin-mode .sofakrok.dragging,
+    body.admin-mode .room-wall-block.dragging {
+      cursor: grabbing; opacity: 0.85;
+    }
+
+    /* Resize handle — visible only in admin mode */
+    .shape-resize {
+      display: none;
+      position: absolute;
+      bottom: -7px; right: -7px;
+      width: 14px; height: 14px;
+      background: rgba(70,189,198,0.9);
+      border: 2px solid #0d2137;
+      border-radius: 3px;
+      cursor: nwse-resize;
+      z-index: 7;
+      touch-action: none;
+    }
+    body.admin-mode .shape-resize { display: block; }
+    .shape-resize:hover { background: #fff; }
+    /* Admin controls on each shelf */
+    .shelf-admin {
+      display: none;
+      position: absolute;
+      top: -2px; right: -2px;
+      gap: 2px;
+      z-index: 3;
+    }
+    body.admin-mode .shelf-admin { display: flex; }
+    .shelf-admin-btn {
+      width: 16px; height: 16px;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 3px;
+      color: #fff;
+      font-size: 9px;
+      cursor: pointer;
+      padding: 0; margin: 0;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+    .shelf-admin-btn:hover { background: rgba(0,0,0,0.85); }
+    .shelf[data-orientation="v"] .shelf-admin {
+      transform: rotate(-90deg);
+      transform-origin: top right;
+    }
+    /* Admin bar button */
+    .admin-kart-btn {
+      background: rgba(70,189,198,0.15);
+      border: 1px solid rgba(70,189,198,0.4);
+      color: var(--primary);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .admin-kart-btn:hover { background: rgba(70,189,198,0.28); }
+    .admin-kart-btn-done {
+      background: rgba(34,197,94,0.18);
+      border-color: rgba(34,197,94,0.5);
+      color: rgb(74, 222, 128);
+    }
+    .admin-kart-btn-done:hover { background: rgba(34,197,94,0.32); }
+
+    /* Toast confirmation */
+    .kart-toast {
+      position: fixed;
+      top: 16px; left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(34,197,94,0.95);
+      color: #0b1e36;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px; font-weight: 600;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+      z-index: 3000;
+      opacity: 0;
       pointer-events: none;
+      transition: opacity .2s, transform .25s;
+    }
+    .kart-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     /* Dotted floor */
@@ -91,8 +179,6 @@
     /* Door */
     .room-door {
       position: absolute;
-      left: 65%; bottom: 0;
-      width: 12%; height: 12.9%;
       display: flex; align-items: flex-end; justify-content: center;
       padding-bottom: 4px;
       font-family: "DM Mono", monospace;
@@ -127,18 +213,12 @@
       justify-content: center;
       z-index: 10;
       /* All shelves same rectangle; vertical ones use rotate */
-      width: 16%; height: 14.4%;
+      width: 15%; height: 14.4%;
     }
     .shelf[data-orientation="v"] { transform: rotate(90deg); }
     /* Admin drag mode */
     body.admin-mode .shelf { cursor: grab; }
     body.admin-mode .shelf.dragging { cursor: grabbing; opacity: .85; z-index: 50; transition: none; }
-    body.admin-mode .shelf::after {
-      content: "✥";
-      position: absolute; top: 2px; right: 3px;
-      font-size: 9px; color: rgba(255,255,255,0.4);
-      pointer-events: none;
-    }
     .admin-kart-bar {
       display: none; align-items: center; gap: 8px;
       margin-bottom: 10px; flex-wrap: wrap;
@@ -313,10 +393,71 @@
       width: 14px; height: 14px; border-radius: 3px;
     }
 
+    /* ── MODAL ──────────────────────────────────────────────── */
+    .kart-modal {
+      display: none;
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.6);
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .kart-modal.open { display: flex; }
+    .kart-modal-box {
+      background: #0d2137;
+      border: 1px solid rgba(70,189,198,0.35);
+      border-radius: 12px;
+      padding: 20px 22px;
+      max-width: 360px; width: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    }
+    .kart-modal-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 15px; font-weight: 700;
+      color: var(--primary); margin: 0 0 12px;
+    }
+    .kart-modal-msg {
+      font-size: 13px; color: var(--text); margin: 0 0 14px; line-height: 1.45;
+    }
+    .kart-modal-input {
+      width: 100%; box-sizing: border-box;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(70,189,198,0.3);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px; font-family: inherit;
+      margin-bottom: 14px;
+    }
+    .kart-modal-input:focus { outline: none; border-color: var(--primary); }
+    .kart-modal-actions {
+      display: flex; gap: 8px; justify-content: flex-end;
+    }
+    .kart-modal-btn {
+      padding: 8px 14px; border-radius: 7px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      border: 1px solid transparent;
+    }
+    .kart-modal-btn.cancel {
+      background: rgba(255,255,255,0.06);
+      color: var(--muted);
+      border-color: rgba(255,255,255,0.1);
+    }
+    .kart-modal-btn.confirm {
+      background: var(--primary);
+      color: #0b1e36;
+    }
+    .kart-modal-btn.danger {
+      background: rgba(239,68,68,0.2);
+      color: rgb(248, 113, 113);
+      border-color: rgba(239,68,68,0.4);
+    }
+    .kart-modal-btn:hover { filter: brightness(1.1); }
+
     /* ── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 768px) {
       .kart-page { padding: 12px; }
-      .room-container { aspect-ratio: 5 / 4; max-height: 50vh; }
+      .room-container { aspect-ratio: 4 / 3; max-height: 50vh; }
       .kart-search { width: 160px; }
       .shelf-label { font-size: 10px; }
       .tabs { display: none; }
@@ -366,7 +507,9 @@
   </div>
 
   <div class="admin-kart-bar">
-    <span class="admin-kart-hint">🔧 Dra for å flytte · Dobbeltklikk for å rotere</span>
+    <button class="admin-kart-btn" onclick="leggTilHylle()">➕ Legg til hylle</button>
+    <button class="admin-kart-btn admin-kart-btn-done" onclick="ferdigRedigere()">✓ Ferdig</button>
+    <span class="admin-kart-hint">🔧 Dra for å flytte · Dobbeltklikk for å rotere · ✏️ endrer navn · 🗑️ sletter</span>
   </div>
 
   <div class="room-container" id="roomContainer">
@@ -374,36 +517,18 @@
       <!-- Walls -->
       <div class="room-walls"></div>
 
-      <!-- Door (bottom-right) -->
-      <div class="room-door">DØR</div>
+      <!-- Door (positioned/sized dynamically by initShapes) -->
+      <div class="room-door" id="roomDoor">DØR</div>
 
       <!-- Sofakrok (right-middle, between N and B) -->
-      <div class="sofakrok" style="top:19.7%;left:61%;width:22%;height:33.6%;">
+      <div class="sofakrok" id="roomSofakrok">
         <span class="sofakrok-label">Sofakrok</span>
       </div>
 
       <!-- Wall block klump between L and M -->
-      <div class="room-wall-block" style="top:8.5%;left:22%;width:5%;height:9.6%;"></div>
+      <div class="room-wall-block" id="roomWall"></div>
 
-      <!-- All shelves same size: horizontal 16%×14.4%, vertical (rotated) -->
-      <div class="shelf" data-shelf="L" data-orientation="h" style="top:4%;left:5%;" onclick="velgHylle('L')"><span class="shelf-label">L</span></div>
-      <div class="shelf" data-shelf="M" data-orientation="v" style="top:7%;left:30%;" onclick="velgHylle('M')"><span class="shelf-label">M</span></div>
-      <div class="shelf" data-shelf="N" data-orientation="h" style="top:4.6%;left:44.7%;" onclick="velgHylle('N')"><span class="shelf-label">N</span></div>
-
-      <div class="shelf" data-shelf="K" data-orientation="v" style="top:21.9%;left:2%;" onclick="velgHylle('K')"><span class="shelf-label">K</span></div>
-      <div class="shelf" data-shelf="J" data-orientation="v" style="top:42.2%;left:2.2%;" onclick="velgHylle('J')"><span class="shelf-label">J</span></div>
-      <div class="shelf" data-shelf="I" data-orientation="v" style="top:61.8%;left:2.4%;" onclick="velgHylle('I')"><span class="shelf-label">I</span></div>
-
-      <div class="shelf" data-shelf="H" data-orientation="h" style="top:61.8%;left:23.8%;" onclick="velgHylle('H')"><span class="shelf-label">H</span></div>
-      <div class="shelf" data-shelf="G" data-orientation="h" style="top:47.2%;left:39.9%;" onclick="velgHylle('G')"><span class="shelf-label">G</span></div>
-      <div class="shelf" data-shelf="F" data-orientation="v" style="top:53.8%;left:54.3%;" onclick="velgHylle('F')"><span class="shelf-label">F</span></div>
-
-      <div class="shelf" data-shelf="E" data-orientation="h" style="top:82.1%;left:13.9%;" onclick="velgHylle('E')"><span class="shelf-label">E</span></div>
-      <div class="shelf" data-shelf="D" data-orientation="h" style="top:82.4%;left:30.8%;" onclick="velgHylle('D')"><span class="shelf-label">D</span></div>
-      <div class="shelf" data-shelf="C" data-orientation="h" style="top:82.7%;left:47.8%;" onclick="velgHylle('C')"><span class="shelf-label">C</span></div>
-
-      <div class="shelf" data-shelf="B" data-orientation="v" style="top:60.2%;left:80.6%;" onclick="velgHylle('B')"><span class="shelf-label">B</span></div>
-      <div class="shelf" data-shelf="A" data-orientation="v" style="top:80.2%;left:80.5%;" onclick="velgHylle('A')"><span class="shelf-label">A</span></div>
+      <!-- Shelves rendered dynamically by renderShelves() from localStorage/DEFAULT_SHELVES -->
     </div>
 
     <!-- Zoom controls -->
@@ -441,6 +566,22 @@
     <div class="shelf-panel-body" id="panelBody"></div>
   </div>
 </main>
+
+<!-- Toast confirmation -->
+<div class="kart-toast" id="kartToast"></div>
+
+<!-- Custom modal (replaces prompt/confirm) -->
+<div class="kart-modal" id="kartModal" role="dialog" aria-modal="true">
+  <div class="kart-modal-box">
+    <h3 class="kart-modal-title" id="kartModalTitle"></h3>
+    <p class="kart-modal-msg" id="kartModalMsg" style="display:none"></p>
+    <input type="text" class="kart-modal-input" id="kartModalInput" style="display:none">
+    <div class="kart-modal-actions">
+      <button class="kart-modal-btn cancel" id="kartModalCancel">Avbryt</button>
+      <button class="kart-modal-btn confirm" id="kartModalOk">OK</button>
+    </div>
+  </div>
+</div>
 
 <div id="banner" class="banner" style="display:none"></div>
 
@@ -494,17 +635,26 @@ function byggHylleData() {
 
 function extractHylle(plassering) {
   if (!plassering) return null;
-  // Extract letter prefix: "A10" → "A", "Sofakrok" → "Sofakrok"
-  const m = plassering.match(/^([A-N])/i);
+  // Match by longest shelf-id prefix (supports multi-char custom names)
+  const up = plassering.toUpperCase();
+  const ids = Array.from(document.querySelectorAll(".shelf"))
+    .map(el => el.dataset.shelf)
+    .sort((a, b) => b.length - a.length);
+  for (const id of ids) {
+    if (up.startsWith(id.toUpperCase())) return id;
+  }
+  // Fallback: legacy A-N letter prefix
+  const m = plassering.match(/^([A-Z])/i);
   return m ? m[1].toUpperCase() : null;
 }
 
 function oppdaterHylleTellere() {
   document.querySelectorAll(".shelf").forEach(el => {
     const id = el.dataset.shelf;
+    const name = el.dataset.name || id;
     const items = hylleData[id] || [];
     const label = el.querySelector(".shelf-label");
-    label.textContent = id + (items.length ? " (" + items.length + ")" : "");
+    label.textContent = name + (items.length ? " (" + items.length + ")" : "");
   });
 }
 
@@ -513,7 +663,7 @@ function velgHylle(id) {
   valgtHylle = id;
   // Highlight
   document.querySelectorAll(".shelf").forEach(el => el.classList.remove("highlight"));
-  const el = document.querySelector('.shelf[data-shelf="' + id + '"]');
+  const el = document.querySelector('.shelf[data-shelf="' + CSS.escape(id) + '"]');
   if (el) el.classList.add("highlight");
   visPanel(id);
 }
@@ -523,7 +673,9 @@ function visPanel(id) {
   const body = document.getElementById("panelBody");
   const items = hylleData[id] || [];
   const antall = items.length;
-  document.getElementById("panelTitle").textContent = "Hylle " + id + (antall ? " · " + antall + " gjenstand" + (antall !== 1 ? "er" : "") : "");
+  const shelfEl = document.querySelector('.shelf[data-shelf="' + CSS.escape(id) + '"]');
+  const name = (shelfEl && shelfEl.dataset.name) || id;
+  document.getElementById("panelTitle").textContent = "Hylle " + name + (antall ? " · " + antall + " gjenstand" + (antall !== 1 ? "er" : "") : "");
 
   if (antall === 0) {
     body.innerHTML = '<div class="shelf-panel-empty">Ingen gjenstander på denne hyllen</div>';
@@ -564,28 +716,6 @@ function escHtml(s) {
   return d.innerHTML;
 }
 
-// ── HOVER TOOLTIP ─────────────────────────────────────────
-document.querySelectorAll(".shelf").forEach(el => {
-  el.addEventListener("mouseenter", e => {
-    const id = el.dataset.shelf;
-    const items = hylleData[id] || [];
-    document.getElementById("tooltipName").textContent = "Hylle " + id;
-    document.getElementById("tooltipCount").textContent = items.length + " gjenstand" + (items.length !== 1 ? "er" : "");
-    document.getElementById("tooltipItems").innerHTML = items.slice(0, 8).map(g =>
-      '<div>' + escHtml(g.navn) + '</div>'
-    ).join("") + (items.length > 8 ? '<div style="color:var(--muted)">+ ' + (items.length - 8) + ' til...</div>' : '');
-    document.getElementById("shelfTooltip").classList.add("visible");
-  });
-  el.addEventListener("mousemove", e => {
-    const tt = document.getElementById("shelfTooltip");
-    tt.style.left = (e.clientX + 14) + "px";
-    tt.style.top = (e.clientY + 14) + "px";
-  });
-  el.addEventListener("mouseleave", () => {
-    document.getElementById("shelfTooltip").classList.remove("visible");
-  });
-});
-
 // ── SEARCH ────────────────────────────────────────────────
 function sokKart(q) {
   q = q.trim().toLowerCase();
@@ -615,7 +745,7 @@ function sokKart(q) {
 }
 
 function highlightHylle(id) {
-  const el = document.querySelector('.shelf[data-shelf="' + id + '"]');
+  const el = document.querySelector('.shelf[data-shelf="' + CSS.escape(id) + '"]');
   if (el) el.classList.add("highlight");
 }
 
@@ -652,7 +782,7 @@ function applyTransform() {
 
 const container = document.getElementById("roomContainer");
 container.addEventListener("pointerdown", e => {
-  if (e.target.closest(".shelf, .zoom-btn, .sofakrok")) return;
+  if (e.target.closest(".shelf, .zoom-btn, .sofakrok, .room-door, .room-wall-block, .shape-resize")) return;
   isDragging = true;
   dragStartX = e.clientX - panX;
   dragStartY = e.clientY - panY;
@@ -675,88 +805,376 @@ container.addEventListener("wheel", e => {
   zoom(e.deltaY < 0 ? 1 : -1);
 }, { passive: false });
 
-// ── ADMIN DRAG EDITING ────────────────────────────────────
-const LS_KEY = "kartHyllePosisjoner";
+// ── ROOM SHAPES (door / sofakrok / wall) — move + resize ──
+const LS_SHAPES = "kartShapes";
+const DEFAULT_SHAPES = {
+  door:     { top: "87.1%", left: "65%",   width: "11.25%", height: "12.9%" },
+  sofakrok: { top: "19.7%", left: "61%",   width: "20.6%",  height: "33.6%" },
+  wall:     { top: "8.5%",  left: "22%",   width: "4.7%",   height: "9.6%"  },
+};
 
-function lastHyllePosisjoner() {
-  try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch { return {}; }
+function lastShapes() {
+  try {
+    const v = JSON.parse(localStorage.getItem(LS_SHAPES));
+    if (v && typeof v === "object") return v;
+  } catch (_) {}
+  return {};
+}
+function lagreShape(key, el) {
+  const all = lastShapes();
+  all[key] = {
+    top: el.style.top,
+    left: el.style.left,
+    width: el.style.width,
+    height: el.style.height,
+  };
+  localStorage.setItem(LS_SHAPES, JSON.stringify(all));
 }
 
-function lagreHyllePosisjoner() {
-  const pos = {};
-  document.querySelectorAll(".shelf").forEach(el => {
-    pos[el.dataset.shelf] = { top: el.style.top, left: el.style.left, orientation: el.dataset.orientation || "h" };
+function initShape(el, key) {
+  if (!el) return;
+  const saved = lastShapes()[key];
+  const s = saved || DEFAULT_SHAPES[key];
+  el.style.top = s.top;
+  el.style.left = s.left;
+  el.style.width = s.width;
+  el.style.height = s.height;
+  el.style.bottom = ""; // clear any CSS bottom:0 override
+
+  // Add resize handle
+  const rs = document.createElement("div");
+  rs.className = "shape-resize";
+  rs.title = "Endre størrelse";
+  el.appendChild(rs);
+
+  // Resize
+  rs.addEventListener("pointerdown", e => {
+    if (!document.body.classList.contains("admin-mode")) return;
+    e.stopPropagation();
+    e.preventDefault();
+    const room = document.getElementById("roomInner");
+    const rr = room.getBoundingClientRect();
+    const startPx = e.clientX, startPy = e.clientY;
+    const startW = parseFloat(el.style.width) || 0;
+    const startH = parseFloat(el.style.height) || 0;
+    rs.setPointerCapture(e.pointerId);
+    const onMove = ev => {
+      const dw = (ev.clientX - startPx) / rr.width * 100;
+      const dh = (ev.clientY - startPy) / rr.height * 100;
+      el.style.width  = Math.max(1.5, startW + dw).toFixed(1) + "%";
+      el.style.height = Math.max(1.5, startH + dh).toFixed(1) + "%";
+    };
+    const onUp = () => {
+      rs.removeEventListener("pointermove", onMove);
+      rs.removeEventListener("pointerup", onUp);
+      lagreShape(key, el);
+    };
+    rs.addEventListener("pointermove", onMove);
+    rs.addEventListener("pointerup", onUp);
   });
-  localStorage.setItem(LS_KEY, JSON.stringify(pos));
-}
 
-
-function brukLagredePosisjoner() {
-  const pos = lastHyllePosisjoner();
-  document.querySelectorAll(".shelf").forEach(el => {
-    const p = pos[el.dataset.shelf];
-    if (!p) return;
-    el.style.top  = p.top;
-    el.style.left = p.left;
-    if (p.orientation) el.dataset.orientation = p.orientation;
-  });
-}
-brukLagredePosisjoner();
-
-// Drag-to-move shelves in admin mode
-(function () {
-  let dragEl = null, startPx, startPy, startElX, startElY, roomW, roomH, didDrag;
-
-  document.querySelectorAll(".shelf").forEach(el => {
-    el.addEventListener("pointerdown", e => {
-      if (!document.body.classList.contains("admin-mode")) return;
-      e.stopPropagation();
-      e.preventDefault();
-      const room = document.getElementById("roomInner");
-      const rr   = room.getBoundingClientRect();
-      dragEl    = el;
-      didDrag   = false;
-      startPx   = e.clientX;
-      startPy   = e.clientY;
-      startElX  = parseFloat(el.style.left) || 0;
-      startElY  = parseFloat(el.style.top)  || 0;
-      // rr.width is the rendered (scaled) width; divide by zoom to get natural room width in screen pixels
-      // so that dx_screen / roomW_screen gives correct % in natural coordinates
-      roomW = rr.width;
-      roomH = rr.height;
-      dragEl.classList.add("dragging");
-      dragEl.setPointerCapture(e.pointerId);
-    });
-
-    el.addEventListener("pointermove", e => {
-      if (!dragEl || dragEl !== el) return;
-      const dx = (e.clientX - startPx) / roomW * 100;
-      const dy = (e.clientY - startPy) / roomH * 100;
+  // Drag
+  el.addEventListener("pointerdown", e => {
+    if (!document.body.classList.contains("admin-mode")) return;
+    if (e.target.closest(".shape-resize")) return;
+    e.stopPropagation();
+    e.preventDefault();
+    const room = document.getElementById("roomInner");
+    const rr = room.getBoundingClientRect();
+    const startPx = e.clientX, startPy = e.clientY;
+    const startL = parseFloat(el.style.left) || 0;
+    const startT = parseFloat(el.style.top) || 0;
+    let didDrag = false;
+    el.classList.add("dragging");
+    el.setPointerCapture(e.pointerId);
+    const onMove = ev => {
+      const dx = (ev.clientX - startPx) / rr.width * 100;
+      const dy = (ev.clientY - startPy) / rr.height * 100;
       if (Math.abs(dx) > 0.3 || Math.abs(dy) > 0.3) didDrag = true;
-      // Size is defined in CSS (16%×9%), so clamp based on that
-      dragEl.style.left = Math.max(0, Math.min(84, startElX + dx)).toFixed(1) + "%";
-      dragEl.style.top  = Math.max(0, Math.min(91, startElY + dy)).toFixed(1) + "%";
-    });
-
-    el.addEventListener("pointerup", () => {
-      if (!dragEl || dragEl !== el) return;
-      dragEl.classList.remove("dragging");
-      if (didDrag) lagreHyllePosisjoner();
-      dragEl = null;
-    });
-
-    el.addEventListener("click", e => {
-      if (didDrag) { e.stopImmediatePropagation(); didDrag = false; }
-    }, true);
-
-    el.addEventListener("dblclick", e => {
-      if (!document.body.classList.contains("admin-mode")) return;
-      e.stopPropagation();
-      el.dataset.orientation = (el.dataset.orientation === "v") ? "h" : "v";
-      lagreHyllePosisjoner();
-    });
+      el.style.left = Math.max(0, Math.min(100, startL + dx)).toFixed(1) + "%";
+      el.style.top  = Math.max(0, Math.min(100, startT + dy)).toFixed(1) + "%";
+    };
+    const onUp = () => {
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", onUp);
+      el.classList.remove("dragging");
+      if (didDrag) lagreShape(key, el);
+    };
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", onUp);
   });
-})();
+}
+
+initShape(document.getElementById("roomDoor"),     "door");
+initShape(document.getElementById("roomSofakrok"), "sofakrok");
+initShape(document.getElementById("roomWall"),     "wall");
+
+// ── SHELF RENDERING (data-driven) ─────────────────────────
+const LS_SHELVES = "kartShelves";
+
+const DEFAULT_SHELVES = [
+  { id:"L", name:"L", top:"4%",    left:"5%",    orientation:"h" },
+  { id:"M", name:"M", top:"7%",    left:"30%",   orientation:"v" },
+  { id:"N", name:"N", top:"4.6%",  left:"44.7%", orientation:"h" },
+  { id:"K", name:"K", top:"36.5%", left:"2.6%",  orientation:"v" },
+  { id:"J", name:"J", top:"56.9%", left:"2.6%",  orientation:"v" },
+  { id:"I", name:"I", top:"77.4%", left:"2.5%",  orientation:"v" },
+  { id:"H", name:"H", top:"47.2%", left:"23.5%", orientation:"h" },
+  { id:"G", name:"G", top:"62.1%", left:"23.5%", orientation:"h" },
+  { id:"F", name:"F", top:"54.4%", left:"49.8%", orientation:"v" },
+  { id:"E", name:"E", top:"80.3%", left:"15.7%", orientation:"h" },
+  { id:"D", name:"D", top:"80.4%", left:"32%",   orientation:"h" },
+  { id:"C", name:"C", top:"80.5%", left:"48.5%", orientation:"h" },
+  { id:"B", name:"B", top:"56.6%", left:"81.2%", orientation:"v" },
+  { id:"A", name:"A", top:"77.5%", left:"81.1%", orientation:"v" },
+];
+
+function lastShelves() {
+  try {
+    const v = JSON.parse(localStorage.getItem(LS_SHELVES));
+    if (Array.isArray(v) && v.length) return v;
+  } catch (_) {}
+  return null;
+}
+
+function lagreShelves() {
+  const shelves = Array.from(document.querySelectorAll(".shelf")).map(el => ({
+    id: el.dataset.shelf,
+    name: el.dataset.name || el.dataset.shelf,
+    top: el.style.top,
+    left: el.style.left,
+    orientation: el.dataset.orientation || "h",
+  }));
+  localStorage.setItem(LS_SHELVES, JSON.stringify(shelves));
+}
+
+function renderShelves() {
+  const inner = document.getElementById("roomInner");
+  // Remove existing shelves (keep walls/door/sofakrok/wall-block)
+  inner.querySelectorAll(".shelf").forEach(el => el.remove());
+  const list = lastShelves() || DEFAULT_SHELVES;
+  list.forEach(s => {
+    const el = document.createElement("div");
+    el.className = "shelf";
+    el.dataset.shelf = s.id;
+    el.dataset.name = s.name || s.id;
+    el.dataset.orientation = s.orientation || "h";
+    el.style.top = s.top;
+    el.style.left = s.left;
+
+    const label = document.createElement("span");
+    label.className = "shelf-label";
+    label.textContent = s.name || s.id;
+    el.appendChild(label);
+
+    const admin = document.createElement("div");
+    admin.className = "shelf-admin";
+    const renameBtn = document.createElement("button");
+    renameBtn.className = "shelf-admin-btn";
+    renameBtn.title = "Endre navn";
+    renameBtn.textContent = "✏️";
+    renameBtn.addEventListener("pointerdown", e => e.stopPropagation());
+    renameBtn.addEventListener("click", e => { e.stopPropagation(); renameShelf(el); });
+    const delBtn = document.createElement("button");
+    delBtn.className = "shelf-admin-btn";
+    delBtn.title = "Slett hylle";
+    delBtn.textContent = "🗑️";
+    delBtn.addEventListener("pointerdown", e => e.stopPropagation());
+    delBtn.addEventListener("click", e => { e.stopPropagation(); deleteShelf(el); });
+    admin.appendChild(renameBtn);
+    admin.appendChild(delBtn);
+    el.appendChild(admin);
+
+    attachShelfListeners(el);
+    inner.appendChild(el);
+  });
+  oppdaterHylleTellere();
+}
+
+// ── MODAL (replaces prompt/confirm which are unreliable on mobile) ──
+function kartModal(opts) {
+  return new Promise(resolve => {
+    const m = document.getElementById("kartModal");
+    const title = document.getElementById("kartModalTitle");
+    const msg = document.getElementById("kartModalMsg");
+    const input = document.getElementById("kartModalInput");
+    const ok = document.getElementById("kartModalOk");
+    const cancel = document.getElementById("kartModalCancel");
+
+    title.textContent = opts.title || "";
+    if (opts.message) { msg.textContent = opts.message; msg.style.display = ""; } else { msg.style.display = "none"; }
+    if (opts.input) {
+      input.style.display = "";
+      input.value = opts.defaultValue || "";
+      input.placeholder = opts.placeholder || "";
+    } else {
+      input.style.display = "none";
+      input.value = "";
+    }
+    ok.textContent = opts.okLabel || "OK";
+    cancel.textContent = opts.cancelLabel || "Avbryt";
+    ok.className = "kart-modal-btn " + (opts.danger ? "danger" : "confirm");
+
+    const close = (val) => {
+      m.classList.remove("open");
+      ok.onclick = null; cancel.onclick = null; input.onkeydown = null; m.onclick = null;
+      resolve(val);
+    };
+    ok.onclick = () => close(opts.input ? input.value : true);
+    cancel.onclick = () => close(null);
+    input.onkeydown = e => {
+      if (e.key === "Enter") { e.preventDefault(); close(input.value); }
+      else if (e.key === "Escape") { e.preventDefault(); close(null); }
+    };
+    m.onclick = e => { if (e.target === m) close(null); };
+
+    m.classList.add("open");
+    if (opts.input) setTimeout(() => { input.focus(); input.select(); }, 30);
+  });
+}
+
+// ── ADMIN: add / rename / delete ──────────────────────────
+async function leggTilHylle() {
+  const raw = await kartModal({
+    title: "Legg til hylle",
+    message: "Gi hyllen et navn (f.eks. O eller TOOLS).",
+    input: true,
+    placeholder: "Navn",
+  });
+  if (raw == null) return;
+  const name = String(raw).trim();
+  if (!name) return;
+  const id = name.toUpperCase();
+  if (document.querySelector('.shelf[data-shelf="' + CSS.escape(id) + '"]')) {
+    await kartModal({ title: "Finnes allerede", message: "En hylle med navnet '" + id + "' finnes allerede.", okLabel: "OK", cancelLabel: "" });
+    return;
+  }
+  const current = Array.from(document.querySelectorAll(".shelf")).map(el => ({
+    id: el.dataset.shelf,
+    name: el.dataset.name || el.dataset.shelf,
+    top: el.style.top,
+    left: el.style.left,
+    orientation: el.dataset.orientation || "h",
+  }));
+  current.push({ id, name: id, top: "50%", left: "50%", orientation: "h" });
+  localStorage.setItem(LS_SHELVES, JSON.stringify(current));
+  renderShelves();
+}
+
+async function renameShelf(el) {
+  const oldId = el.dataset.shelf;
+  const oldName = el.dataset.name || oldId;
+  const raw = await kartModal({
+    title: "Endre navn",
+    message: "Nytt navn på hylle '" + oldName + "':",
+    input: true,
+    defaultValue: oldName,
+  });
+  if (raw == null) return;
+  const newName = String(raw).trim();
+  if (!newName || newName === oldName) return;
+  const newId = newName.toUpperCase();
+  if (newId !== oldId.toUpperCase() && document.querySelector('.shelf[data-shelf="' + CSS.escape(newId) + '"]')) {
+    await kartModal({ title: "Finnes allerede", message: "En hylle med navnet '" + newId + "' finnes allerede." });
+    return;
+  }
+  el.dataset.shelf = newId;
+  el.dataset.name = newName;
+  lagreShelves();
+  oppdaterHylleTellere();
+}
+
+async function deleteShelf(el) {
+  const name = el.dataset.name || el.dataset.shelf;
+  const ok = await kartModal({
+    title: "Slett hylle",
+    message: "Slette hylle '" + name + "'? Gjenstander som refererer til denne hyllen blir ikke slettet, men vises ikke på kartet.",
+    okLabel: "Slett",
+    danger: true,
+  });
+  if (!ok) return;
+  el.remove();
+  lagreShelves();
+}
+
+// ── DRAG / CLICK / DBLCLICK / HOVER LISTENERS ─────────────
+let _drag = { el: null, startPx: 0, startPy: 0, startElX: 0, startElY: 0, roomW: 0, roomH: 0, didDrag: false };
+
+function attachShelfListeners(el) {
+  // Click → velg hylle
+  el.addEventListener("click", e => {
+    if (_drag.didDrag) { e.stopImmediatePropagation(); _drag.didDrag = false; return; }
+    if (e.target.closest(".shelf-admin")) return;
+    velgHylle(el.dataset.shelf);
+  }, true);
+
+  // Drag in admin mode
+  el.addEventListener("pointerdown", e => {
+    if (!document.body.classList.contains("admin-mode")) return;
+    if (e.target.closest(".shelf-admin")) return;
+    e.stopPropagation();
+    e.preventDefault();
+    const room = document.getElementById("roomInner");
+    const rr = room.getBoundingClientRect();
+    _drag.el = el;
+    _drag.didDrag = false;
+    _drag.startPx = e.clientX;
+    _drag.startPy = e.clientY;
+    _drag.startElX = parseFloat(el.style.left) || 0;
+    _drag.startElY = parseFloat(el.style.top) || 0;
+    _drag.roomW = rr.width;
+    _drag.roomH = rr.height;
+    el.classList.add("dragging");
+    el.setPointerCapture(e.pointerId);
+  });
+
+  el.addEventListener("pointermove", e => {
+    if (_drag.el !== el) return;
+    const dx = (e.clientX - _drag.startPx) / _drag.roomW * 100;
+    const dy = (e.clientY - _drag.startPy) / _drag.roomH * 100;
+    if (Math.abs(dx) > 0.3 || Math.abs(dy) > 0.3) _drag.didDrag = true;
+    el.style.left = Math.max(0, Math.min(85, _drag.startElX + dx)).toFixed(1) + "%";
+    el.style.top  = Math.max(0, Math.min(85, _drag.startElY + dy)).toFixed(1) + "%";
+  });
+
+  el.addEventListener("pointerup", () => {
+    if (_drag.el !== el) return;
+    el.classList.remove("dragging");
+    if (_drag.didDrag) lagreShelves();
+    _drag.el = null;
+  });
+
+  el.addEventListener("dblclick", e => {
+    if (!document.body.classList.contains("admin-mode")) return;
+    e.stopPropagation();
+    el.dataset.orientation = (el.dataset.orientation === "v") ? "h" : "v";
+    lagreShelves();
+  });
+
+  // Hover tooltip
+  el.addEventListener("mouseenter", () => {
+    const id = el.dataset.shelf;
+    const name = el.dataset.name || id;
+    const items = hylleData[id] || [];
+    document.getElementById("tooltipName").textContent = "Hylle " + name;
+    document.getElementById("tooltipCount").textContent = items.length + " gjenstand" + (items.length !== 1 ? "er" : "");
+    document.getElementById("tooltipItems").innerHTML = items.slice(0, 8).map(g =>
+      '<div>' + escHtml(g.navn) + '</div>'
+    ).join("") + (items.length > 8 ? '<div style="color:var(--muted)">+ ' + (items.length - 8) + ' til...</div>' : '');
+    document.getElementById("shelfTooltip").classList.add("visible");
+  });
+  el.addEventListener("mousemove", e => {
+    const tt = document.getElementById("shelfTooltip");
+    tt.style.left = (e.clientX + 14) + "px";
+    tt.style.top = (e.clientY + 14) + "px";
+  });
+  el.addEventListener("mouseleave", () => {
+    document.getElementById("shelfTooltip").classList.remove("visible");
+  });
+}
+
+// Initial render
+renderShelves();
 
 // ── HAMBURGER / ADMIN ─────────────────────────────────────
 function toggleMeny() {
@@ -771,15 +1189,94 @@ document.addEventListener("click", function(e) {
     btn.classList.remove("open");
   }
 });
-function toggleAdmin() {
-  var active = document.body.classList.toggle("admin-mode");
-  sessionStorage.setItem("adminMode", active ? "1" : "");
+// ── EDIT SESSION (snapshot + revert on exit-without-Ferdig) ──
+let _editSnapshot = null;
+
+function snapshotEdit() {
+  _editSnapshot = {
+    kartShelves: localStorage.getItem("kartShelves"),
+    kartShapes:  localStorage.getItem("kartShapes"),
+  };
+}
+
+function hasUnsavedChanges() {
+  if (!_editSnapshot) return false;
+  return localStorage.getItem("kartShelves") !== _editSnapshot.kartShelves
+      || localStorage.getItem("kartShapes")  !== _editSnapshot.kartShapes;
+}
+
+function revertEdits() {
+  if (!_editSnapshot) return;
+  if (_editSnapshot.kartShelves == null) localStorage.removeItem("kartShelves");
+  else localStorage.setItem("kartShelves", _editSnapshot.kartShelves);
+  if (_editSnapshot.kartShapes == null) localStorage.removeItem("kartShapes");
+  else localStorage.setItem("kartShapes", _editSnapshot.kartShapes);
+  _editSnapshot = null;
+}
+
+function setAdminUI(on) {
+  document.body.classList.toggle("admin-mode", on);
+  sessionStorage.setItem("adminMode", on ? "1" : "");
   var btn = document.getElementById("adminToggle");
-  if (btn) btn.classList.toggle("active", active);
+  if (btn) btn.classList.toggle("active", on);
+}
+
+async function toggleAdmin() {
+  const isOn = document.body.classList.contains("admin-mode");
+  if (!isOn) {
+    // Enter edit mode → snapshot
+    snapshotEdit();
+    setAdminUI(true);
+    return;
+  }
+  // Exit requested via Administrer toggle
+  if (hasUnsavedChanges()) {
+    const discard = await kartModal({
+      title: "Ulagrede endringer",
+      message: "Du har endringer som ikke er lagret. Hva vil du gjøre?",
+      okLabel: "Forkast endringer",
+      cancelLabel: "Fortsett å redigere",
+      danger: true,
+    });
+    if (!discard) return; // keep editing, stay in admin mode
+    revertEdits();
+    setAdminUI(false);
+    // close hamburger menu so user sees the reverted map
+    var meny = document.getElementById("hamburgerMeny");
+    var hb = document.getElementById("hamburger");
+    if (meny) meny.classList.remove("open");
+    if (hb) hb.classList.remove("open");
+    location.reload();
+    return;
+  }
+  // No changes → just exit
+  _editSnapshot = null;
+  setAdminUI(false);
+}
+
+function visToast(text) {
+  var t = document.getElementById("kartToast");
+  if (!t) return;
+  t.textContent = text;
+  t.classList.add("show");
+  clearTimeout(visToast._tm);
+  visToast._tm = setTimeout(function() { t.classList.remove("show"); }, 2200);
+}
+
+function ferdigRedigere() {
+  // Commit: localStorage already up-to-date; just discard the snapshot.
+  _editSnapshot = null;
+  setAdminUI(false);
+  var meny = document.getElementById("hamburgerMeny");
+  var hb = document.getElementById("hamburger");
+  if (meny) meny.classList.remove("open");
+  if (hb) hb.classList.remove("open");
+  visToast("✓ Kartet er lagret");
 }
 (function() {
   if (sessionStorage.getItem("adminMode") === "1") {
     document.body.classList.add("admin-mode");
+    snapshotEdit();
     var btn = document.getElementById("adminToggle");
     if (btn) btn.classList.add("active");
   }
