@@ -72,14 +72,14 @@
       </div>
     </div>
 
-    <div class="info-card" style="margin-bottom:16px;max-width:560px">
-      <h3>📍 På kartet</h3>
-      <div id="miniKartContainer"></div>
-    </div>
+    <div class="item-top-grid">
+      <div class="info-card map-card">
+        <h3>📍 På kartet</h3>
+        <div id="miniKartContainer"></div>
+      </div>
 
-    <div class="item-grid" style="margin-bottom:16px">
       <div class="info-card image-card">
-        <div class="info-card-header"><h3>Bilde</h3></div>
+        <div class="info-card-header"><h3>📷 Bilde</h3></div>
         <img id="boksBilde" class="hylle-img" src="" alt="" style="display:none">
         <div id="bildePlaceholder" class="hylle-placeholder">
           <span class="ph-icon">&#128230;</span><span>Ingen bilde</span>
@@ -93,22 +93,22 @@
         </div>
         <div id="boksBildeStatus" class="bilde-upload-status" style="display:none"></div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div class="info-card">
-          <h3>Info</h3>
-          <div class="info-row"><span class="info-label">ID</span><span class="info-value mono" id="boksIdInfo">-</span></div>
-          <div class="info-row"><span class="info-label">Hylle</span><span class="info-value" id="boksHylleInfo">-</span></div>
-          <div class="info-row"><span class="info-label">Beskrivelse</span><span class="info-value muted-text" id="boksBeskInfo">-</span></div>
-        </div>
-        <div class="info-card qr-card admin-only">
-          <h3>QR-kode</h3>
-          <div class="qr-code-box" id="boksQrCode"></div>
-          <div class="qr-hint">Scan for å åpne denne boksen</div>
-          <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px" class="admin-only">
-            <button class="btn-print" onclick="skrivUtBoksEtikett()">Skriv ut</button>
-            <button class="btn-print" onclick="lastNedBoksQr()" style="background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.3);color:#34d399">Last ned QR</button>
-          </div>
-        </div>
+
+      <div class="info-card">
+        <h3>📋 Info</h3>
+        <div class="info-row"><span class="info-label">ID</span><span class="info-value mono" id="boksIdInfo">-</span></div>
+        <div class="info-row"><span class="info-label">Hylle</span><span class="info-value" id="boksHylleInfo">-</span></div>
+        <div class="info-row"><span class="info-label">Beskrivelse</span><span class="info-value muted-text" id="boksBeskInfo">-</span></div>
+      </div>
+    </div>
+
+    <div class="info-card qr-card admin-only" style="max-width:420px;margin-bottom:16px">
+      <h3>⬛ QR-kode</h3>
+      <div class="qr-code-box" id="boksQrCode"></div>
+      <div class="qr-hint">Scan for å åpne denne boksen</div>
+      <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px" class="admin-only">
+        <button class="btn-print" onclick="skrivUtBoksEtikett()">🖨️ Skriv ut</button>
+        <button class="btn-print" onclick="lastNedBoksQr()" style="background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.3);color:#34d399">⬇️ Last ned QR</button>
       </div>
     </div>
 

@@ -81,12 +81,12 @@
       </div>
     </div>
 
-    <div class="info-card" style="margin-bottom:16px;max-width:560px">
-      <h3>📍 På kartet</h3>
-      <div id="miniKartContainer"></div>
-    </div>
+    <div class="item-top-grid">
+      <div class="info-card map-card">
+        <h3>📍 På kartet</h3>
+        <div id="miniKartContainer"></div>
+      </div>
 
-    <div class="item-grid">
       <div class="info-card image-card">
         <div class="info-card-header">
           <h3>📷 Hylleplassering</h3>
@@ -106,28 +106,27 @@
         <div id="bildeUploadStatus" class="bilde-upload-status" style="display:none"></div>
       </div>
 
-      <div class="info-right-col">
-        <div class="info-card">
-          <h3>📋 Detaljer</h3>
-          <div class="info-row"><span class="info-label">Hylleplassering</span><span class="info-value" id="itemHylle">—</span></div>
-          <div class="info-row"><span class="info-label">Kategori</span><span class="info-value" id="itemKategori2">—</span></div>
-          <div class="info-row"><span class="info-label">Serienummer</span><span class="info-value mono" id="itemSerienummer2">—</span></div>
-          <div class="info-row"><span class="info-label">Enhet</span><span class="info-value" id="itemEnhet">—</span></div>
-          <div class="info-row" style="align-items:flex-start;padding-top:8px">
-            <span class="info-label">Notater</span>
-            <span class="info-value small-text muted-text" id="itemNotater" style="text-align:right">—</span>
-          </div>
+      <div class="info-card">
+        <h3>📋 Detaljer</h3>
+        <div class="info-row"><span class="info-label">Hylleplassering</span><span class="info-value" id="itemHylle">—</span></div>
+        <div class="info-row"><span class="info-label">Kategori</span><span class="info-value" id="itemKategori2">—</span></div>
+        <div class="info-row"><span class="info-label">Serienummer</span><span class="info-value mono" id="itemSerienummer2">—</span></div>
+        <div class="info-row"><span class="info-label">Enhet</span><span class="info-value" id="itemEnhet">—</span></div>
+        <div class="info-row" style="align-items:flex-start;padding-top:8px">
+          <span class="info-label">Notater</span>
+          <span class="info-value small-text muted-text" id="itemNotater" style="text-align:right">—</span>
         </div>
-        <div class="info-card qr-card admin-only">
-          <h3>⬛ QR-kode</h3>
-          <div class="qr-code-box" id="qrCode"></div>
-          <div class="qr-hint">Scan → åpner denne siden</div>
-          <div class="qr-url" id="qrUrl"></div>
-          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-            <button class="btn-print admin-only" onclick="skrivUtItemEtikett()">🖨️ Skriv ut etikett</button>
-            <button class="btn-print admin-only" onclick="lastNedQr()" style="background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.3);color:#34d399">⬇️ Last ned QR</button>
-          </div>
-        </div>
+      </div>
+    </div>
+
+    <div class="info-card qr-card admin-only" style="max-width:420px;margin-bottom:16px">
+      <h3>⬛ QR-kode</h3>
+      <div class="qr-code-box" id="qrCode"></div>
+      <div class="qr-hint">Scan → åpner denne siden</div>
+      <div class="qr-url" id="qrUrl"></div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-print admin-only" onclick="skrivUtItemEtikett()">🖨️ Skriv ut etikett</button>
+        <button class="btn-print admin-only" onclick="lastNedQr()" style="background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.3);color:#34d399">⬇️ Last ned QR</button>
       </div>
     </div>
   </div>
