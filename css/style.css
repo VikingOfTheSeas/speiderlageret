@@ -610,8 +610,8 @@ body:not(.admin-mode) .admin-only { display: none !important; }
   .topbar-sub { display: none; }
   .topbar-brand > div { display: none; }
   .topbar-logo { width: 30px; min-width: 30px; height: 40px; flex-shrink: 0; display: block; }
-  .tabs { display: flex; gap: 2px; flex: 1; justify-content: center; }
-  .tab { padding: 5px 6px; font-size: 11px; }
+  .tabs { display: flex !important; gap: 2px; flex: 1; justify-content: center; flex-wrap: nowrap; }
+  .tab { padding: 5px 6px; font-size: 11px; white-space: nowrap; }
   .topbar-right { gap: 4px; }
   .topbar-right .btn-logout { display: none; }
   .filters-row { flex-wrap: wrap; }

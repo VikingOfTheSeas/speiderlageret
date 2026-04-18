@@ -7,7 +7,7 @@
   <title>Kart – 1. Haugerud</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=1776529282">
+  <link rel="stylesheet" href="css/style.css?v=1776543577">
   <script src="js/auth.js"></script>
   <style>
     /* ── KART PAGE ─────────────────────────────────────────── */
@@ -40,7 +40,7 @@
       overflow: hidden;
       aspect-ratio: 4 / 3;
       max-height: 75vh;
-      margin: 0 auto;
+      margin: 0;
       user-select: none;
     }
 
@@ -451,7 +451,6 @@
       .kart-search-wrap { flex: 1 1 100%; }
       .kart-search { width: 100%; box-sizing: border-box; }
       .shelf-label { font-size: 10px; }
-      .tabs { display: none; }
       .shelf-panel-header { padding: 12px 14px; }
       .shelf-panel-title { font-size: 15px; }
       .shelf-panel-body { padding: 12px 14px; }
@@ -497,7 +496,6 @@
 
 <main class="kart-page">
   <div class="kart-header">
-    <h2>📍 Lagerkart</h2>
     <div class="kart-search-wrap">
       <input type="text" class="kart-search" id="kartSearch" placeholder="Søk gjenstand eller hylle..." oninput="sokKart(this.value)">
     </div>
