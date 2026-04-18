@@ -38,12 +38,12 @@
       border: 2px solid rgba(70,189,198,0.2);
       border-radius: 16px;
       overflow: hidden;
+      /* Strict 4:3 on every device — width fills parent, height is
+         derived from aspect-ratio. No max-height so the ratio is never
+         overridden on tall desktops (the cap used to make desktop look
+         wider than 4:3, while mobile stayed true 4:3). */
+      width: 100%;
       aspect-ratio: 4 / 3;
-      /* Height driven by viewport, width derived from aspect-ratio.
-         This keeps an exact 4:3 shape on every screen size. */
-      height: 75vh;
-      width: auto;
-      max-width: 100%;
       margin: 0 auto;
       cursor: grab;
       user-select: none;
