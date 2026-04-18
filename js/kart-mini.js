@@ -15,7 +15,7 @@
       '.mini-kart-wrap:hover .mini-kart-cta{background:rgba(70,189,198,0.22);border-color:rgba(70,189,198,0.55)}',
       '.mini-room{position:relative;width:100%;aspect-ratio:4/3;background:#10253e;border-radius:8px;overflow:hidden;border:1px solid rgba(70,189,198,0.2)}',
       '.mini-room::before{content:"";position:absolute;inset:4%;border:2px solid rgba(70,189,198,0.25);border-radius:5px;background-image:radial-gradient(circle,rgba(70,189,198,0.06) 1px,transparent 1px);background-size:12px 12px}',
-      '.mini-sofakrok{position:absolute;background:rgba(70,189,198,0.12);border:1px solid rgba(70,189,198,0.35);border-radius:4px;z-index:2}',
+      '.mini-sofakrok{position:absolute;background:rgba(70,189,198,0.12);border:1px solid rgba(70,189,198,0.35);border-radius:4px;z-index:2;display:flex;align-items:center;justify-content:center;font-family:"DM Sans",sans-serif;font-size:9px;font-weight:600;color:rgba(70,189,198,0.9);letter-spacing:0.5px}',
       '.mini-door{position:absolute;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px;font-family:"DM Mono",monospace;font-size:8px;font-weight:700;color:rgba(70,189,198,0.9);letter-spacing:1px;border-top:2px solid rgba(70,189,198,0.6);border-left:2px solid rgba(70,189,198,0.6);border-right:2px solid rgba(70,189,198,0.6);border-bottom:none;border-radius:4px 4px 0 0;background:rgba(70,189,198,0.07);z-index:6}',
       '.mini-shelf{position:absolute;z-index:5;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.45);border-radius:2px;display:flex;align-items:center;justify-content:center;width:15%;height:14.4%}',
       '.mini-shelf[data-orientation="v"]{transform:rotate(90deg)}',
@@ -135,7 +135,7 @@
 
     var html = '<a href="' + href + '" class="mini-kart-wrap">';
     html += '<div class="mini-room">';
-    html += '<div class="mini-sofakrok" style="' + shapeStyle(shapes.sofakrok) + '"></div>';
+    html += '<div class="mini-sofakrok" style="' + shapeStyle(shapes.sofakrok) + '">Sofakrok</div>';
     html += '<div class="mini-door" style="' + shapeStyle(shapes.door) + '">DØR</div>';
     html += '<div class="mini-wall-block" style="' + shapeStyle(shapes.wall) + '"></div>';
 
