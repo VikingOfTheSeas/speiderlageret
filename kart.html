@@ -39,7 +39,11 @@
       border-radius: 16px;
       overflow: hidden;
       aspect-ratio: 4 / 3;
-      max-height: 75vh;
+      /* Height driven by viewport, width derived from aspect-ratio.
+         This keeps an exact 4:3 shape on every screen size. */
+      height: 75vh;
+      width: auto;
+      max-width: 100%;
       margin: 0 auto;
       cursor: grab;
       user-select: none;
@@ -457,7 +461,6 @@
     /* ── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 768px) {
       .kart-page { padding: 12px; }
-      .room-container { aspect-ratio: 4 / 3; max-height: 50vh; }
       .kart-search { width: 160px; }
       .shelf-label { font-size: 10px; }
       .tabs { display: none; }
