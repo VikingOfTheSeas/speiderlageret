@@ -38,13 +38,8 @@
       border: 2px solid rgba(70,189,198,0.2);
       border-radius: 16px;
       overflow: hidden;
-      /* Strict 4:3 on every device via the padding-bottom hack.
-         Width is capped so height (= 75% of width) never exceeds 75vh.
-         This guarantees identical shape on desktop, tablet and mobile. */
-      width: 100%;
-      max-width: calc(75vh * 4 / 3);
-      height: 0;
-      padding-bottom: 75%;
+      aspect-ratio: 4 / 3;
+      max-height: 75vh;
       margin: 0 auto;
       cursor: grab;
       user-select: none;
@@ -54,7 +49,7 @@
 
     .room-inner {
       position: absolute;
-      inset: 0;
+      width: 100%; height: 100%;
       transform-origin: 0 0;
       transition: transform 0.1s ease-out;
     }
@@ -462,6 +457,7 @@
     /* ── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 768px) {
       .kart-page { padding: 12px; }
+      .room-container { aspect-ratio: 4 / 3; max-height: 50vh; }
       .kart-search { width: 160px; }
       .shelf-label { font-size: 10px; }
       .tabs { display: none; }
