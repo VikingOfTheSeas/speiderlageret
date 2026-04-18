@@ -38,12 +38,13 @@
       border: 2px solid rgba(70,189,198,0.2);
       border-radius: 16px;
       overflow: hidden;
-      /* Strict 4:3 on every device. Width is capped so height (= width*3/4)
-         never exceeds 75vh; this prevents the old max-height trick from
-         violating the aspect-ratio on wide screens. */
+      /* Strict 4:3 on every device via the padding-bottom hack.
+         Width is capped so height (= 75% of width) never exceeds 75vh.
+         This guarantees identical shape on desktop, tablet and mobile. */
       width: 100%;
       max-width: calc(75vh * 4 / 3);
-      aspect-ratio: 4 / 3;
+      height: 0;
+      padding-bottom: 75%;
       margin: 0 auto;
       cursor: grab;
       user-select: none;
@@ -53,7 +54,7 @@
 
     .room-inner {
       position: absolute;
-      width: 100%; height: 100%;
+      inset: 0;
       transform-origin: 0 0;
       transition: transform 0.1s ease-out;
     }
