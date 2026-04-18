@@ -20,8 +20,9 @@
       '.mini-wall-block{position:absolute;background:rgba(100,116,139,0.55);border:1px solid rgba(100,116,139,0.8);border-radius:2px;z-index:4;pointer-events:none}',
       '.mini-shelf[data-orientation="v"] .mini-lbl{transform:rotate(-90deg)}',
       '.mini-lbl{font-family:"DM Mono",monospace;font-size:8px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.6);pointer-events:none;line-height:1}',
-      '.mini-kart-link{position:absolute;bottom:6px;right:6px;z-index:10;font-size:14px;text-decoration:none;opacity:.7;transition:opacity .15s}',
-      '.mini-kart-link:hover{opacity:1}',
+      '.mini-kart-link{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding:10px 14px;background:rgba(70,189,198,0.12);border:1px solid rgba(70,189,198,0.35);border-radius:8px;color:#46bdc6;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;text-decoration:none;transition:all .15s}',
+      '.mini-kart-link:hover{background:rgba(70,189,198,0.22);border-color:rgba(70,189,198,0.55);transform:translateY(-1px)}',
+      '.mini-kart-link:active{transform:translateY(0)}',
     ].join('');
     document.head.appendChild(s);
   }
@@ -139,10 +140,10 @@
         '<span class="mini-lbl">' + (s.name || s.id) + '</span></div>';
     });
 
-    if (hl) {
-      html += '<a href="kart.html?hylle=' + encodeURIComponent(hl) + '" class="mini-kart-link" title="Åpne kart">📍</a>';
-    }
     html += '</div>';
+    var href = 'kart.html' + (hl ? '?hylle=' + encodeURIComponent(hl) : '');
+    var label = hl ? 'Vis hylle ' + hl + ' på kart' : 'Åpne kart';
+    html += '<a href="' + href + '" class="mini-kart-link">📍 ' + label + ' →</a>';
     return html;
   }
 

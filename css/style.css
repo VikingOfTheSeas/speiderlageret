@@ -55,7 +55,7 @@ a { color: var(--primary); text-decoration: none; }
   display: flex; align-items: center; gap: 10px;
   flex-shrink: 0; text-decoration: none;
 }
-.topbar-logo  { height: 38px; width: auto; object-fit: contain; }
+.topbar-logo  { width: 30px; height: 40px; object-fit: contain; flex-shrink: 0; }
 .topbar-title { font-size: 15px; font-weight: 700; color: var(--primary); white-space: nowrap; }
 .topbar-sub   { font-size: 9px; color: var(--muted); letter-spacing: 1px; }
 
@@ -611,7 +611,7 @@ body:not(.admin-mode) .admin-only { display: none !important; }
   .topbar-stats { display: none; }
   .topbar-sub { display: none; }
   .topbar-brand > div { display: none; }
-  .topbar-logo { height: 40px; width: auto; }
+  .topbar-logo { width: 33px; height: 44px; }
   .tabs { display: flex; gap: 2px; flex: 1; justify-content: center; }
   .tab { padding: 5px 6px; font-size: 11px; }
   .topbar-right { gap: 4px; }
