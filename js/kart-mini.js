@@ -1,4 +1,7 @@
-// kart-mini.js – embeddable mini room map for item/boks pages
+// kart-mini.js – embeddable mini room map for item/boks pages.
+// Pulls shelf layout + shape positions from Supabase (kart_config row id=1)
+// so every client renders the same map. Falls back to localStorage, then
+// to built-in defaults if the cloud is unreachable.
 (function () {
   // Inject CSS once
   if (!document.getElementById('kart-mini-css')) {
@@ -23,8 +26,7 @@
     document.head.appendChild(s);
   }
 
-  // Default shelves (used when no custom layout saved in localStorage)
-  // v = vertical (rotated 90°), h = horizontal (default)
+  // Defaults — match kart.html's DEFAULT_SHELVES and DEFAULT_SHAPES.
   var DEFAULT_SHELVES = [
     { id:"L", name:"L", t:4,    l:5,    o:"h" },
     { id:"M", name:"M", t:7,    l:30,   o:"v" },
@@ -42,63 +44,82 @@
     { id:"A", name:"A", t:77.5, l:81.1, o:"v" },
   ];
 
-  // Default shapes (must match main kart's DEFAULT_SHAPES in kart.html)
   var DEFAULT_SHAPES = {
     door:     { top: "87.1%", left: "65%", width: "11.25%", height: "12.9%" },
     sofakrok: { top: "19.7%", left: "61%", width: "20.6%",  height: "33.6%" },
     wall:     { top: "8.5%",  left: "22%", width: "4.7%",   height: "9.6%"  },
   };
 
-  function getShelves() {
-    try {
-      var raw = localStorage.getItem("kartShelves");
-      if (raw) {
-        var arr = JSON.parse(raw);
-        if (Array.isArray(arr) && arr.length) {
-          return arr.map(function (s) {
-            return {
-              id: s.id,
-              name: s.name || s.id,
-              t: parseFloat(s.top),
-              l: parseFloat(s.left),
-              o: s.orientation || "h",
-            };
-          });
-        }
-      }
-    } catch (e) {}
-    return DEFAULT_SHELVES;
+  // Cached cloud state so we only hit Supabase once per page load.
+  var cloudCache = null;
+  var cloudPromise = null;
+
+  function normalizeShelves(arr) {
+    if (!Array.isArray(arr) || !arr.length) return null;
+    return arr.map(function (s) {
+      return {
+        id: s.id,
+        name: s.name || s.id,
+        t: parseFloat(s.top),
+        l: parseFloat(s.left),
+        o: s.orientation || "h",
+      };
+    });
   }
 
-  function getShapes() {
+  function readLocalShelves() {
+    try {
+      var raw = localStorage.getItem("kartShelves");
+      if (!raw) return null;
+      return normalizeShelves(JSON.parse(raw));
+    } catch (e) { return null; }
+  }
+
+  function readLocalShapes() {
     try {
       var raw = localStorage.getItem("kartShapes");
-      if (raw) {
-        var obj = JSON.parse(raw);
-        if (obj && typeof obj === "object") {
-          return {
-            door:     Object.assign({}, DEFAULT_SHAPES.door,     obj.door     || {}),
-            sofakrok: Object.assign({}, DEFAULT_SHAPES.sofakrok, obj.sofakrok || {}),
-            wall:     Object.assign({}, DEFAULT_SHAPES.wall,     obj.wall     || {}),
-          };
-        }
-      }
-    } catch (e) {}
-    return DEFAULT_SHAPES;
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      if (!obj || typeof obj !== "object") return null;
+      return obj;
+    } catch (e) { return null; }
+  }
+
+  function mergeShapes(override) {
+    return {
+      door:     Object.assign({}, DEFAULT_SHAPES.door,     (override && override.door)     || {}),
+      sofakrok: Object.assign({}, DEFAULT_SHAPES.sofakrok, (override && override.sofakrok) || {}),
+      wall:     Object.assign({}, DEFAULT_SHAPES.wall,     (override && override.wall)     || {}),
+    };
+  }
+
+  async function loadCloudConfig() {
+    if (cloudCache) return cloudCache;
+    if (cloudPromise) return cloudPromise;
+    if (!window.db) return null;
+    cloudPromise = (async function () {
+      try {
+        var res = await window.db
+          .from("kart_config")
+          .select("shelves,shapes")
+          .eq("id", 1)
+          .maybeSingle();
+        if (res.error) { console.warn("mini-kart cloud load:", res.error.message); return null; }
+        cloudCache = res.data || null;
+        return cloudCache;
+      } catch (e) { console.warn("mini-kart cloud load:", e); return null; }
+    })();
+    return cloudPromise;
   }
 
   function shapeStyle(sh) {
     return 'top:' + sh.top + ';left:' + sh.left + ';width:' + sh.width + ';height:' + sh.height;
   }
 
-  window.renderMiniKart = function (containerId, hylleplassering) {
-    var container = document.getElementById(containerId);
-    if (!container) return;
-    var shelves = getShelves();
-    var shapes = getShapes();
-    // Match shelf by prefix (longest-first to avoid partial matches)
+  function buildHtml(shelves, shapes, hylleplassering) {
     var up = (hylleplassering || "").toUpperCase();
-    var ids = shelves.map(function (s) { return s.id; }).sort(function (a, b) { return b.length - a.length; });
+    var ids = shelves.map(function (s) { return s.id; })
+      .sort(function (a, b) { return b.length - a.length; });
     var hl = null;
     for (var i = 0; i < ids.length; i++) {
       if (up.indexOf(ids[i].toUpperCase()) === 0) { hl = ids[i]; break; }
@@ -120,6 +141,44 @@
       html += '<a href="kart.html?hylle=' + encodeURIComponent(hl) + '" class="mini-kart-link" title="Åpne kart">🗺️</a>';
     }
     html += '</div>';
-    container.innerHTML = html;
+    return html;
+  }
+
+  function pickShelves(cloud) {
+    if (cloud) {
+      var fromCloud = normalizeShelves(cloud.shelves);
+      if (fromCloud) return fromCloud;
+    }
+    var local = readLocalShelves();
+    if (local) return local;
+    return DEFAULT_SHELVES;
+  }
+
+  function pickShapes(cloud) {
+    if (cloud && cloud.shapes && typeof cloud.shapes === "object") {
+      return mergeShapes(cloud.shapes);
+    }
+    var local = readLocalShapes();
+    if (local) return mergeShapes(local);
+    return DEFAULT_SHAPES;
+  }
+
+  window.renderMiniKart = function (containerId, hylleplassering) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    // 1) Immediate render from local/default data so the UI never blanks.
+    var shelves = pickShelves(null);
+    var shapes  = pickShapes(null);
+    container.innerHTML = buildHtml(shelves, shapes, hylleplassering);
+
+    // 2) Fetch cloud data and re-render if different. Fire-and-forget.
+    loadCloudConfig().then(function (cloud) {
+      if (!cloud || !container.isConnected) return;
+      var cloudShelves = pickShelves(cloud);
+      var cloudShapes  = pickShapes(cloud);
+      var cloudHtml    = buildHtml(cloudShelves, cloudShapes, hylleplassering);
+      if (container.innerHTML !== cloudHtml) container.innerHTML = cloudHtml;
+    });
   };
 })();

@@ -835,15 +835,21 @@ function lagreShape(key, el) {
   localStorage.setItem(LS_SHAPES, JSON.stringify(all));
 }
 
-function initShape(el, key) {
+// Apply position/size for a shape from localStorage (or defaults). Safe
+// to call repeatedly — re-used when cloud sync hydrates fresh data.
+function applyShape(el, key) {
   if (!el) return;
-  const saved = lastShapes()[key];
-  const s = saved || DEFAULT_SHAPES[key];
+  const s = lastShapes()[key] || DEFAULT_SHAPES[key];
   el.style.top = s.top;
   el.style.left = s.left;
   el.style.width = s.width;
   el.style.height = s.height;
   el.style.bottom = ""; // clear any CSS bottom:0 override
+}
+
+function initShape(el, key) {
+  if (!el) return;
+  applyShape(el, key);
 
   // Add resize handle
   const rs = document.createElement("div");
@@ -912,6 +918,71 @@ function initShape(el, key) {
 initShape(document.getElementById("roomDoor"),     "door");
 initShape(document.getElementById("roomSofakrok"), "sofakrok");
 initShape(document.getElementById("roomWall"),     "wall");
+
+// ── CLOUD SYNC (Supabase table kart_config, single row id=1) ──
+// Source of truth is a single row on Supabase so every client sees the
+// same map. localStorage is kept as a draft cache during admin edits;
+// on "Ferdig" we push the local state to the cloud, and on page load
+// we pull the cloud state down and overwrite localStorage.
+const CLOUD_ROW_ID = 1;
+
+async function lastKartConfigFraSky() {
+  if (!window.db) return null;
+  try {
+    const { data, error } = await db
+      .from("kart_config")
+      .select("shelves,shapes")
+      .eq("id", CLOUD_ROW_ID)
+      .maybeSingle();
+    if (error) { console.warn("kart cloud load:", error.message); return null; }
+    return data || null;
+  } catch (e) { console.warn("kart cloud load:", e); return null; }
+}
+
+async function lagreKartConfigTilSky() {
+  if (!window.db) return false;
+  let shelves = null, shapes = null;
+  try { shelves = JSON.parse(localStorage.getItem(LS_SHELVES)); } catch (_) {}
+  try { shapes  = JSON.parse(localStorage.getItem(LS_SHAPES));  } catch (_) {}
+  try {
+    const { error } = await db.from("kart_config").upsert({
+      id: CLOUD_ROW_ID,
+      shelves: shelves,
+      shapes: shapes,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: "id" });
+    if (error) { console.warn("kart cloud save:", error.message); return false; }
+    return true;
+  } catch (e) { console.warn("kart cloud save:", e); return false; }
+}
+
+async function hydrateKartFromCloud() {
+  // Don't clobber the user's in-progress admin edits.
+  if (document.body.classList.contains("admin-mode")) return;
+  const cloud = await lastKartConfigFraSky();
+  if (!cloud) {
+    // Cloud is empty — seed it from this client's local state (first-run migration).
+    if (localStorage.getItem(LS_SHELVES) || localStorage.getItem(LS_SHAPES)) {
+      await lagreKartConfigTilSky();
+    }
+    return;
+  }
+  if (Array.isArray(cloud.shelves) && cloud.shelves.length) {
+    localStorage.setItem(LS_SHELVES, JSON.stringify(cloud.shelves));
+  } else {
+    localStorage.removeItem(LS_SHELVES);
+  }
+  if (cloud.shapes && typeof cloud.shapes === "object") {
+    localStorage.setItem(LS_SHAPES, JSON.stringify(cloud.shapes));
+  } else {
+    localStorage.removeItem(LS_SHAPES);
+  }
+  // Re-apply shapes + re-render shelves with the fresh data.
+  applyShape(document.getElementById("roomDoor"),     "door");
+  applyShape(document.getElementById("roomSofakrok"), "sofakrok");
+  applyShape(document.getElementById("roomWall"),     "wall");
+  if (typeof renderShelves === "function") renderShelves();
+}
 
 // ── SHELF RENDERING (data-driven) ─────────────────────────
 const LS_SHELVES = "kartShelves";
@@ -1177,8 +1248,10 @@ function attachShelfListeners(el) {
   });
 }
 
-// Initial render
+// Initial render from localStorage defaults (instant), then hydrate from
+// the cloud in the background and re-render if anything changed.
 renderShelves();
+hydrateKartFromCloud();
 
 // ── HAMBURGER / ADMIN ─────────────────────────────────────
 function toggleMeny() {
@@ -1267,15 +1340,17 @@ function visToast(text) {
   visToast._tm = setTimeout(function() { t.classList.remove("show"); }, 2200);
 }
 
-function ferdigRedigere() {
-  // Commit: localStorage already up-to-date; just discard the snapshot.
+async function ferdigRedigere() {
+  // Commit: push localStorage to the cloud so every client sees the same map.
   _editSnapshot = null;
   setAdminUI(false);
   var meny = document.getElementById("hamburgerMeny");
   var hb = document.getElementById("hamburger");
   if (meny) meny.classList.remove("open");
   if (hb) hb.classList.remove("open");
-  visToast("✓ Kartet er lagret");
+  visToast("⏳ Lagrer kartet…");
+  const ok = await lagreKartConfigTilSky();
+  visToast(ok ? "✓ Kartet er lagret for alle" : "⚠️ Kunne ikke lagre til skyen");
 }
 (function() {
   if (sessionStorage.getItem("adminMode") === "1") {
