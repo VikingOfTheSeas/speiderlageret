@@ -923,7 +923,10 @@ initShape(document.getElementById("roomWall"),     "wall");
 const CLOUD_ROW_ID = 1;
 
 async function lastKartConfigFraSky() {
-  if (!window.db) return null;
+  // `db` comes from config.js as a top-level `const`, which is a
+  // scope-global binding but NOT a property on window — so we reference
+  // it directly and guard against missing Supabase client via typeof.
+  if (typeof db === "undefined" || !db) return null;
   try {
     const { data, error } = await db
       .from("kart_config")
@@ -936,7 +939,10 @@ async function lastKartConfigFraSky() {
 }
 
 async function lagreKartConfigTilSky() {
-  if (!window.db) return false;
+  if (typeof db === "undefined" || !db) {
+    console.warn("kart cloud save: Supabase client (`db`) not ready");
+    return false;
+  }
   let shelves = null, shapes = null;
   try { shelves = JSON.parse(localStorage.getItem(LS_SHELVES)); } catch (_) {}
   try { shapes  = JSON.parse(localStorage.getItem(LS_SHAPES));  } catch (_) {}
@@ -947,9 +953,9 @@ async function lagreKartConfigTilSky() {
       shapes: shapes,
       updated_at: new Date().toISOString(),
     }, { onConflict: "id" });
-    if (error) { console.warn("kart cloud save:", error.message); return false; }
+    if (error) { console.warn("kart cloud save:", error.message, error); return false; }
     return true;
-  } catch (e) { console.warn("kart cloud save:", e); return false; }
+  } catch (e) { console.warn("kart cloud save exception:", e); return false; }
 }
 
 async function hydrateKartFromCloud() {

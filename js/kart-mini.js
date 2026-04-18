@@ -96,10 +96,12 @@
   async function loadCloudConfig() {
     if (cloudCache) return cloudCache;
     if (cloudPromise) return cloudPromise;
-    if (!window.db) return null;
+    // `db` is a top-level `const` from config.js — globally scoped but
+    // not on `window`. Reference it directly via typeof guard.
+    if (typeof db === "undefined" || !db) return null;
     cloudPromise = (async function () {
       try {
-        var res = await window.db
+        var res = await db
           .from("kart_config")
           .select("shelves,shapes")
           .eq("id", 1)
