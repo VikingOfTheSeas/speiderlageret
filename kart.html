@@ -1031,9 +1031,11 @@ function kartModal(opts) {
       input.style.display = "";
       input.value = opts.defaultValue || "";
       input.placeholder = opts.placeholder || "";
+      input.type = opts.password ? "password" : "text";
     } else {
       input.style.display = "none";
       input.value = "";
+      input.type = "text";
     }
     ok.textContent = opts.okLabel || "OK";
     cancel.textContent = opts.cancelLabel || "Avbryt";
@@ -1290,6 +1292,28 @@ function visToast(text) {
 }
 
 async function ferdigRedigere() {
+  // Krev passord før endringer publiseres til skyen.
+  const FERDIG_PASSORD = "Terje Marstein";
+  for (;;) {
+    const input = await kartModal({
+      title: "🔒 Passord kreves",
+      message: "Skriv inn passordet for å lagre kartet.",
+      input: true,
+      password: true,
+      placeholder: "Passord…",
+      okLabel: "Lagre",
+      cancelLabel: "Avbryt",
+    });
+    if (input == null) return; // avbrutt — forbli i redigeringsmodus
+    if (input === FERDIG_PASSORD) break;
+    await kartModal({
+      title: "❌ Feil passord",
+      message: "Passordet stemmer ikke. Prøv igjen.",
+      okLabel: "OK",
+      cancelLabel: "",
+    });
+  }
+
   // Commit: push localStorage to the cloud so every client sees the same map.
   _editSnapshot = null;
   setAdminUI(false);
