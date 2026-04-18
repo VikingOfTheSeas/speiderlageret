@@ -283,7 +283,11 @@
       min-width: 160px;
       max-width: 280px;
     }
-    .shelf-tooltip.visible { display: block; }
+    /* Only show tooltip on devices with real hover (desktop).
+       On mobile the tooltip gets stuck after tap and overflows the viewport. */
+    @media (hover: hover) and (pointer: fine) {
+      .shelf-tooltip.visible { display: block; }
+    }
     .shelf-tooltip-name {
       font-family: 'DM Mono', monospace;
       font-size: 16px; font-weight: 700;
