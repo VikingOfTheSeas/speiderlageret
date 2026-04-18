@@ -24,7 +24,7 @@
       <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','lager')">📦 Lager</a>
       <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','bokser')">🗃️ Bokser</a>
       <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','sammendrag')">📊 Sammendrag</a>
-      <a href="kart.html" class="tab">🗺️ Kart</a>
+      <a href="kart.html" class="tab">📍 Kart</a>
     </nav>
     <div class="topbar-right">
       <button class="btn-qr-scan" onclick="window.location.href='index.html?scan=1'" title="Scan QR-koder">📷 Scan</button>
@@ -35,7 +35,7 @@
         <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','lager')">📦 Lager</a>
         <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','bokser')">🗃️ Bokser</a>
         <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','sammendrag')">📊 Sammendrag</a>
-        <a href="kart.html" class="hmeny-tab">🗺️ Kart</a>
+        <a href="kart.html" class="hmeny-tab">📍 Kart</a>
         <div class="hmeny-divider"></div>
         <button class="hmeny-admin" id="adminToggle" onclick="toggleAdmin()">🔧 Administrer</button>
         <button class="hmeny-logout" onclick="loggUt()">🚪 Logg ut</button>
@@ -114,7 +114,7 @@
           </div>
         </div>
         <div class="info-card">
-          <h3>🗺️ På kartet</h3>
+          <h3>📍 På kartet</h3>
           <div id="miniKartContainer"></div>
         </div>
         <div class="info-card qr-card admin-only">

@@ -140,7 +140,7 @@
     });
 
     if (hl) {
-      html += '<a href="kart.html?hylle=' + encodeURIComponent(hl) + '" class="mini-kart-link" title="Åpne kart">🗺️</a>';
+      html += '<a href="kart.html?hylle=' + encodeURIComponent(hl) + '" class="mini-kart-link" title="Åpne kart">📍</a>';
     }
     html += '</div>';
     return html;

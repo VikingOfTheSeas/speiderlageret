@@ -55,7 +55,7 @@ a { color: var(--primary); text-decoration: none; }
   display: flex; align-items: center; gap: 10px;
   flex-shrink: 0; text-decoration: none;
 }
-.topbar-logo  { width: 34px; height: 34px; object-fit: contain; }
+.topbar-logo  { height: 38px; width: auto; object-fit: contain; }
 .topbar-title { font-size: 15px; font-weight: 700; color: var(--primary); white-space: nowrap; }
 .topbar-sub   { font-size: 9px; color: var(--muted); letter-spacing: 1px; }
 
@@ -611,7 +611,7 @@ body:not(.admin-mode) .admin-only { display: none !important; }
   .topbar-stats { display: none; }
   .topbar-sub { display: none; }
   .topbar-brand > div { display: none; }
-  .topbar-logo { width: 26px; height: 26px; }
+  .topbar-logo { height: 40px; width: auto; }
   .tabs { display: flex; gap: 2px; flex: 1; justify-content: center; }
   .tab { padding: 5px 6px; font-size: 11px; }
   .topbar-right { gap: 4px; }

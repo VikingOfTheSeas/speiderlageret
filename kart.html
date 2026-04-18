@@ -359,11 +359,11 @@
     .shelf-item-info {
       padding: 10px 12px; display: flex; flex-direction: column; gap: 5px;
     }
-    .shelf-item-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .shelf-item-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; word-break: break-word; overflow-wrap: anywhere; }
     .shelf-item-meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
-    .shelf-item-id { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--primary); }
-    .shelf-item-hylle { font-size: 10px; color: var(--muted); }
-    .shelf-item-kat { font-size: 10px; color: var(--muted); }
+    .shelf-item-id { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--primary); word-break: break-all; }
+    .shelf-item-hylle { font-size: 10px; color: var(--muted); word-break: break-word; }
+    .shelf-item-kat { font-size: 10px; color: var(--muted); word-break: break-word; }
 
     /* ── LEGEND ─────────────────────────────────────────────── */
     .kart-legend {
@@ -440,9 +440,16 @@
     @media (max-width: 768px) {
       .kart-page { padding: 12px; }
       .room-container { aspect-ratio: 4 / 3; max-height: 50vh; }
-      .kart-search { width: 160px; }
+      .kart-search-wrap { flex: 1 1 100%; }
+      .kart-search { width: 100%; box-sizing: border-box; }
       .shelf-label { font-size: 10px; }
       .tabs { display: none; }
+      .shelf-panel-header { padding: 12px 14px; }
+      .shelf-panel-title { font-size: 15px; }
+      .shelf-panel-body { padding: 12px 14px; }
+      .shelf-item-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+      .shelf-item-img, .shelf-item-img-placeholder { height: 90px; }
+      .shelf-item-info { padding: 8px 10px; }
     }
   </style>
 </head>
@@ -461,7 +468,7 @@
       <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','lager')">📦 Lager</a>
       <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','bokser')">🗃️ Bokser</a>
       <a href="index.html" class="tab" onclick="sessionStorage.setItem('aktivTab','sammendrag')">📊 Sammendrag</a>
-      <a href="kart.html" class="tab active">🗺️ Kart</a>
+      <a href="kart.html" class="tab active">📍 Kart</a>
     </nav>
     <div class="topbar-right">
       <button class="hamburger" id="hamburger" onclick="toggleMeny()" aria-label="Meny">
@@ -471,7 +478,7 @@
         <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','lager')">📦 Lager</a>
         <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','bokser')">🗃️ Bokser</a>
         <a href="index.html" class="hmeny-tab" onclick="sessionStorage.setItem('aktivTab','sammendrag')">📊 Sammendrag</a>
-        <a href="kart.html" class="hmeny-tab active">🗺️ Kart</a>
+        <a href="kart.html" class="hmeny-tab active">📍 Kart</a>
         <div class="hmeny-divider"></div>
         <button class="hmeny-admin" id="adminToggle" onclick="toggleAdmin()">🔧 Administrer</button>
         <button class="hmeny-logout" onclick="loggUt()">🚪 Logg ut</button>
@@ -482,7 +489,7 @@
 
 <main class="kart-page">
   <div class="kart-header">
-    <h2>🗺️ Lagerkart</h2>
+    <h2>📍 Lagerkart</h2>
     <div class="kart-search-wrap">
       <input type="text" class="kart-search" id="kartSearch" placeholder="Søk gjenstand eller hylle..." oninput="sokKart(this.value)">
     </div>
