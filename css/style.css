@@ -17,7 +17,6 @@
 }
 
 html {
-  overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
   background: #0a1628;
 }
@@ -29,8 +28,7 @@ body {
   color: var(--text);
   min-height: 100vh;
   font-size: 14px;
-  max-width: 100vw;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -43,8 +41,8 @@ a { color: var(--primary); text-decoration: none; }
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
   position: sticky; top: 0; z-index: 100;
-  padding: 0 16px;
-  max-width: 100vw;
+  padding: env(safe-area-inset-top, 0) 16px 0;
+  width: 100%;
 }
 .topbar-inner {
   max-width: 1400px; margin: 0 auto;
@@ -55,7 +53,7 @@ a { color: var(--primary); text-decoration: none; }
   display: flex; align-items: center; gap: 10px;
   flex-shrink: 0; text-decoration: none;
 }
-.topbar-logo  { width: 27px; min-width: 27px; height: 36px; object-fit: contain; flex-shrink: 0; }
+.topbar-logo  { width: 33px; min-width: 33px; height: 44px; object-fit: contain; flex-shrink: 0; display: block; }
 .topbar-title { font-size: 15px; font-weight: 700; color: var(--primary); white-space: nowrap; }
 .topbar-sub   { font-size: 9px; color: var(--muted); letter-spacing: 1px; }
 
@@ -606,13 +604,12 @@ body:not(.admin-mode) .admin-only { display: none !important; }
 
 /* ── MOBILE ─────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  body { padding-top: 50px; }
-  .topbar { padding: 0 6px; position: fixed; top: 0; left: 0; right: 0; }
+  .topbar { padding: env(safe-area-inset-top, 0) 6px 0; }
   .topbar-inner { height: 50px; padding: 0; flex-wrap: nowrap; position: relative; gap: 4px; }
   .topbar-stats { display: none; }
   .topbar-sub { display: none; }
   .topbar-brand > div { display: none; }
-  .topbar-logo { width: 30px; min-width: 30px; height: 40px; flex-shrink: 0; }
+  .topbar-logo { width: 30px; min-width: 30px; height: 40px; flex-shrink: 0; display: block; }
   .tabs { display: flex; gap: 2px; flex: 1; justify-content: center; }
   .tab { padding: 5px 6px; font-size: 11px; }
   .topbar-right { gap: 4px; }
