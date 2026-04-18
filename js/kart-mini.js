@@ -8,6 +8,11 @@
     var s = document.createElement('style');
     s.id = 'kart-mini-css';
     s.textContent = [
+      '.mini-kart-wrap{position:relative;display:block;text-decoration:none;color:inherit;cursor:pointer}',
+      '.mini-kart-wrap .mini-room{transition:border-color .15s,box-shadow .15s}',
+      '.mini-kart-wrap:hover .mini-room{border-color:rgba(70,189,198,0.5);box-shadow:0 0 0 2px rgba(70,189,198,0.15)}',
+      '.mini-kart-cta{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;padding:9px 14px;background:rgba(70,189,198,0.14);border:1px solid rgba(70,189,198,0.4);border-radius:8px;color:#46bdc6;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600}',
+      '.mini-kart-wrap:hover .mini-kart-cta{background:rgba(70,189,198,0.22);border-color:rgba(70,189,198,0.55)}',
       '.mini-room{position:relative;width:100%;aspect-ratio:4/3;background:#10253e;border-radius:8px;overflow:hidden;border:1px solid rgba(70,189,198,0.2)}',
       '.mini-room::before{content:"";position:absolute;inset:4%;border:2px solid rgba(70,189,198,0.25);border-radius:5px;background-image:radial-gradient(circle,rgba(70,189,198,0.06) 1px,transparent 1px);background-size:12px 12px}',
       '.mini-sofakrok{position:absolute;background:rgba(70,189,198,0.12);border:1px solid rgba(70,189,198,0.35);border-radius:4px;z-index:2}',
@@ -20,9 +25,6 @@
       '.mini-wall-block{position:absolute;background:rgba(100,116,139,0.55);border:1px solid rgba(100,116,139,0.8);border-radius:2px;z-index:4;pointer-events:none}',
       '.mini-shelf[data-orientation="v"] .mini-lbl{transform:rotate(-90deg)}',
       '.mini-lbl{font-family:"DM Mono",monospace;font-size:8px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.6);pointer-events:none;line-height:1}',
-      '.mini-kart-link{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding:10px 14px;background:rgba(70,189,198,0.12);border:1px solid rgba(70,189,198,0.35);border-radius:8px;color:#46bdc6;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;text-decoration:none;transition:all .15s}',
-      '.mini-kart-link:hover{background:rgba(70,189,198,0.22);border-color:rgba(70,189,198,0.55);transform:translateY(-1px)}',
-      '.mini-kart-link:active{transform:translateY(0)}',
     ].join('');
     document.head.appendChild(s);
   }
@@ -128,7 +130,11 @@
       if (up.indexOf(ids[i].toUpperCase()) === 0) { hl = ids[i]; break; }
     }
 
-    var html = '<div class="mini-room">';
+    var href  = 'kart.html' + (hl ? '?hylle=' + encodeURIComponent(hl) : '');
+    var label = hl ? 'Vis hylle ' + hl + ' på kart' : 'Åpne kart';
+
+    var html = '<a href="' + href + '" class="mini-kart-wrap">';
+    html += '<div class="mini-room">';
     html += '<div class="mini-sofakrok" style="' + shapeStyle(shapes.sofakrok) + '"></div>';
     html += '<div class="mini-door" style="' + shapeStyle(shapes.door) + '">DØR</div>';
     html += '<div class="mini-wall-block" style="' + shapeStyle(shapes.wall) + '"></div>';
@@ -141,9 +147,8 @@
     });
 
     html += '</div>';
-    var href = 'kart.html' + (hl ? '?hylle=' + encodeURIComponent(hl) : '');
-    var label = hl ? 'Vis hylle ' + hl + ' på kart' : 'Åpne kart';
-    html += '<a href="' + href + '" class="mini-kart-link">📍 ' + label + ' →</a>';
+    html += '<div class="mini-kart-cta">📍 ' + label + ' →</div>';
+    html += '</a>';
     return html;
   }
 

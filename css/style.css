@@ -609,9 +609,10 @@ body:not(.admin-mode) .admin-only { display: none !important; }
   .topbar { padding: 0 6px; }
   .topbar-inner { height: 50px; padding: 0; flex-wrap: nowrap; position: relative; gap: 4px; }
   .topbar-stats { display: none; }
+  .topbar-logo { display: none; }
   .topbar-sub { display: none; }
-  .topbar-brand > div { display: none; }
-  .topbar-logo { width: 33px; height: 44px; }
+  .topbar-brand > div { display: block; }
+  .topbar-title { font-size: 13px; }
   .tabs { display: flex; gap: 2px; flex: 1; justify-content: center; }
   .tab { padding: 5px 6px; font-size: 11px; }
   .topbar-right { gap: 4px; }
