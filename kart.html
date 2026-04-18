@@ -41,11 +41,8 @@
       aspect-ratio: 4 / 3;
       max-height: 75vh;
       margin: 0 auto;
-      cursor: grab;
       user-select: none;
-      touch-action: none;
     }
-    .room-container:active { cursor: grabbing; }
 
     .room-inner {
       position: absolute;
@@ -368,21 +365,6 @@
     .shelf-item-hylle { font-size: 10px; color: var(--muted); }
     .shelf-item-kat { font-size: 10px; color: var(--muted); }
 
-    /* ── ZOOM CONTROLS ─────────────────────────────────────── */
-    .zoom-controls {
-      position: absolute; top: 12px; right: 12px;
-      display: flex; gap: 4px; z-index: 50;
-    }
-    .zoom-btn {
-      width: 36px; height: 36px;
-      background: rgba(10,22,40,0.9); border: 1px solid rgba(70,189,198,0.3);
-      border-radius: 8px; color: var(--primary);
-      font-size: 18px; font-weight: 700; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all .15s;
-    }
-    .zoom-btn:hover { background: rgba(70,189,198,0.15); }
-
     /* ── LEGEND ─────────────────────────────────────────────── */
     .kart-legend {
       display: flex; gap: 16px; flex-wrap: wrap;
@@ -531,11 +513,6 @@
       <!-- Shelves rendered dynamically by renderShelves() from localStorage/DEFAULT_SHELVES -->
     </div>
 
-    <!-- Zoom controls -->
-    <div class="zoom-controls">
-      <button class="zoom-btn" onclick="zoom(1)">+</button>
-      <button class="zoom-btn" onclick="resetZoom()" style="font-size:12px;">&#8634;</button>
-    </div>
   </div>
 
   <!-- Legend -->
@@ -748,62 +725,6 @@ function highlightHylle(id) {
   const el = document.querySelector('.shelf[data-shelf="' + CSS.escape(id) + '"]');
   if (el) el.classList.add("highlight");
 }
-
-// ── ZOOM & PAN ────────────────────────────────────────────
-let currentZoom = 1;
-let panX = 0, panY = 0;
-let isDragging = false;
-let dragStartX, dragStartY;
-
-function clampPan() {
-  const cr = container.getBoundingClientRect();
-  const inner = document.getElementById("roomInner");
-  const maxX = Math.max(0, (inner.offsetWidth  * currentZoom - cr.width)  / 2);
-  const maxY = Math.max(0, (inner.offsetHeight * currentZoom - cr.height) / 2);
-  panX = Math.max(-maxX, Math.min(maxX, panX));
-  panY = Math.max(-maxY, Math.min(maxY, panY));
-}
-
-function zoom(dir) {
-  currentZoom = Math.max(1, Math.min(3, currentZoom + dir * 0.3));
-  clampPan();
-  applyTransform();
-}
-
-function resetZoom() {
-  currentZoom = 1; panX = 0; panY = 0;
-  applyTransform();
-}
-
-function applyTransform() {
-  document.getElementById("roomInner").style.transform =
-    'translate(' + panX + 'px, ' + panY + 'px) scale(' + currentZoom + ')';
-}
-
-const container = document.getElementById("roomContainer");
-container.addEventListener("pointerdown", e => {
-  if (e.target.closest(".shelf, .zoom-btn, .sofakrok, .room-door, .room-wall-block, .shape-resize")) return;
-  isDragging = true;
-  dragStartX = e.clientX - panX;
-  dragStartY = e.clientY - panY;
-  container.setPointerCapture(e.pointerId);
-});
-container.addEventListener("pointermove", e => {
-  if (!isDragging) return;
-  panX = e.clientX - dragStartX;
-  panY = e.clientY - dragStartY;
-  clampPan();
-  document.getElementById("roomInner").style.transition = "none";
-  applyTransform();
-});
-container.addEventListener("pointerup", () => {
-  isDragging = false;
-  document.getElementById("roomInner").style.transition = "transform 0.1s ease-out";
-});
-container.addEventListener("wheel", e => {
-  e.preventDefault();
-  zoom(e.deltaY < 0 ? 1 : -1);
-}, { passive: false });
 
 // ── ROOM SHAPES (door / sofakrok / wall) — move + resize ──
 const LS_SHAPES = "kartShapes";
