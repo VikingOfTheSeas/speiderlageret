@@ -144,6 +144,19 @@
     }
     .admin-kart-btn-done:hover { background: rgba(34,197,94,0.32); }
 
+    /* Buttons in the search row — only visible when Administrer-mode is on */
+    .kart-admin-action { display: none; }
+    body.admin-mode .kart-admin-action {
+      display: inline-flex; align-items: center; gap: 6px;
+      white-space: nowrap;
+    }
+    .kart-admin-action:disabled { opacity: 0.55; cursor: wait; }
+
+    /* Hide admin-only overlays while exporting the map to an image */
+    body.kart-export .shelf-admin,
+    body.kart-export .shape-resize,
+    body.kart-export .admin-kart-bar { display: none !important; }
+
     /* Toast confirmation */
     .kart-toast {
       position: fixed;
@@ -444,6 +457,35 @@
     }
     .kart-modal-btn:hover { filter: brightness(1.1); }
 
+    /* ── PRINT ──────────────────────────────────────────────── */
+    @media print {
+      @page { size: landscape; margin: 10mm; }
+      html, body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      .topbar, .kart-header, .admin-kart-bar,
+      .kart-legend, .shelf-panel, .shelf-tooltip,
+      .kart-modal, .kart-toast, .banner,
+      .shelf-admin, .shape-resize { display: none !important; }
+      .kart-page { max-width: none; margin: 0; padding: 0; }
+      .room-container {
+        position: relative;
+        width: 100%;
+        max-height: none !important;
+        border: 1px solid #333 !important;
+        box-shadow: none !important;
+        background: #10253e !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        page-break-inside: avoid;
+      }
+      .room-container * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
     /* ── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 768px) {
       .kart-page { padding: 12px; }
@@ -498,6 +540,8 @@
   <div class="kart-header">
     <div class="kart-search-wrap">
       <input type="text" class="kart-search" id="kartSearch" placeholder="Søk gjenstand eller hylle..." oninput="sokKart(this.value)">
+      <button type="button" class="admin-kart-btn kart-admin-action" id="lastNedKartBtn" onclick="lastNedKart()" title="Last ned kartet som bilde">📸 Last ned</button>
+      <button type="button" class="admin-kart-btn kart-admin-action" id="skrivUtKartBtn" onclick="skrivUtKart()" title="Skriv ut kartet">🖨️ Skriv ut</button>
     </div>
   </div>
 
@@ -1296,6 +1340,73 @@ async function ferdigRedigere() {
     if (btn) btn.classList.add("active");
   }
 })();
+
+// ── Last ned / Skriv ut kartet ──────────────────────────────
+function _loadHtml2Canvas() {
+  if (window.html2canvas) return Promise.resolve(window.html2canvas);
+  if (window._h2cPromise) return window._h2cPromise;
+  window._h2cPromise = new Promise(function (resolve, reject) {
+    var s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
+    s.onload = function () { resolve(window.html2canvas); };
+    s.onerror = function () { reject(new Error("Kunne ikke laste html2canvas")); };
+    document.head.appendChild(s);
+  });
+  return window._h2cPromise;
+}
+
+async function lastNedKart() {
+  var el = document.getElementById("roomContainer");
+  if (!el) return;
+  var btn = document.getElementById("lastNedKartBtn");
+  if (btn) btn.disabled = true;
+  visToast("📸 Genererer bilde…");
+  document.body.classList.add("kart-export");
+  try {
+    var h2c = await _loadHtml2Canvas();
+    var canvas = await h2c(el, {
+      backgroundColor: "#10253e",
+      scale: Math.min(window.devicePixelRatio || 1, 2) * 1.5,
+      useCORS: true,
+      logging: false,
+    });
+    await new Promise(function (resolve) {
+      canvas.toBlob(function (blob) {
+        if (!blob) { visToast("⚠️ Kunne ikke lage bildefil"); resolve(); return; }
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        var d = new Date();
+        var pad = function (n) { return String(n).padStart(2, "0"); };
+        a.download = "lagerkart-" + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + ".png";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+          if (a.parentNode) a.parentNode.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 100);
+        visToast("✓ Kartet er lastet ned");
+        resolve();
+      }, "image/png");
+    });
+  } catch (e) {
+    console.warn("lastNedKart:", e);
+    visToast("⚠️ Kunne ikke laste ned bildet");
+  } finally {
+    document.body.classList.remove("kart-export");
+    if (btn) btn.disabled = false;
+  }
+}
+
+function skrivUtKart() {
+  // Close the hamburger menu if open so it doesn't show up in print preview.
+  var meny = document.getElementById("hamburgerMeny");
+  var hb = document.getElementById("hamburger");
+  if (meny) meny.classList.remove("open");
+  if (hb) hb.classList.remove("open");
+  // Let any pending toast fade before the print dialog captures the page.
+  setTimeout(function () { window.print(); }, 50);
+}
 </script>
 </body>
 </html>
