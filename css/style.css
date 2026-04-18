@@ -527,6 +527,11 @@ body:not(.admin-mode) .admin-only { display: none !important; }
 .btn-edit-loan { margin-left: auto; padding: 7px 14px; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3); border-radius: 8px; color: var(--danger); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .btn-edit-loan:hover { background: rgba(248,113,113,0.22); }
 .item-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.item-top-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; align-items: start; }
+.item-top-grid .info-card { margin: 0; }
+.item-top-grid .map-card #miniKartContainer { max-width: 100%; }
+@media (max-width: 1024px) { .item-top-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 768px)  { .item-top-grid { grid-template-columns: 1fr; } }
 .info-right-col { display: flex; flex-direction: column; gap: 16px; }
 .info-card { background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 13px; padding: 18px; }
 .info-card h3 { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
