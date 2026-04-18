@@ -457,35 +457,6 @@
     }
     .kart-modal-btn:hover { filter: brightness(1.1); }
 
-    /* ── PRINT ──────────────────────────────────────────────── */
-    @media print {
-      @page { size: landscape; margin: 10mm; }
-      html, body {
-        background: #fff !important;
-        color: #000 !important;
-      }
-      .topbar, .kart-header, .admin-kart-bar,
-      .kart-legend, .shelf-panel, .shelf-tooltip,
-      .kart-modal, .kart-toast, .banner,
-      .shelf-admin, .shape-resize { display: none !important; }
-      .kart-page { max-width: none; margin: 0; padding: 0; }
-      .room-container {
-        position: relative;
-        width: 100%;
-        max-height: none !important;
-        border: 1px solid #333 !important;
-        box-shadow: none !important;
-        background: #10253e !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        page-break-inside: avoid;
-      }
-      .room-container * {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-    }
-
     /* ── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 768px) {
       .kart-page { padding: 12px; }
@@ -541,7 +512,6 @@
     <div class="kart-search-wrap">
       <input type="text" class="kart-search" id="kartSearch" placeholder="Søk gjenstand eller hylle..." oninput="sokKart(this.value)">
       <button type="button" class="admin-kart-btn kart-admin-action" id="lastNedKartBtn" onclick="lastNedKart()" title="Last ned kartet som bilde">📸 Last ned</button>
-      <button type="button" class="admin-kart-btn kart-admin-action" id="skrivUtKartBtn" onclick="skrivUtKart()" title="Skriv ut kartet">🖨️ Skriv ut</button>
     </div>
   </div>
 
@@ -1398,15 +1368,6 @@ async function lastNedKart() {
   }
 }
 
-function skrivUtKart() {
-  // Close the hamburger menu if open so it doesn't show up in print preview.
-  var meny = document.getElementById("hamburgerMeny");
-  var hb = document.getElementById("hamburger");
-  if (meny) meny.classList.remove("open");
-  if (hb) hb.classList.remove("open");
-  // Let any pending toast fade before the print dialog captures the page.
-  setTimeout(function () { window.print(); }, 50);
-}
 </script>
 </body>
 </html>
