@@ -1253,6 +1253,7 @@ function setAdminUI(on) {
 async function toggleAdmin() {
   const isOn = document.body.classList.contains("admin-mode");
   if (!isOn) {
+    if (!krevAdminPassord()) return;
     // Enter edit mode → snapshot
     snapshotEdit();
     setAdminUI(true);
