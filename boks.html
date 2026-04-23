@@ -554,13 +554,20 @@ function leverInnHeleBoksen() {
   var utlante = boksGjenstander.filter(function(g) { return g.status === "Utlånt"; });
   if (!utlante.length) { visBanner("Ingen utlånte gjenstander i boksen", "error"); return; }
   visBekreft("Er du sikker på at du vil levere inn hele boksen (" + utlante.length + " stk)?", async function() {
-    for (var i = 0; i < utlante.length; i++) {
-      await db.from("gjenstander").update({ status: "Tilgjengelig", utlant_til: "", utlansdato: "", innleveringsdato: "" }).eq("id", utlante[i].id);
-      await db.from("utlanslogg").update({ status: "levert", levert_dato: iDag() }).eq("gjenstand_id", utlante[i].id).eq("status", "aktiv");
+    try {
+      for (var i = 0; i < utlante.length; i++) {
+        var r1 = await db.from("gjenstander").update({ status: "Tilgjengelig", utlant_til: "", utlansdato: null, innleveringsdato: null }).eq("id", utlante[i].id);
+        if (r1.error) throw new Error("gjenstander: " + r1.error.message);
+        var r2 = await db.from("utlanslogg").update({ status: "levert", levert_dato: iDag() }).eq("gjenstand_id", utlante[i].id).eq("status", "aktiv");
+        if (r2.error) throw new Error("utlanslogg: " + r2.error.message);
+      }
+      await lastInnBoks(currentBoks.id);
+      visBanner("Hele boksen levert inn (" + utlante.length + " stk)", "success");
+    } catch (e) {
+      console.error("leverInnHeleBoksen feilet:", e);
+      visBanner("Feil: " + e.message, "error");
     }
-    await lastInnBoks(currentBoks.id);
-    visBanner("Hele boksen levert inn (" + utlante.length + " stk)", "success");
-  });
+  }, "Ja, lever inn hele boksen");
 }
 
 // ---- LEVER INN ----
@@ -669,12 +676,20 @@ async function lagreLeverModal(utMap) {
   btn.disabled = false; btn.textContent = "Registrer innlevering";
 }
 
-function lukkBekreft() { document.getElementById("bekreftModal").style.display = "none"; }
+function lukkBekreft() {
+  var m = document.getElementById("bekreftModal");
+  m.classList.remove("open");
+  m.style.display = "none";
+}
 
-function visBekreft(melding, onJa) {
+function visBekreft(melding, onJa, okTekst) {
   document.getElementById("bekreftMelding").textContent = melding;
-  document.getElementById("bekreftModal").style.display = "flex";
+  var m = document.getElementById("bekreftModal");
+  m.style.display = "flex";
+  // .modal-overlay er usynlig (opacity:0, pointer-events:none) uten .open-klassen
+  requestAnimationFrame(function() { m.classList.add("open"); });
   var btn = document.getElementById("bekreftOkBtn");
+  if (okTekst) btn.textContent = okTekst;
   btn.onclick = function() { lukkBekreft(); onJa(); };
 }
 
