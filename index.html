@@ -72,6 +72,7 @@
       <button class="btn-batch-utlan" onclick="batchUtlan()">📤 Utlånt</button>
       <button class="btn-batch-tilg"  onclick="batchTilgjengelig()">✅ Tilgjengelig</button>
       <button class="btn-save admin-only" style="padding:5px 12px;font-size:12px" onclick="apneBatchRediger()">✏️ Rediger</button>
+      <button class="btn-batch-utlan admin-only" style="padding:5px 12px;font-size:12px" onclick="bekreftBatchSlett()">🗑️ Slett</button>
       <button class="btn-batch-clear" onclick="clearValg()">✕ Avbryt</button>
     </div>
 
@@ -377,6 +378,51 @@
 </div>
 
 <!-- NY BOKS MODAL -->
+<!-- REDIGER BOKS MODAL -->
+<div id="redigerBoksModal" class="modal-overlay">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <span class="modal-title">✏️ Rediger boks</span>
+      <button class="modal-close" onclick="lukkRedigerBoks()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label>ID</label>
+        <input type="text" id="redBoksId" readonly style="background:rgba(70,189,198,0.06);color:var(--primary);font-family:'DM Mono',monospace;font-weight:700;cursor:default">
+        <span class="field-hint">ID kan ikke endres</span>
+      </div>
+      <div class="form-field">
+        <label>Navn *</label>
+        <input type="text" id="redBoksNavn" placeholder="f.eks. Verktøyboks, Teltboks…" required>
+      </div>
+      <div class="form-field">
+        <label>Hylleplassering *</label>
+        <input type="text" id="redBoksHylle" placeholder="f.eks. A1, B3, C12…" required>
+        <span class="field-hint">Alle gjenstander i boksen får samme hylleplassering</span>
+      </div>
+      <div class="form-field">
+        <label>Beskrivelse</label>
+        <input type="text" id="redBoksBeskrivelse" placeholder="Valgfritt">
+      </div>
+      <div class="form-field">
+        <label>Bilde (valgfritt)</label>
+        <div class="bilde-upload-row">
+          <label class="btn-file-upload" for="redBoksBildeInput">📁 Last opp</label>
+          <input type="file" id="redBoksBildeInput" accept="image/*" style="display:none" onchange="forhandsvisRedBoksBilde(this)">
+          <span class="bilde-upload-sep">eller</span>
+          <input type="text" id="redBoksBildeUrl" placeholder="Lim inn URL" style="flex:1;min-width:0;padding:8px 10px;background:rgba(255,255,255,0.07);border:1px solid rgba(70,189,198,0.22);border-radius:8px;color:#e2e8f0;font-size:13px;font-family:inherit">
+        </div>
+        <div id="redBoksBildeStatus" class="bilde-upload-status" style="display:none"></div>
+        <img id="redBoksBildePrev" style="display:none;width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-top:8px;border:1px solid rgba(70,189,198,0.2)">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="lukkRedigerBoks()">Avbryt</button>
+      <button class="btn-save" onclick="lagreRedigerBoks()">💾 Lagre endringer</button>
+    </div>
+  </div>
+</div>
+
 <div id="nyBoksModal" class="modal-overlay">
   <div class="modal" style="max-width:460px">
     <div class="modal-header">
@@ -668,6 +714,30 @@ function clearValg() {
   document.querySelectorAll(".row-checkbox").forEach(function(cb) { cb.checked = false; });
   document.getElementById("batchBar").style.display = "none";
   document.querySelectorAll(".item-row").forEach(function(r) { r.classList.remove("row-selected"); });
+}
+
+function bekreftBatchSlett() {
+  if (!valgte.size) return;
+  var antall = valgte.size;
+  document.getElementById("deleteItemName").textContent = antall + " gjenstand" + (antall > 1 ? "er" : "");
+  var tittelEl = document.querySelector("#deleteModal .delete-title");
+  if (tittelEl) tittelEl.textContent = "Slette " + antall + " gjenstand" + (antall > 1 ? "er" : "") + "?";
+  document.getElementById("deleteModal").classList.add("open");
+  document.getElementById("confirmDeleteBtn").onclick = async function() {
+    var ids = Array.from(valgte);
+    var r = await db.from("gjenstander").delete().in("id", ids);
+    // Tilbakestill tittel til standard for vanlig enkeltsletting
+    if (tittelEl) tittelEl.textContent = "Slette gjenstand?";
+    if (!r.error) {
+      lukkSlettModal();
+      clearValg();
+      await lastInn();
+      visBanner(ids.length + " gjenstand" + (ids.length > 1 ? "er" : "") + " slettet", "success");
+    } else {
+      visBanner("Feil: " + r.error.message, "error");
+    }
+  };
+  setTimeout(function() { document.getElementById("confirmDeleteBtn").focus(); }, 50);
 }
 
 // ---- UTLÅN MODAL ----
@@ -1030,7 +1100,12 @@ function bekreftSlett(id, navn, skipBekreft) {
   document.getElementById("confirmDeleteBtn").onclick = _slettFn;
   setTimeout(function() { document.getElementById("confirmDeleteBtn").focus(); }, 50);
 }
-function lukkSlettModal() { document.getElementById("deleteModal").classList.remove("open"); _slettFn = null; }
+function lukkSlettModal() {
+  document.getElementById("deleteModal").classList.remove("open");
+  var tittelEl = document.querySelector("#deleteModal .delete-title");
+  if (tittelEl) tittelEl.textContent = "Slette gjenstand?";
+  _slettFn = null;
+}
 
 // ---- QR VISNING ----
 function apneQr(id, navn) {
@@ -1430,7 +1505,7 @@ async function visBokser() {
       "<td class='tc muted-text'>" + (b.hylleplassering||"-") + "</td>" +
       "<td class='tc'>" + gjTekst + "</td>" +
       "<td class='tc admin-only'><div class='actions-cell'>" +
-      "<button class='btn-action btn-edit' onclick='window.location.href=\"boks.html?id=" + enc(b.id) + "\"' title='Åpne'>&#9998;&#65039;</button>" +
+      "<button class='btn-action btn-edit' onclick='apneRedigerBoks(\"" + b.id + "\")' title='Rediger'>&#9998;&#65039;</button>" +
       "<button class='btn-action btn-qr' onclick='apneBoksQr(\"" + b.id + "\",\"" + b.navn.replace(/"/g,"") + "\")' title='QR-kode'>&#11035;</button>" +
       "<button class='btn-action btn-delete' onclick='bekreftSlettBoks(\"" + b.id + "\",\"" + b.navn.replace(/"/g,"") + "\")' title='Slett'>&#128465;&#65039;</button>" +
       "</div></td>" +
@@ -1493,6 +1568,94 @@ async function lagreNyBoks() {
   if (r.error) { visBanner("Feil: " + r.error.message, "error"); }
   else { lukkNyBoks(); await lastInnBokser(); visBanner("Boks opprettet!", "success"); settFane("bokser"); }
   btn.disabled = false; btn.textContent = "Opprett boks";
+}
+
+// ---- REDIGER BOKS ----
+var _redigerBoksId = null;
+
+function apneRedigerBoks(id) {
+  var b = bokser.find(function(x) { return x.id === id; });
+  if (!b) { visBanner("Fant ikke boksen", "error"); return; }
+  _redigerBoksId = id;
+  document.getElementById("redBoksId").value = b.id;
+  document.getElementById("redBoksNavn").value = b.navn || "";
+  document.getElementById("redBoksHylle").value = b.hylleplassering || "";
+  document.getElementById("redBoksBeskrivelse").value = b.beskrivelse || "";
+  document.getElementById("redBoksBildeUrl").value = b.bilde_url || "";
+  var prev = document.getElementById("redBoksBildePrev");
+  if (b.bilde_url) { prev.src = konverterBildeUrl(b.bilde_url); prev.style.display = "block"; }
+  else { prev.style.display = "none"; }
+  var st = document.getElementById("redBoksBildeStatus"); if (st) st.style.display = "none";
+  var inp = document.getElementById("redBoksBildeInput"); if (inp) inp.value = "";
+  window._redBoksBildeData = null;
+  document.getElementById("redigerBoksModal").classList.add("open");
+  setTimeout(function() { var el = document.getElementById("redBoksNavn"); if (el) el.focus(); }, 100);
+}
+
+function lukkRedigerBoks() {
+  document.getElementById("redigerBoksModal").classList.remove("open");
+  _redigerBoksId = null;
+}
+
+async function forhandsvisRedBoksBilde(input) {
+  var fil = input.files[0]; if (!fil) return;
+  var st = document.getElementById("redBoksBildeStatus");
+  if (st) { st.style.display = "block"; st.className = "bilde-upload-status uploading"; st.textContent = "Laster opp…"; }
+  try {
+    var dataUrl = await komprimerTilBase64(fil);
+    window._redBoksBildeData = dataUrl;
+    var prev = document.getElementById("redBoksBildePrev");
+    if (prev) { prev.src = dataUrl; prev.style.display = "block"; }
+    if (st) { st.className = "bilde-upload-status success"; st.textContent = "Klar!"; setTimeout(function() { st.style.display = "none"; }, 2000); }
+  } catch(e) { if (st) { st.className = "bilde-upload-status feil"; st.textContent = "Feil: " + e.message; } }
+}
+
+async function lagreRedigerBoks() {
+  if (!_redigerBoksId) return;
+  var gammel = bokser.find(function(x) { return x.id === _redigerBoksId; });
+  if (!gammel) { visBanner("Fant ikke boksen", "error"); return; }
+
+  var navn  = document.getElementById("redBoksNavn").value.trim();
+  var hylle = document.getElementById("redBoksHylle").value.trim();
+  var beskr = document.getElementById("redBoksBeskrivelse").value.trim();
+  var bildeUrl = document.getElementById("redBoksBildeUrl").value.trim();
+  var bilde = window._redBoksBildeData || (bildeUrl ? konverterBildeUrl(bildeUrl) : (gammel.bilde_url || null));
+
+  if (!navn)  { visBanner("Navn er påkrevd", "error"); return; }
+  if (!hylle) { visBanner("Hylleplassering er påkrevd", "error"); return; }
+
+  var btn = document.querySelector("#redigerBoksModal .btn-save");
+  btn.disabled = true; btn.textContent = "Lagrer…";
+
+  try {
+    var r1 = await db.from("bokser").update({
+      navn: navn,
+      hylleplassering: hylle,
+      beskrivelse: beskr || null,
+      bilde_url: bilde || null,
+    }).eq("id", _redigerBoksId);
+    if (r1.error) throw new Error(r1.error.message);
+
+    // Hvis hylleplassering endret: oppdater alle gjenstander i boksen
+    var antallOppdatert = 0;
+    if ((gammel.hylleplassering || "") !== hylle) {
+      var r2 = await db.from("gjenstander").update({ hylleplassering: hylle }).eq("boks_id", _redigerBoksId);
+      if (r2.error) throw new Error("gjenstander hylle: " + r2.error.message);
+      antallOppdatert = gjenstander.filter(function(g) { return g.boks_id === _redigerBoksId; }).length;
+    }
+
+    lukkRedigerBoks();
+    await lastInnBokser();
+    await lastInn();
+    var msg = "Boks oppdatert";
+    if (antallOppdatert > 0) msg += " (også " + antallOppdatert + " gjenstand" + (antallOppdatert > 1 ? "er" : "") + ")";
+    visBanner(msg, "success");
+  } catch (e) {
+    console.error("lagreRedigerBoks feilet:", e);
+    visBanner("Feil: " + e.message, "error");
+  } finally {
+    btn.disabled = false; btn.textContent = "💾 Lagre endringer";
+  }
 }
 
 function apneBoksQr(id, navn) {
@@ -1622,15 +1785,15 @@ function setupListeners() {
     var url = konverterBildeUrl(e.target.value);
     if (url) { prev.src = url; prev.style.display = "block"; } else { prev.style.display = "none"; }
   });
-  ["editModal","qrModal","deleteModal","scannerModal","leggTilModal","batchRedigerModal","nyBoksModal"].forEach(function(id) {
+  ["editModal","qrModal","deleteModal","scannerModal","leggTilModal","batchRedigerModal","nyBoksModal","redigerBoksModal"].forEach(function(id) {
     var el = document.getElementById(id);
     if (!el) return;
     el.addEventListener("click", function(e) {
-      if (e.target.id === id) { lukkRedigerModal(); lukkQrModal(); lukkSlettModal(); lukkLeggTilModal(); lukkBatchRediger(); lukkNyBoks(); if (id === "scannerModal") lukkScanner(); }
+      if (e.target.id === id) { lukkRedigerModal(); lukkQrModal(); lukkSlettModal(); lukkLeggTilModal(); lukkBatchRediger(); lukkNyBoks(); lukkRedigerBoks(); if (id === "scannerModal") lukkScanner(); }
     });
   });
   document.addEventListener("keydown", function(e) {
-    if (e.key === "Escape") { lukkRedigerModal(); lukkQrModal(); lukkSlettModal(); lukkScanner(); lukkLeggTilModal(); lukkBatchRediger(); }
+    if (e.key === "Escape") { lukkRedigerModal(); lukkQrModal(); lukkSlettModal(); lukkScanner(); lukkLeggTilModal(); lukkBatchRediger(); lukkRedigerBoks(); }
     if (e.key === "Enter" && document.getElementById("deleteModal").classList.contains("open")) {
       e.preventDefault(); if (_slettFn) _slettFn();
     }
