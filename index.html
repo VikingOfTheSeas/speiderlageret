@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css?v=1776543577">
-  <script src="js/auth.js?v=1782345678"></script>
+  <script src="js/auth.js?v=1782401234"></script>
 </head>
 <body>
 
@@ -1815,9 +1815,9 @@ document.addEventListener("click", function(e) {
     btn.classList.remove("open");
   }
 });
-function toggleAdmin() {
+async function toggleAdmin() {
   var wasActive = document.body.classList.contains("admin-mode");
-  if (!wasActive && !krevAdminPassord()) return;
+  if (!wasActive && !(await krevAdminPassord())) return;
   var active = document.body.classList.toggle("admin-mode");
   sessionStorage.setItem("adminMode", active ? "1" : "");
   var btn = document.getElementById("adminToggle");

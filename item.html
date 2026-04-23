@@ -272,9 +272,9 @@ document.addEventListener("click", function(e) {
     btn.classList.remove("open");
   }
 });
-function toggleAdmin() {
+async function toggleAdmin() {
   var wasActive = document.body.classList.contains("admin-mode");
-  if (!wasActive && !krevAdminPassord()) return;
+  if (!wasActive && !(await krevAdminPassord())) return;
   var active = document.body.classList.toggle("admin-mode");
   sessionStorage.setItem("adminMode", active ? "1" : "");
   var btn = document.getElementById("adminToggle");
