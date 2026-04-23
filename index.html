@@ -594,7 +594,8 @@ function filtrerOgVis() {
   var liste = gjenstander.filter(function(g) {
     var treff = !sok || g.id.toLowerCase().includes(sok) || g.navn.toLowerCase().includes(sok) ||
       (g.utlant_til||"").toLowerCase().includes(sok) ||
-      (g.hylleplassering||"").toLowerCase().includes(sok);
+      (g.hylleplassering||"").toLowerCase().includes(sok) ||
+      (g.notater||"").toLowerCase().includes(sok);
     return treff && (kat === "Alle" || g.kategori === kat) && (stat === "Alle" || g.status === stat);
   });
   liste.sort(function(a, b) {

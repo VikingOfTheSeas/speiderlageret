@@ -738,7 +738,8 @@ function sokKart(q) {
   gjenstander.forEach(g => {
     if ((g.navn || "").toLowerCase().includes(q) ||
         (g.id || "").toLowerCase().includes(q) ||
-        (g.hylleplassering || "").toLowerCase().includes(q)) {
+        (g.hylleplassering || "").toLowerCase().includes(q) ||
+        (g.notater || "").toLowerCase().includes(q)) {
       const h = extractHylle(g.hylleplassering);
       if (h) found.add(h);
     }
