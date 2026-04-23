@@ -68,6 +68,10 @@
           <button class="btn-save" style="padding:7px 14px;font-size:13px" onclick="apneUtlan()">Lån ut</button>
           <button class="qbtn qbtn-tilg qbtn-active" style="padding:7px 14px;font-size:12px" onclick="apneLever()">Lever inn</button>
         </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:6px">
+          <button class="btn-save" style="padding:7px 14px;font-size:12px;background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.35);color:#fca5a5" onclick="apneLanUtHeleBoksen()">📦 Lån ut hele boksen</button>
+          <button class="qbtn qbtn-tilg qbtn-active" style="padding:7px 14px;font-size:12px" onclick="leverInnHeleBoksen()">📦 Lever inn hele boksen</button>
+        </div>
       </div>
     </div>
 
@@ -426,6 +430,11 @@ function byggUtlanModal(forhNavn) {
 
   document.getElementById("utlanBody").innerHTML = html;
   oppdaterMaks();
+  // Reset modal til standard utlan-modus (i tilfelle det ble brukt til hele boksen)
+  var uTitle = document.querySelector("#utlanModal .modal-title");
+  if (uTitle) uTitle.textContent = "Lån ut fra boksen";
+  var uSaveBtn = document.querySelector("#utlanModal .btn-save");
+  if (uSaveBtn) { uSaveBtn.onclick = lagreUtlan; uSaveBtn.textContent = "Registrer utlån"; uSaveBtn.disabled = false; }
   document.getElementById("utlanModal").classList.add("open");
 }
 
@@ -472,6 +481,87 @@ async function lagreUtlan() {
 }
 
 function lukkUtlan() { document.getElementById("utlanModal").classList.remove("open"); }
+
+// ---- LÅN UT HELE BOKSEN ----
+function apneLanUtHeleBoksen() {
+  var tilgjengelige = boksGjenstander.filter(function(g) { return g.status === "Tilgjengelig"; });
+  if (!tilgjengelige.length) {
+    visBanner("Ingen tilgjengelige gjenstander i boksen", "error");
+    return;
+  }
+  var utlante = boksGjenstander.filter(function(g) { return g.status === "Utlånt"; });
+
+  var advarsel = "";
+  if (utlante.length > 0) {
+    advarsel = "<div style='background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.35);padding:10px;border-radius:8px;margin-bottom:10px;font-size:13px;color:#fcd34d'>⚠️ " + utlante.length + " stk er allerede utlånt og blir ikke påvirket.</div>";
+  }
+
+  var html = advarsel +
+    "<div style='background:rgba(70,189,198,0.1);padding:10px;border-radius:8px;margin-bottom:10px;font-size:13px'>Låner ut <b>hele boksen</b> &mdash; " + tilgjengelige.length + " stk (" + new Set(tilgjengelige.map(function(g){return g.navn;})).size + " typer).</div>" +
+    "<div class='form-grid2'><div class='form-field'><label>Utlånsdato</label><input type='date' id='utlanDato' value='" + iDag() + "'></div>" +
+    "<div class='form-field'><label>Leveres inn</label><input type='date' id='utlanFrist' value='" + iDag() + "'></div></div>" +
+    "<div class='form-field'><label>Låntaker *</label><input type='text' id='utlanTil' placeholder='Navn eller gruppe' autocomplete='name' style='width:100%'></div>";
+
+  document.getElementById("utlanBody").innerHTML = html;
+  var title = document.querySelector("#utlanModal .modal-title");
+  if (title) title.textContent = "Lån ut hele boksen";
+  var saveBtn = document.querySelector("#utlanModal .btn-save");
+  if (saveBtn) { saveBtn.onclick = lagreLanUtHeleBoksen; saveBtn.textContent = "Lån ut hele boksen"; saveBtn.disabled = false; }
+  document.getElementById("utlanModal").classList.add("open");
+}
+
+async function lagreLanUtHeleBoksen() {
+  var til = document.getElementById("utlanTil").value.trim();
+  var dato = document.getElementById("utlanDato").value;
+  var frist = document.getElementById("utlanFrist").value;
+
+  if (!til) { visBanner("Fyll inn låntaker", "error"); return; }
+  if (!dato) { visBanner("Fyll inn utlånsdato", "error"); return; }
+  if (dato < iDag()) { visBanner("Utlånsdato kan ikke være før i dag", "error"); return; }
+  if (frist && dato > frist) { visBanner("Utlånsdato kan ikke være etter innleveringsdato", "error"); return; }
+
+  var tilgjengelige = boksGjenstander.filter(function(g) { return g.status === "Tilgjengelig"; });
+  if (!tilgjengelige.length) { visBanner("Ingen tilgjengelige gjenstander", "error"); return; }
+
+  var saveBtn = document.querySelector("#utlanModal .btn-save");
+  saveBtn.disabled = true; saveBtn.textContent = "Lagrer...";
+
+  // Gruppér per navn for utlanslogg (én rad per gjenstandstype)
+  var navnMap = new Map();
+  tilgjengelige.forEach(function(g) {
+    if (!navnMap.has(g.navn)) navnMap.set(g.navn, []);
+    navnMap.get(g.navn).push(g);
+  });
+
+  // Oppdater alle gjenstander-rader til Utlånt
+  for (var i = 0; i < tilgjengelige.length; i++) {
+    await db.from("gjenstander").update({ status: "Utlånt", utlant_til: til, utlansdato: dato, innleveringsdato: frist || null }).eq("id", tilgjengelige[i].id);
+  }
+
+  // Én utlanslogg-post per navn-gruppe (konsistent med lagreUtlan)
+  for (var [navn, rader] of navnMap) {
+    await db.from("utlanslogg").insert({ gjenstand_id: rader[0].id, boks_id: currentBoks.id, antall: rader.length, utlant_til: til, utlansdato: dato, innleveringsdato: frist || null, status: "aktiv" });
+  }
+
+  lukkUtlan();
+  await lastInnBoks(currentBoks.id);
+  visBanner("Hele boksen utlånt til " + til + " (" + tilgjengelige.length + " stk)", "success");
+  saveBtn.disabled = false; saveBtn.textContent = "Registrer utlån";
+}
+
+// ---- LEVER INN HELE BOKSEN ----
+function leverInnHeleBoksen() {
+  var utlante = boksGjenstander.filter(function(g) { return g.status === "Utlånt"; });
+  if (!utlante.length) { visBanner("Ingen utlånte gjenstander i boksen", "error"); return; }
+  visBekreft("Er du sikker på at du vil levere inn hele boksen (" + utlante.length + " stk)?", async function() {
+    for (var i = 0; i < utlante.length; i++) {
+      await db.from("gjenstander").update({ status: "Tilgjengelig", utlant_til: "", utlansdato: "", innleveringsdato: "" }).eq("id", utlante[i].id);
+      await db.from("utlanslogg").update({ status: "levert", levert_dato: iDag() }).eq("gjenstand_id", utlante[i].id).eq("status", "aktiv");
+    }
+    await lastInnBoks(currentBoks.id);
+    visBanner("Hele boksen levert inn (" + utlante.length + " stk)", "success");
+  });
+}
 
 // ---- LEVER INN ----
 function apneLever() {
