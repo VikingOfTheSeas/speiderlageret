@@ -605,6 +605,13 @@ document.addEventListener("DOMContentLoaded", async function() {
   }
   var aktivTab = sessionStorage.getItem("aktivTab");
   if (aktivTab) { sessionStorage.removeItem("aktivTab"); settFane(aktivTab); }
+  // ?edit=<id> kommer fra "Rediger gjenstand"-knappen på gjenstandssiden
+  var editId = new URLSearchParams(location.search).get("edit");
+  if (editId) {
+    history.replaceState({}, "", location.pathname);
+    if (gjenstander.find(function(x) { return x.id === editId; })) apneRediger(editId);
+    else visBanner("Fant ikke gjenstanden " + editId, "error");
+  }
 });
 
 // ---- DATA ----
