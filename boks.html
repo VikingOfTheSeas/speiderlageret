@@ -71,6 +71,7 @@
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:6px">
           <button class="btn-save" style="padding:7px 14px;font-size:12px;background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.35);color:#fca5a5" onclick="apneLanUtHeleBoksen()">📦 Lån ut hele boksen</button>
           <button class="qbtn qbtn-tilg qbtn-active" style="padding:7px 14px;font-size:12px" onclick="leverInnHeleBoksen()">📦 Lever inn hele boksen</button>
+          <button class="btn-save admin-only" style="padding:7px 14px;font-size:12px" onclick="apneRedigerBoks()">✏️ Rediger</button>
         </div>
       </div>
     </div>
@@ -176,6 +177,40 @@
     <div class="modal-footer">
       <button class="btn-cancel" onclick="lukkLever()">Avbryt</button>
       <button class="btn-save" id="leverSaveBtn" onclick="lagreLever()">Registrer innlevering</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rediger boks modal -->
+<div id="redigerBoksModal" class="modal-overlay">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <span class="modal-title">✏️ Rediger boks</span>
+      <button class="modal-close" onclick="lukkRedigerBoks()">X</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label>ID</label>
+        <input type="text" id="redBoksId" readonly style="background:rgba(70,189,198,0.06);color:var(--primary);font-family:'DM Mono',monospace;font-weight:700;cursor:default">
+        <span class="field-hint">ID kan ikke endres</span>
+      </div>
+      <div class="form-field">
+        <label>Navn *</label>
+        <input type="text" id="redBoksNavn" placeholder="f.eks. Verktøyboks, Teltboks…">
+      </div>
+      <div class="form-field">
+        <label>Hylleplassering *</label>
+        <input type="text" id="redBoksHylle" placeholder="f.eks. A1, B3, C12…">
+        <span class="field-hint">Alle gjenstander i boksen får samme hylleplassering</span>
+      </div>
+      <div class="form-field">
+        <label>Beskrivelse</label>
+        <input type="text" id="redBoksBeskrivelse" placeholder="Valgfritt">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="lukkRedigerBoks()">Avbryt</button>
+      <button class="btn-save" id="redBoksSaveBtn" onclick="lagreRedigerBoks()">💾 Lagre endringer</button>
     </div>
   </div>
 </div>
@@ -735,6 +770,60 @@ async function lagreBokseBildeUrl() {
   else visBanner("Feil: " + r.error.message, "error");
 }
 
+// ---- REDIGER BOKS ----
+function apneRedigerBoks() {
+  if (!currentBoks) return;
+  document.getElementById("redBoksId").value = currentBoks.id;
+  document.getElementById("redBoksNavn").value = currentBoks.navn || "";
+  document.getElementById("redBoksHylle").value = currentBoks.hylleplassering || "";
+  document.getElementById("redBoksBeskrivelse").value = currentBoks.beskrivelse || "";
+  document.getElementById("redigerBoksModal").classList.add("open");
+  setTimeout(function() { var el = document.getElementById("redBoksNavn"); if (el) el.focus(); }, 100);
+}
+
+function lukkRedigerBoks() { document.getElementById("redigerBoksModal").classList.remove("open"); }
+
+async function lagreRedigerBoks() {
+  if (!currentBoks) return;
+  var navn  = document.getElementById("redBoksNavn").value.trim();
+  var hylle = document.getElementById("redBoksHylle").value.trim();
+  var beskr = document.getElementById("redBoksBeskrivelse").value.trim();
+
+  if (!navn)  { visBanner("Navn er påkrevd", "error"); return; }
+  if (!hylle) { visBanner("Hylleplassering er påkrevd", "error"); return; }
+
+  var btn = document.getElementById("redBoksSaveBtn");
+  btn.disabled = true; btn.textContent = "Lagrer…";
+
+  try {
+    var r1 = await db.from("bokser").update({
+      navn: navn,
+      hylleplassering: hylle,
+      beskrivelse: beskr || null,
+    }).eq("id", currentBoks.id);
+    if (r1.error) throw new Error(r1.error.message);
+
+    // Hvis hylleplassering endret: oppdater alle gjenstander i boksen
+    var antallOppdatert = 0;
+    if ((currentBoks.hylleplassering || "") !== hylle) {
+      var r2 = await db.from("gjenstander").update({ hylleplassering: hylle }).eq("boks_id", currentBoks.id);
+      if (r2.error) throw new Error("gjenstander hylle: " + r2.error.message);
+      antallOppdatert = boksGjenstander.length;
+    }
+
+    lukkRedigerBoks();
+    await lastInnBoks(currentBoks.id);
+    var msg = "Boks oppdatert";
+    if (antallOppdatert > 0) msg += " (også " + antallOppdatert + " gjenstand" + (antallOppdatert > 1 ? "er" : "") + ")";
+    visBanner(msg, "success");
+  } catch (e) {
+    console.error("lagreRedigerBoks feilet:", e);
+    visBanner("Feil: " + e.message, "error");
+  } finally {
+    btn.disabled = false; btn.textContent = "💾 Lagre endringer";
+  }
+}
+
 // ---- QR / PRINT ----
 async function skrivUtBoksEtikett() {
   var src = await lagQrBoksCanvas(110);
@@ -868,7 +957,8 @@ function visBanner(tekst, type) {
 document.getElementById("utlanModal").addEventListener("click", function(e) { if (e.target.id === "utlanModal") lukkUtlan(); });
 document.getElementById("leverModal").addEventListener("click", function(e) { if (e.target.id === "leverModal") lukkLever(); });
 document.getElementById("bekreftModal").addEventListener("click", function(e) { if (e.target.id === "bekreftModal") lukkBekreft(); });
-document.addEventListener("keydown", function(e) { if (e.key === "Escape") { lukkUtlan(); lukkLever(); lukkBekreft(); } });
+document.getElementById("redigerBoksModal").addEventListener("click", function(e) { if (e.target.id === "redigerBoksModal") lukkRedigerBoks(); });
+document.addEventListener("keydown", function(e) { if (e.key === "Escape") { lukkUtlan(); lukkLever(); lukkBekreft(); lukkRedigerBoks(); } });
 
 function toggleMeny() {
   document.getElementById("hamburgerMeny").classList.toggle("open");

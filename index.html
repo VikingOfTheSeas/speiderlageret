@@ -1116,6 +1116,7 @@ async function leggTil(e) {
     oppdaterPrev();
     await lastInn();
     lukkLeggTilModal();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
   btn.disabled = false; btn.textContent = "Legg til i lageret";
 }
@@ -1599,7 +1600,7 @@ async function lagreNyBoks() {
   btn.disabled = true; btn.textContent = "Lagrer…";
   var r = await db.from("bokser").insert({ id: id, navn: navn, hylleplassering: hylle, beskrivelse: beskr || null, bilde_url: bilde || null });
   if (r.error) { visBanner("Feil: " + r.error.message, "error"); }
-  else { lukkNyBoks(); await lastInnBokser(); visBanner("Boks opprettet!", "success"); settFane("bokser"); }
+  else { lukkNyBoks(); await lastInnBokser(); visBanner("Boks opprettet!", "success"); settFane("bokser"); window.scrollTo({ top: 0, behavior: "smooth" }); }
   btn.disabled = false; btn.textContent = "Opprett boks";
 }
 
