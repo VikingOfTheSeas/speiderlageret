@@ -24,6 +24,37 @@ function cacheSkriv(key, data) {
   try { sessionStorage.setItem(key, JSON.stringify(data)); } catch (e) {}
 }
 
+// ---- UTLÅNSLOGG ----
+// Én rad per gjenstand slik at hver gjenstandsside får komplett historikk.
+async function loggUtlan(items, til, dato, frist) {
+  if (!items || !items.length) return;
+  var rader = items.map(function(g) {
+    return {
+      gjenstand_id: g.id,
+      boks_id: g.boks_id || null,
+      antall: 1,
+      utlant_til: til,
+      utlansdato: dato,
+      innleveringsdato: frist || null,
+      status: "aktiv",
+    };
+  });
+  var r = await db.from("utlanslogg").insert(rader);
+  if (r.error) console.warn("utlanslogg insert:", r.error.message);
+}
+
+// Lukker aktive loggrader for gjenstandene (ved innlevering/statusbytte).
+async function loggInnlevert(ids) {
+  if (!ids || !ids.length) return;
+  var d = new Date();
+  var idag = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0"+d.getDate()).slice(-2);
+  var r = await db.from("utlanslogg")
+    .update({ status: "levert", levert_dato: idag })
+    .in("gjenstand_id", ids)
+    .eq("status", "aktiv");
+  if (r.error) console.warn("utlanslogg levert:", r.error.message);
+}
+
 async function hentGjenstandBilde(id) {
   var r = await db.from("gjenstander").select("bilde_url").eq("id", id).single();
   return (r.data && r.data.bilde_url) || "";

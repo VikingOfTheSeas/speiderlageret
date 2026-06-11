@@ -238,7 +238,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/kart-mini.js?v=1776544715"></script>
-<script src="js/config.js?v=1782501000"></script>
+<script src="js/config.js?v=1786200000"></script>
 <script>
 // ---- STATE ----
 var currentBoks = null;
@@ -504,11 +504,13 @@ async function lagreUtlan() {
 
   // Finn N tilgjengelige rader med dette navnet
   var tilgjRader = boksGjenstander.filter(function(g) { return g.navn === navn && g.status === "Tilgjengelig"; });
-  for (var i = 0; i < Math.min(antall, tilgjRader.length); i++) {
-    await db.from("gjenstander").update({ status: "Utlånt", utlant_til: til, utlansdato: dato, innleveringsdato: frist || null }).eq("id", tilgjRader[i].id);
+  var utlante = tilgjRader.slice(0, antall);
+  for (var i = 0; i < utlante.length; i++) {
+    await db.from("gjenstander").update({ status: "Utlånt", utlant_til: til, utlansdato: dato, innleveringsdato: frist || null }).eq("id", utlante[i].id);
   }
 
-  await db.from("utlanslogg").insert({ gjenstand_id: tilgjRader[0].id, boks_id: currentBoks.id, antall: antall, utlant_til: til, utlansdato: dato, innleveringsdato: frist || null, status: "aktiv" });
+  // Én loggrad per gjenstand så hver gjenstandsside får komplett historikk
+  await loggUtlan(utlante, til, dato, frist);
 
   lukkUtlan();
   await lastInnBoks(currentBoks.id);
@@ -562,22 +564,13 @@ async function lagreLanUtHeleBoksen() {
   var saveBtn = document.querySelector("#utlanModal .btn-save");
   saveBtn.disabled = true; saveBtn.textContent = "Lagrer...";
 
-  // Gruppér per navn for utlanslogg (én rad per gjenstandstype)
-  var navnMap = new Map();
-  tilgjengelige.forEach(function(g) {
-    if (!navnMap.has(g.navn)) navnMap.set(g.navn, []);
-    navnMap.get(g.navn).push(g);
-  });
-
   // Oppdater alle gjenstander-rader til Utlånt
   for (var i = 0; i < tilgjengelige.length; i++) {
     await db.from("gjenstander").update({ status: "Utlånt", utlant_til: til, utlansdato: dato, innleveringsdato: frist || null }).eq("id", tilgjengelige[i].id);
   }
 
-  // Én utlanslogg-post per navn-gruppe (konsistent med lagreUtlan)
-  for (var [navn, rader] of navnMap) {
-    await db.from("utlanslogg").insert({ gjenstand_id: rader[0].id, boks_id: currentBoks.id, antall: rader.length, utlant_til: til, utlansdato: dato, innleveringsdato: frist || null, status: "aktiv" });
-  }
+  // Én loggrad per gjenstand så hver gjenstandsside får komplett historikk
+  await loggUtlan(tilgjengelige, til, dato, frist);
 
   lukkUtlan();
   await lastInnBoks(currentBoks.id);
