@@ -544,7 +544,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script src="js/config.js?v=1775637712"></script>
+<script src="js/config.js?v=1782501000"></script>
 <script>
 var KATEGORIER = ["Camping","Kjøkken","Sikkerhet","Utstyr","Navigasjon","Verktøy","Belysning","Vann","Kommunikasjon","Annet"];
 var STATUSER   = ["Tilgjengelig","Utlånt","Til reparasjon","Tapt"];
@@ -609,18 +609,37 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 // ---- DATA ----
 async function lastInn() {
-  document.getElementById("itemsBody").innerHTML = "<tr><td colspan='9' class='empty-row loading-text'>Laster...</td></tr>";
-  var r = await db.from("gjenstander").select("*").order("id");
+  // Render umiddelbart fra sessionStorage-cachen, hent så ferskt i bakgrunnen
+  if (!gjenstander.length) {
+    var cached = cacheLes("cache_gjenstander_v1");
+    if (cached && cached.length) {
+      gjenstander = cached;
+      filtrerOgVis(); oppdaterStats(); viseSammendrag();
+    } else {
+      document.getElementById("itemsBody").innerHTML = "<tr><td colspan='9' class='empty-row loading-text'>Laster...</td></tr>";
+    }
+  }
+  var r = await db.from("gjenstander").select(GJENSTAND_FELTER).order("id");
   if (r.error) { visBanner("Feil: " + r.error.message, "error"); return; }
   gjenstander = r.data || [];
+  cacheSkriv("cache_gjenstander_v1", gjenstander);
   filtrerOgVis();
   oppdaterStats();
   viseSammendrag();
 }
 
 async function lastInnBokser() {
-  var r = await db.from("bokser").select("*").order("id");
+  if (!bokser.length) {
+    var cached = cacheLes("cache_bokser_v1");
+    if (cached && cached.length) {
+      bokser = cached;
+      if (document.getElementById("bokser") && document.getElementById("bokser").classList.contains("active")) visBokser();
+      populerBoksSelect();
+    }
+  }
+  var r = await db.from("bokser").select(BOKS_FELTER).order("id");
   bokser = r.data || [];
+  cacheSkriv("cache_bokser_v1", bokser);
   if (document.getElementById("bokser") && document.getElementById("bokser").classList.contains("active")) visBokser();
   populerBoksSelect();
 }
@@ -901,7 +920,6 @@ function apneRediger(id, forceStatus) {
   document.getElementById("editNavn").value             = g.navn || "";
   document.getElementById("editKategori").value         = g.kategori || "Annet";
   document.getElementById("editHylle").value            = g.hylleplassering || "";
-  document.getElementById("editBildeUrl").value         = g.bilde_url || "";
   document.getElementById("editStatus").value           = forceStatus || g.status || "Tilgjengelig";
   document.getElementById("editUtlantTil").value        = g.utlant_til || "";
   document.getElementById("editUtlansdato").value       = g.utlansdato || "";
@@ -909,7 +927,17 @@ function apneRediger(id, forceStatus) {
   document.getElementById("editNotater").value          = g.notater || "";
   document.getElementById("editBoksId").value           = g.boks_id || "";
   populerBoksSelect();
-  viseBildePrev(g.bilde_url);
+  // Bildet ligger ikke i den lette listen — hent det på forespørsel.
+  // _editBildeKlar hindrer at lagring før bildet er hentet visker det ut.
+  window._editBildeKlar = false;
+  document.getElementById("editBildeUrl").value = "";
+  viseBildePrev("");
+  hentGjenstandBilde(id).then(function(url) {
+    if (editingId !== id) return; // modalen er lukket / annen gjenstand åpnet
+    document.getElementById("editBildeUrl").value = url || "";
+    viseBildePrev(url);
+    window._editBildeKlar = true;
+  });
   toggleUtlan(forceStatus || g.status);
   oppdaterHylleLas();
   document.getElementById("editModal").classList.add("open");
@@ -978,17 +1006,21 @@ async function lagreRediger() {
   }
 
   if (!editingId) return;
-  var bildeRaw = document.getElementById("editBildeUrl").value.trim();
   var oppdatert = {
     id: editingId,
     navn:            document.getElementById("editNavn").value.trim(),
     kategori:        document.getElementById("editKategori").value,
     hylleplassering: document.getElementById("editHylle").value.trim(),
-    bilde_url:       bildeRaw.startsWith("data:") ? bildeRaw : konverterBildeUrl(bildeRaw),
     boks_id:         document.getElementById("editBoksId").value || null,
     status: status, utlant_til: utlant_til, utlansdato: utlansdato, innleveringsdato: innlevering,
     notater: document.getElementById("editNotater").value.trim(),
   };
+  // Bare send bilde_url når bildet faktisk er lastet inn/endret —
+  // ellers ville en lagring før bakgrunnshentingen er ferdig viske ut bildet.
+  if (window._editBildeKlar) {
+    var bildeRaw = document.getElementById("editBildeUrl").value.trim();
+    oppdatert.bilde_url = bildeRaw.startsWith("data:") ? bildeRaw : konverterBildeUrl(bildeRaw);
+  }
   var r = await db.from("gjenstander").upsert(oppdatert, {onConflict:"id"});
   if (r.error) { visBanner("Feil: " + r.error.message, "error"); }
   else { clearValg(); await lastInn(); lukkRedigerModal(); visBanner("Lagret!", "success"); }
@@ -1003,6 +1035,7 @@ async function lastOppBilde(input) {
   try {
     var dataUrl = await komprimerTilBase64(fil);
     document.getElementById("editBildeUrl").value = dataUrl;
+    window._editBildeKlar = true;
     viseBildePrev(dataUrl);
     st.className = "bilde-upload-status success"; st.textContent = "Bilde klart!";
     setTimeout(function() { st.style.display = "none"; }, 2500);
@@ -1581,10 +1614,17 @@ function apneRedigerBoks(id) {
   document.getElementById("redBoksNavn").value = b.navn || "";
   document.getElementById("redBoksHylle").value = b.hylleplassering || "";
   document.getElementById("redBoksBeskrivelse").value = b.beskrivelse || "";
-  document.getElementById("redBoksBildeUrl").value = b.bilde_url || "";
+  // Boksbildet ligger ikke i den lette listen — hent det på forespørsel.
+  window._redBoksBildeKlar = false;
+  document.getElementById("redBoksBildeUrl").value = "";
   var prev = document.getElementById("redBoksBildePrev");
-  if (b.bilde_url) { prev.src = konverterBildeUrl(b.bilde_url); prev.style.display = "block"; }
-  else { prev.style.display = "none"; }
+  prev.style.display = "none";
+  hentBoksBilde(id).then(function(url) {
+    if (_redigerBoksId !== id) return;
+    document.getElementById("redBoksBildeUrl").value = url || "";
+    if (url) { prev.src = konverterBildeUrl(url); prev.style.display = "block"; }
+    window._redBoksBildeKlar = true;
+  });
   var st = document.getElementById("redBoksBildeStatus"); if (st) st.style.display = "none";
   var inp = document.getElementById("redBoksBildeInput"); if (inp) inp.value = "";
   window._redBoksBildeData = null;
@@ -1618,8 +1658,6 @@ async function lagreRedigerBoks() {
   var navn  = document.getElementById("redBoksNavn").value.trim();
   var hylle = document.getElementById("redBoksHylle").value.trim();
   var beskr = document.getElementById("redBoksBeskrivelse").value.trim();
-  var bildeUrl = document.getElementById("redBoksBildeUrl").value.trim();
-  var bilde = window._redBoksBildeData || (bildeUrl ? konverterBildeUrl(bildeUrl) : (gammel.bilde_url || null));
 
   if (!navn)  { visBanner("Navn er påkrevd", "error"); return; }
   if (!hylle) { visBanner("Hylleplassering er påkrevd", "error"); return; }
@@ -1628,12 +1666,20 @@ async function lagreRedigerBoks() {
   btn.disabled = true; btn.textContent = "Lagrer…";
 
   try {
-    var r1 = await db.from("bokser").update({
+    var endringer = {
       navn: navn,
       hylleplassering: hylle,
       beskrivelse: beskr || null,
-      bilde_url: bilde || null,
-    }).eq("id", _redigerBoksId);
+    };
+    // Bare send bilde_url når bildet er lastet inn/endret — ellers ville
+    // en lagring før bakgrunnshentingen er ferdig viske ut boksbildet.
+    if (window._redBoksBildeData) {
+      endringer.bilde_url = window._redBoksBildeData;
+    } else if (window._redBoksBildeKlar) {
+      var bildeUrl = document.getElementById("redBoksBildeUrl").value.trim();
+      endringer.bilde_url = bildeUrl ? konverterBildeUrl(bildeUrl) : null;
+    }
+    var r1 = await db.from("bokser").update(endringer).eq("id", _redigerBoksId);
     if (r1.error) throw new Error(r1.error.message);
 
     // Hvis hylleplassering endret: oppdater alle gjenstander i boksen
@@ -1779,7 +1825,7 @@ function setupListeners() {
   });
   document.getElementById("editStatus").addEventListener("change", function(e) { toggleUtlan(e.target.value); });
   document.getElementById("editBoksId").addEventListener("change", oppdaterHylleLas);
-  document.getElementById("editBildeUrl").addEventListener("input", function(e) { viseBildePrev(e.target.value); });
+  document.getElementById("editBildeUrl").addEventListener("input", function(e) { window._editBildeKlar = true; viseBildePrev(e.target.value); });
   document.getElementById("addBildeUrl").addEventListener("input", function(e) {
     var prev = document.getElementById("addBildePrev");
     var url = konverterBildeUrl(e.target.value);

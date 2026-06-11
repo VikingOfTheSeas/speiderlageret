@@ -589,7 +589,7 @@
 <div id="banner" class="banner" style="display:none"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
-<script src="js/config.js"></script>
+<script src="js/config.js?v=1782501000"></script>
 <script>
 // ── DATA ──────────────────────────────────────────────────
 let gjenstander = [];
@@ -597,19 +597,25 @@ let hylleData = {}; // { "A": [item, item, ...], "B": [...] }
 let valgtHylle = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const { data, error } = await db.from("gjenstander").select("*");
-  if (error) { console.error(error); return; }
-  gjenstander = data || [];
-  byggHylleData();
-  oppdaterHylleTellere();
+  // Render umiddelbart fra sessionStorage-cachen (delt med index.html),
+  // hent så ferske data i bakgrunnen.
+  const cached = cacheLes("cache_gjenstander_v1");
+  if (cached && cached.length) {
+    gjenstander = cached;
+    byggHylleData();
+    oppdaterHylleTellere();
+  }
 
-  // Highlight shelf from URL param
+  // Highlight shelf from URL param — gjøres før nett-hentingen så
+  // panelet åpner umiddelbart når cache finnes.
   const params = new URLSearchParams(location.search);
   const h = params.get("hylle");
   if (h) {
     highlightHylle(h.toUpperCase());
     velgHylle(h.toUpperCase());
   }
+
+  await lastInnData();
 
   // Realtime updates
   db.channel("kart-gjenstander")
@@ -619,8 +625,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function lastInnData() {
-  const { data } = await db.from("gjenstander").select("*");
+  const { data, error } = await db.from("gjenstander").select(GJENSTAND_FELTER);
+  if (error) { console.error(error); return; }
   gjenstander = data || [];
+  cacheSkriv("cache_gjenstander_v1", gjenstander);
   byggHylleData();
   oppdaterHylleTellere();
   if (valgtHylle) visPanel(valgtHylle);
@@ -671,6 +679,21 @@ function velgHylle(id) {
   visPanel(id);
 }
 
+// Bilder ligger ikke i den lette gjenstander-listen — de hentes først
+// når en hylle åpnes, og caches i minnet per id ("" = har ikke bilde).
+const _hylleBildeCache = {};
+
+async function hentHylleBilder(hylleId, items) {
+  const mangler = items.filter(g => _hylleBildeCache[g.id] === undefined).map(g => g.id);
+  if (!mangler.length) return;
+  const { data, error } = await db.from("gjenstander").select("id,bilde_url").in("id", mangler);
+  if (error) { console.warn("hyllebilder:", error.message); return; }
+  (data || []).forEach(r => { _hylleBildeCache[r.id] = r.bilde_url || ""; });
+  mangler.forEach(id => { if (_hylleBildeCache[id] === undefined) _hylleBildeCache[id] = ""; });
+  // Re-render panelet med bildene hvis samme hylle fortsatt er åpen
+  if (valgtHylle === hylleId) visPanel(hylleId);
+}
+
 function visPanel(id) {
   const panel = document.getElementById("shelfPanel");
   const body = document.getElementById("panelBody");
@@ -686,8 +709,9 @@ function visPanel(id) {
     const statusKlasse = s => ({ "Tilgjengelig":"status-tilgjengelig","Utlånt":"status-utlant","Til reparasjon":"status-reparasjon","Tapt":"status-tapt" }[s] || "status-tilgjengelig");
     const statusTekst  = s => ({ "Tilgjengelig":"Tilgjengelig","Utlånt":"Utlånt","Til reparasjon":"Reparasjon","Tapt":"Tapt" }[s] || s);
     body.innerHTML = '<div class="shelf-item-grid">' + items.map(g => {
-      const img = g.bilde_url
-        ? '<img class="shelf-item-img" src="' + escHtml(g.bilde_url) + '" alt="" loading="lazy" onerror="this.outerHTML=\'<div class=shelf-item-img-placeholder>📦</div>\'">'
+      const bildeUrl = _hylleBildeCache[g.id];
+      const img = bildeUrl
+        ? '<img class="shelf-item-img" src="' + escHtml(bildeUrl) + '" alt="" loading="lazy" onerror="this.outerHTML=\'<div class=shelf-item-img-placeholder>📦</div>\'">'
         : '<div class="shelf-item-img-placeholder">📦</div>';
       return '<a href="item.html?id=' + encodeURIComponent(g.id) + '" class="shelf-item-card">' +
         img +
@@ -702,6 +726,7 @@ function visPanel(id) {
         '</div>' +
       '</a>';
     }).join("") + '</div>';
+    hentHylleBilder(id, items);
   }
   panel.classList.add("open");
   panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
