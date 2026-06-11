@@ -203,7 +203,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/kart-mini.js?v=1776544715"></script>
-<script src="js/config.js"></script>
+<script src="js/config.js?v=1782501000"></script>
 <script>
 // ---- STATE ----
 var currentBoks = null;
@@ -233,7 +233,8 @@ async function lastInnBoks(id) {
     if (r1.error || !r1.data) { visError("Fant ingen boks: " + id); return; }
     currentBoks = r1.data;
 
-    var r2 = await db.from("gjenstander").select("*").eq("boks_id", id);
+    // Lett select uten base64-bilder — innholdstabellen viser ikke bilder
+    var r2 = await db.from("gjenstander").select(GJENSTAND_FELTER).eq("boks_id", id);
     boksGjenstander = r2.data || [];
 
     var ids = boksGjenstander.map(function(g) { return g.id; });

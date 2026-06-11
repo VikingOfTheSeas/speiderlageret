@@ -5,6 +5,35 @@ const APP_BASE_URL      = 'https://1-haugerud-lager-administrasjon.vercel.app/';
 const { createClient } = window.supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Kolonnelister UTEN bilde_url. Base64-bildene gjør at select("*") på
+// gjenstander/bokser laster ~16 MB; uten bildene er det ~15 KB.
+// Bilder hentes på forespørsel der de faktisk vises (hentGjenstandBilde/
+// hentBoksBilde).
+const GJENSTAND_FELTER = "id,navn,kategori,serienummer,enhet,status,utlant_til,utlansdato,innleveringsdato,hylleplassering,notater,opprettet,er_bulk,antall_totalt,antall_utlant,boks_id";
+const BOKS_FELTER      = "id,navn,hylleplassering,beskrivelse,opprettet";
+
+// Enkel sessionStorage-cache: sidene rendrer umiddelbart fra cachen og
+// henter ferske data i bakgrunnen (stale-while-revalidate).
+function cacheLes(key) {
+  try {
+    var raw = sessionStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function cacheSkriv(key, data) {
+  try { sessionStorage.setItem(key, JSON.stringify(data)); } catch (e) {}
+}
+
+async function hentGjenstandBilde(id) {
+  var r = await db.from("gjenstander").select("bilde_url").eq("id", id).single();
+  return (r.data && r.data.bilde_url) || "";
+}
+
+async function hentBoksBilde(id) {
+  var r = await db.from("bokser").select("bilde_url").eq("id", id).single();
+  return (r.data && r.data.bilde_url) || "";
+}
+
 function konverterBildeUrl(url) {
   if (!url || url.startsWith('data:')) return url;
   const m1 = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
