@@ -583,6 +583,17 @@ function formatDato(d) {
   if (isNaN(dt)) return d;
   return ("0"+dt.getDate()).slice(-2) + "/" + ("0"+(dt.getMonth()+1)).slice(-2) + "/" + dt.getFullYear();
 }
+function scrollTilToppen() {
+  // Eldre mobil-Safari ignorerer scrollTo med options-objekt
+  try { window.scrollTo({ top: 0, behavior: "smooth" }); }
+  catch (e) { window.scrollTo(0, 0); }
+  // Fallback om smooth-scroll ikke starter (iOS-quirk)
+  setTimeout(function() {
+    var sc = document.scrollingElement || document.documentElement;
+    if (sc.scrollTop > 0) window.scrollTo(0, 0);
+  }, 600);
+}
+
 function visBanner(tekst, type) {
   type = type || "success";
   var el = document.getElementById("banner");
@@ -1153,7 +1164,7 @@ async function leggTil(e) {
     oppdaterPrev();
     await lastInn();
     lukkLeggTilModal();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollTilToppen();
   }
   btn.disabled = false; btn.textContent = "Legg til i lageret";
 }
@@ -1594,6 +1605,8 @@ function apneNyBoks() {
   var st = document.getElementById("nyBoksBildeStatus"); if (st) st.style.display = "none";
   var inp = document.getElementById("nyBoksBildeInput"); if (inp) inp.value = "";
   window._nyBoksBildeData = null;
+  var mbody = document.querySelector("#nyBoksModal .modal-body");
+  if (mbody) mbody.scrollTop = 0;
   document.getElementById("nyBoksModal").classList.add("open");
   setTimeout(function() { var el = document.getElementById("nyBoksHylle"); if (el) el.focus(); }, 100);
 }
@@ -1637,7 +1650,7 @@ async function lagreNyBoks() {
   btn.disabled = true; btn.textContent = "Lagrer…";
   var r = await db.from("bokser").insert({ id: id, navn: navn, hylleplassering: hylle, beskrivelse: beskr || null, bilde_url: bilde || null });
   if (r.error) { visBanner("Feil: " + r.error.message, "error"); }
-  else { lukkNyBoks(); await lastInnBokser(); visBanner("Boks opprettet!", "success"); settFane("bokser"); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  else { lukkNyBoks(); await lastInnBokser(); visBanner("Boks opprettet!", "success"); settFane("bokser"); scrollTilToppen(); }
   btn.disabled = false; btn.textContent = "Opprett boks";
 }
 
@@ -1784,6 +1797,9 @@ function apneLeggTilModal() {
     sel.innerHTML = "<option value=''>- Ingen boks —</option>" +
       bokser.map(function(b) { return "<option value='" + b.id + "'>" + b.navn + " (" + b.id + ")</option>"; }).join("");
   }
+  // Modal-body husker scrollposisjonen fra sist — start alltid øverst (Navn)
+  var mbody = document.querySelector("#leggTilModal .modal-body");
+  if (mbody) mbody.scrollTop = 0;
   document.getElementById("leggTilModal").classList.add("open");
   document.body.style.overflow = "hidden";
 }
