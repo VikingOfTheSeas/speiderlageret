@@ -544,7 +544,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script src="js/config.js?v=1782501000"></script>
+<script src="js/config.js?v=1786200000"></script>
 <script>
 var KATEGORIER = ["Camping","Kjøkken","Sikkerhet","Utstyr","Navigasjon","Verktøy","Belysning","Vann","Kommunikasjon","Annet"];
 var STATUSER   = ["Tilgjengelig","Utlånt","Til reparasjon","Tapt"];
@@ -807,13 +807,16 @@ async function lagreUtlanModal() {
   var btn = document.querySelector("#utlanModal .btn-save");
   btn.disabled = true; btn.textContent = "Lagrer…";
   var antallUtlant = _utlanIds.length;
+  var loggItems = [];
   for (var id of _utlanIds) {
     var g = gjenstander.find(function(x) { return x.id === id; });
     if (!g) continue;
     await db.from("gjenstander").upsert(Object.assign({}, g, {
       status: "Utlånt", utlant_til: til, utlansdato: dato, innleveringsdato: frist || null
     }), {onConflict:"id"});
+    if (g.status !== "Utlånt") loggItems.push(g);
   }
+  await loggUtlan(loggItems, til, dato, frist);
   lukkUtlanModal();
   clearValg();
   await lastInn();
@@ -829,10 +832,14 @@ function batchUtlan() {
 async function batchTilgjengelig() {
   if (!valgte.size) return;
   var ids = Array.from(valgte);
+  var leverte = [];
   for (var id of ids) {
     var g = gjenstander.find(function(x) { return x.id === id; });
-    if (g) await db.from("gjenstander").upsert(Object.assign({}, g, {status:"Tilgjengelig",utlant_til:"",utlansdato:"",innleveringsdato:""}), {onConflict:"id"});
+    if (!g) continue;
+    await db.from("gjenstander").upsert(Object.assign({}, g, {status:"Tilgjengelig",utlant_til:"",utlansdato:"",innleveringsdato:""}), {onConflict:"id"});
+    if (g.status === "Utlånt") leverte.push(g.id);
   }
+  await loggInnlevert(leverte);
   clearValg(); await lastInn(); visBanner(ids.length + " satt til Tilgjengelig", "success");
 }
 
@@ -908,7 +915,10 @@ async function raskStatus(id, sel) {
   document.querySelector("[data-id='" + id + "']").className = "item-row row-" + sk(ny);
   var r = await db.from("gjenstander").upsert(ok, {onConflict:"id"});
   if (r.error) { visBanner("Feil: " + r.error.message, "error"); sel.value = g.status; }
-  else { Object.assign(g, ok); oppdaterStats(); viseSammendrag(); visBanner(ny, "success"); }
+  else {
+    if (g.status === "Utlånt" && ny !== "Utlånt") await loggInnlevert([g.id]);
+    Object.assign(g, ok); oppdaterStats(); viseSammendrag(); visBanner(ny, "success");
+  }
 }
 
 // ---- REDIGER ----
@@ -992,12 +1002,18 @@ async function lagreRediger() {
   // Batch mode
   if (window._batchUtlanIds && window._batchUtlanIds.length > 1) {
     var bids = window._batchUtlanIds;
+    var bLoggUt = [], bLoggInn = [];
     for (var bid of bids) {
       var bg = gjenstander.find(function(x) { return x.id === bid; });
-      if (bg) await db.from("gjenstander").upsert(Object.assign({}, bg, {
+      if (!bg) continue;
+      await db.from("gjenstander").upsert(Object.assign({}, bg, {
         status: status, utlant_til: utlant_til, utlansdato: utlansdato, innleveringsdato: innlevering
       }), {onConflict:"id"});
+      if (bg.status !== "Utlånt" && status === "Utlånt") bLoggUt.push(bg);
+      else if (bg.status === "Utlånt" && status !== "Utlånt") bLoggInn.push(bg.id);
     }
+    await loggUtlan(bLoggUt, utlant_til, utlansdato, innlevering);
+    await loggInnlevert(bLoggInn);
     window._batchUtlanIds = null;
     clearValg(); await lastInn(); lukkRedigerModal();
     visBanner(bids.length + " oppdatert!", "success");
@@ -1023,7 +1039,21 @@ async function lagreRediger() {
   }
   var r = await db.from("gjenstander").upsert(oppdatert, {onConflict:"id"});
   if (r.error) { visBanner("Feil: " + r.error.message, "error"); }
-  else { clearValg(); await lastInn(); lukkRedigerModal(); visBanner("Lagret!", "success"); }
+  else {
+    // Hold utlånsloggen i synk med statusendringer gjort via rediger-modalen
+    var gammelG = gjenstander.find(function(x) { return x.id === editingId; });
+    var gammelStatus = gammelG ? gammelG.status : null;
+    if (gammelStatus !== "Utlånt" && status === "Utlånt") {
+      await loggUtlan([{ id: editingId, boks_id: oppdatert.boks_id }], utlant_til, utlansdato, innlevering);
+    } else if (gammelStatus === "Utlånt" && status !== "Utlånt") {
+      await loggInnlevert([editingId]);
+    } else if (gammelStatus === "Utlånt" && status === "Utlånt") {
+      await db.from("utlanslogg")
+        .update({ utlant_til: utlant_til, utlansdato: utlansdato, innleveringsdato: innlevering || null })
+        .eq("gjenstand_id", editingId).eq("status", "aktiv");
+    }
+    clearValg(); await lastInn(); lukkRedigerModal(); visBanner("Lagret!", "success");
+  }
   btn.disabled = false; btn.textContent = "Lagre";
 }
 

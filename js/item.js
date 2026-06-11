@@ -7,11 +7,55 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (error || !data) { visError("Fant ingen gjenstand med ID: " + id); return; }
   currentItem = data;
   renderItem(data);
+  lastUtlanslogg(id);
   db.channel("item-" + id)
     .on("postgres_changes", { event: "UPDATE", schema: "public", table: "gjenstander", filter: `id=eq.${id}` },
       p => { currentItem = p.new; renderItem(p.new); })
+    .on("postgres_changes", { event: "*", schema: "public", table: "utlanslogg", filter: `gjenstand_id=eq.${id}` },
+      () => lastUtlanslogg(id))
     .subscribe();
 });
+
+async function lastUtlanslogg(id) {
+  const tbody = document.getElementById("utlansloggBody");
+  if (!tbody) return;
+  const { data, error } = await db.from("utlanslogg")
+    .select("utlant_til,utlansdato,innleveringsdato,levert_dato,status,opprettet")
+    .eq("gjenstand_id", id)
+    .order("opprettet", { ascending: false });
+  if (error) { console.warn("utlanslogg:", error.message); return; }
+  const logg = data || [];
+  const countEl = document.getElementById("loggCount");
+  if (countEl) countEl.textContent = logg.length;
+  if (!logg.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-row">Ingen utlån registrert ennå</td></tr>';
+    return;
+  }
+  const iDagStr = (function(){ const dd=new Date(); return dd.getFullYear()+"-"+("0"+(dd.getMonth()+1)).slice(-2)+"-"+("0"+dd.getDate()).slice(-2); })();
+  const fmt = s => {
+    if (!s) return "—";
+    const sp = s.toString().substring(0,10);
+    if (sp === iDagStr) return "I dag";
+    const d = new Date(sp);
+    if (isNaN(d)) return s;
+    return ("0"+d.getDate()).slice(-2) + "/" + ("0"+(d.getMonth()+1)).slice(-2) + "/" + d.getFullYear();
+  };
+  const esc = s => { const d = document.createElement("div"); d.textContent = s || ""; return d.innerHTML; };
+  tbody.innerHTML = logg.map(rad => {
+    const aktiv = rad.status === "aktiv";
+    const forfalt = aktiv && rad.innleveringsdato && rad.innleveringsdato.toString().substring(0,10) < iDagStr;
+    const statusHtml = aktiv
+      ? '<span class="status-badge status-utlant">Aktiv' + (forfalt ? " ⚠️" : "") + "</span>"
+      : '<span class="status-badge status-tilgjengelig">Levert</span>';
+    return "<tr class='" + (forfalt ? "row-forfalt" : "") + "'>" +
+      "<td class='center' style='padding-left:16px;font-weight:600;font-size:13px'>" + esc(rad.utlant_til || "—") + "</td>" +
+      "<td class='center mono small-text'>" + fmt(rad.utlansdato) + "</td>" +
+      "<td class='center mono small-text" + (forfalt ? " orange-text fw" : "") + "'>" + fmt(rad.innleveringsdato) + "</td>" +
+      "<td class='center mono small-text'>" + fmt(rad.levert_dato) + "</td>" +
+      "<td class='center'>" + statusHtml + "</td>" +
+      "</tr>";
+  }).join("");
+}
 
 function renderItem(g) {
   document.title = g.navn + " – 1. Haugerud";
@@ -89,9 +133,16 @@ function renderQknapper(gjeldende) {
 async function endreStatus(ny) {
   if (!currentItem) return;
   if (ny === "Utlånt") { apneLanModal(); return; }
+  const varUtlant = currentItem.status === "Utlånt";
   const oppdatert = { ...currentItem, status: ny, utlant_til: "", utlansdato: "", innleveringsdato: "" };
   const { error } = await db.from("gjenstander").upsert(oppdatert, { onConflict: "id" });
-  if (!error) { currentItem = oppdatert; renderItem(oppdatert); visBanner("✓ " + ny, "success"); }
+  if (!error) {
+    if (varUtlant) await loggInnlevert([currentItem.id]);
+    currentItem = oppdatert;
+    renderItem(oppdatert);
+    lastUtlanslogg(oppdatert.id);
+    visBanner("✓ " + ny, "success");
+  }
   else visBanner("Feil: " + error.message, "error");
 }
 
@@ -121,18 +172,19 @@ async function lagreLan() {
   };
   const { error } = await db.from("gjenstander").upsert(oppdatert, { onConflict: "id" });
   if (!error) {
-    // Log to utlanslogg
-    await db.from("utlanslogg").insert({
-      gjenstand_id: currentItem.id,
-      antall: 1,
-      utlant_til: til,
-      utlansdato: dato,
-      innleveringsdato: frist || null,
-      status: "aktiv"
-    });
+    // Redigering av eksisterende utlån oppdaterer loggraden i stedet
+    // for å lage en ny
+    if (currentItem.status !== "Utlånt") {
+      await loggUtlan([currentItem], til, dato, frist);
+    } else {
+      await db.from("utlanslogg")
+        .update({ utlant_til: til, utlansdato: dato, innleveringsdato: frist || null })
+        .eq("gjenstand_id", currentItem.id).eq("status", "aktiv");
+    }
     currentItem = oppdatert;
     lukkLanModal();
     renderItem(oppdatert);
+    lastUtlanslogg(oppdatert.id);
     visBanner("✓ Utlån registrert", "success");
   } else visBanner("Feil: " + error.message, "error");
 }
