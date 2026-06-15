@@ -826,62 +826,112 @@ async function skrivUtBoksEtikett() {
   setTimeout(function() { window.print(); area.style.display = "none"; }, 400);
 }
 
+// Avrundet rektangel-hjelper (eldre canvas mangler ctx.roundRect)
+function roundRectPath(ctx, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y,     x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x,     y + h, r);
+  ctx.arcTo(x,     y + h, x,     y,     r);
+  ctx.arcTo(x,     y,     x + w, y,     r);
+  ctx.closePath();
+}
+
 async function lastNedBoksQr() {
-  var QR_SIZE = 1000, GAP = 40, PAD = 60;
-  var src = await lagQrBoksCanvas(QR_SIZE);
-  var qrImg = new Image();
-  qrImg.src = src;
-  await new Promise(function(r) { qrImg.onload = r; });
-
-  var BOX_W = QR_SIZE; // hylle box same size as QR
-  var ROW1_W = QR_SIZE + GAP + BOX_W; // top row width
-  var W = ROW1_W + PAD * 2;
-
-  // Measure text rows
-  var ORG_FONT = 120, INFO_FONT = 72;
-  var ROW2_H = ORG_FONT + 40; // "1. Haugerud"
-  var ROW3_H = INFO_FONT + 20; // navn
-  var ROW4_H = INFO_FONT + 20; // id
-  var H = PAD + QR_SIZE + GAP + ROW2_H + ROW3_H + ROW4_H + PAD;
-
+  var W = 1500, H = 1000;
   var c = document.createElement("canvas");
   c.width = W; c.height = H;
   var ctx = c.getContext("2d");
   ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
 
-  // Row 1 left: hylle box with text scaled to fill
-  var hylleX = PAD;
-  ctx.strokeStyle = "#000000"; ctx.lineWidth = 4;
-  ctx.strokeRect(hylleX, PAD, BOX_W, QR_SIZE);
+  // Ytre avrundet ramme
+  var M = 24;                       // ytre marg
+  var BORDER = 8;                   // rammetykkelse
+  var x0 = M, y0 = M, x1 = W - M, y1 = H - M;
+  ctx.strokeStyle = "#000000"; ctx.lineWidth = BORDER; ctx.lineJoin = "round";
+  roundRectPath(ctx, x0, y0, x1 - x0, y1 - y0, 44);
+  ctx.stroke();
+
+  ctx.fillStyle = "#000000";
+
+  // Layout: øvre seksjon (hylle | QR) + nedre seksjon (navn / org + id)
+  var topH   = Math.round((y1 - y0) * 0.56);   // høyde på øvre seksjon
+  var midY   = y0 + topH;                        // horisontal skillelinje
+  var leftW  = Math.round((x1 - x0) * 0.52);     // bredde på venstre celle
+  var divX   = x0 + leftW;                        // vertikal skillelinje
+
+  // Skillelinjer (tynnere enn ytre ramme)
+  ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(divX, y0); ctx.lineTo(divX, midY); ctx.stroke();   // vertikal i topp
+  ctx.beginPath(); ctx.moveTo(x0, midY); ctx.lineTo(x1, midY); ctx.stroke();      // horisontal
+
+  // Øvre venstre: stor hylleplassering, skalert til å fylle cellen
   var hylleTekst = currentBoks.hylleplassering || "—";
-  ctx.fillStyle = "#000000"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  var targetW = BOX_W * 0.95, targetH = QR_SIZE * 0.9;
-  var fontSize = 800;
-  ctx.font = "700 " + fontSize + "px Arial,sans-serif";
-  var mw = ctx.measureText(hylleTekst).width;
-  if (mw > targetW) fontSize = Math.floor(fontSize * targetW / mw);
-  if (fontSize > targetH) fontSize = Math.floor(targetH);
-  ctx.font = "700 " + fontSize + "px Arial,sans-serif";
-  ctx.fillText(hylleTekst, hylleX + BOX_W / 2, PAD + QR_SIZE / 2);
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  var hMaxW = leftW * 0.78, hMaxH = topH * 0.74;
+  var hFont = 700;
+  ctx.font = "700 " + hFont + "px Arial,sans-serif";
+  var hw = ctx.measureText(hylleTekst).width;
+  if (hw > hMaxW) hFont = Math.floor(hFont * hMaxW / hw);
+  if (hFont > hMaxH) hFont = Math.floor(hMaxH);
+  ctx.font = "700 " + hFont + "px Arial,sans-serif";
+  ctx.fillText(hylleTekst, x0 + leftW / 2, y0 + topH / 2);
 
-  // Row 1 right: QR code
-  ctx.drawImage(qrImg, PAD + BOX_W + GAP, PAD, QR_SIZE, QR_SIZE);
+  // Øvre høyre: QR-kode, kvadratisk og sentrert i cellen
+  var cellW = x1 - divX, cellH = topH;
+  var qrPad = 36;
+  var qrSize = Math.min(cellW, cellH) - qrPad * 2;
+  var src = await lagQrBoksCanvas(Math.min(1000, Math.round(qrSize * 2)));
+  var qrImg = new Image();
+  qrImg.src = src;
+  await new Promise(function(r) { qrImg.onload = r; });
+  var qrX = divX + (cellW - qrSize) / 2;
+  var qrY = y0 + (cellH - qrSize) / 2;
+  ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
 
-  // Row 2: "1. Haugerud" centered
-  var y2 = PAD + QR_SIZE + GAP + ROW2_H / 2;
-  ctx.font = "700 " + ORG_FONT + "px Arial,sans-serif";
-  ctx.fillStyle = "#000000"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  ctx.fillText("1. Haugerud", W / 2, y2);
+  // Nedre seksjon
+  var botTop = midY, botBot = y1;
+  var padX = 44;
 
-  // Row 3: Boks navn
-  var y3 = PAD + QR_SIZE + GAP + ROW2_H + ROW3_H / 2;
-  ctx.font = "700 " + INFO_FONT + "px Arial,sans-serif";
-  ctx.fillText(currentBoks.navn, W / 2, y3);
+  // Boksnavn – stort og fett, venstrejustert, skalert ned ved behov
+  var navn = currentBoks.navn || "—";
+  var navnMaxW = (x1 - x0) - padX * 2;
+  var navnFont = 150;
+  ctx.font = "700 " + navnFont + "px Arial,sans-serif";
+  var nw = ctx.measureText(navn).width;
+  if (nw > navnMaxW) navnFont = Math.floor(navnFont * navnMaxW / nw);
+  ctx.font = "700 " + navnFont + "px Arial,sans-serif";
+  ctx.textAlign = "left"; ctx.textBaseline = "middle";
+  var navnY = botTop + (botBot - botTop) * 0.32;
+  ctx.fillText(navn, x0 + padX, navnY);
 
-  // Row 4: ID
-  var y4 = PAD + QR_SIZE + GAP + ROW2_H + ROW3_H + ROW4_H / 2;
-  ctx.font = "400 " + INFO_FONT + "px monospace";
-  ctx.fillText(currentBoks.id, W / 2, y4);
+  // Tynn linje under navnet
+  var lineY = botTop + (botBot - botTop) * 0.60;
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(x0 + padX, lineY); ctx.lineTo(x1 - padX, lineY); ctx.stroke();
+
+  // Nederste rad: "1. Haugerud" til venstre
+  var orgFont = 70;
+  ctx.font = "700 " + orgFont + "px Arial,sans-serif";
+  ctx.textAlign = "left"; ctx.textBaseline = "middle";
+  var orgY = botTop + (botBot - botTop) * 0.80;
+  ctx.fillText("1. Haugerud", x0 + padX, orgY);
+
+  // Nederste rad: ID i avrundet pille til høyre
+  var idTekst = currentBoks.id || "";
+  var idFont = 64;
+  ctx.font = "700 " + idFont + "px Arial,sans-serif";
+  var idW = ctx.measureText(idTekst).width;
+  var pillPadX = 34, pillH = idFont + 44;
+  var pillW = idW + pillPadX * 2;
+  var pillX = x1 - padX - pillW;
+  var pillY = orgY - pillH / 2;
+  ctx.lineWidth = 5;
+  roundRectPath(ctx, pillX, pillY, pillW, pillH, pillH / 2.2);
+  ctx.stroke();
+  ctx.textAlign = "center";
+  ctx.fillText(idTekst, pillX + pillW / 2, orgY);
 
   var a = document.createElement("a");
   a.download = "QR-" + currentBoks.id + ".png";
